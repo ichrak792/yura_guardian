@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/security.css">
+    <link rel="stylesheet" href="/css/notifications.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="logo-section">
+
+                <h3></h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-divider">Menu</div>
+                <a href="/dashboard/security" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/dashboard/notifications" class="nav-item active">
+                    <span class="icon">🔔</span>
+                    <span>Notifications</span>
+                    <span class="badge-new">2</span>
+                </a>
+                <a href="/dashboard/history" class="nav-item">
+                    <span class="icon">⏱️</span>
+                    <span>Historique d'activités</span>
+                </a>
+                <a href="/dashboard/camera" class="nav-item">
+                    <span class="icon">📹</span>
+                    <span>Caméra</span>
+                </a>
+                <a href="/dashboard/map" class="nav-item">
+                    <span class="icon">🗺️</span>
+                    <span>Map</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="/logout" class="nav-item">
+                    <span class="icon">🚪</span>
+                    <span>Déconnexion</span>
+                </a>
+                
+                <div class="user-profile">
+                    <div class="user-avatar-small"><%= user.name.charAt(0) %></div>
+                    <div class="user-details">
+                        <div class="user-name-small"><%= user.name %></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1> Notifications</h1>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Stats rapides -->
+                <div class="alerts-stats">
+                    <div class="stat-card danger-stat">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-info">
+                            <h3>2</h3>
+                            <p>Critiques</p>
+                        </div>
+                    </div>
+                    <div class="stat-card warning-stat">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-info">
+                            <h3>2</h3>
+                            <p>Moyennes</p>
+                        </div>
+                    </div>
+                    <div class="stat-card info-stat">
+                        <div class="stat-icon">ℹ️</div>
+                        <div class="stat-info">
+                            <h3>5</h3>
+                            <p>Infos</p>
+                        </div>
+                    </div>
+                    <div class="stat-card success-stat">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <h3>3</h3>
+                            <p>OK</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barre de recherche -->
+                <div class="search-section">
+                    <div class="search-bar">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Rechercher par zone, type, message...">
+                        <button class="clear-search" id="clearSearch" style="display: none;">✕</button>
+                    </div>
+                </div>
+
+                <!-- Filtres par date -->
+                <div class="date-filters">
+                    <button class="date-btn active" data-period="today"> Aujourd'hui</button>
+                    <button class="date-btn" data-period="week"> Cette semaine</button>
+                    <button class="date-btn" data-period="month"> Ce mois</button>
+                </div>
+
+                <!-- Filtres par type -->
+                <div class="filters-section">
+                    <button class="filter-btn active" data-filter="all">Toutes</button>
+                    <button class="filter-btn" data-filter="danger">Critiques</button>
+                    <button class="filter-btn" data-filter="warning">Moyennes</button>
+                    <button class="filter-btn" data-filter="info">Infos</button>
+                    <button class="filter-btn" data-filter="success">État système</button>
+                </div>
+
+                <!-- Liste des alertes -->
+                <div class="alerts-container">
+                    <% alerts.forEach(function(alert) { %>
+                        <div class="alert-card alert-<%= alert.type %> <%= alert.isNew ? 'alert-new' : '' %>" data-type="<%= alert.type %>">
+                            <div class="alert-header">
+                                <div class="alert-icon-wrapper">
+                                    <span class="alert-icon"><%= alert.icon %></span>
+                                </div>
+                                <div class="alert-content">
+                                    <div class="alert-title-row">
+                                        <h3 class="alert-title"><%= alert.title %></h3>
+                                        <% if (alert.isNew) { %>
+                                            <span class="new-badge">NOUVEAU</span>
+                                        <% } %>
+                                    </div>
+                                    <p class="alert-message"><%= alert.message %></p>
+                                    <div class="alert-meta">
+                                        <span class="alert-time">⏱️ Il y a <%= alert.time %></span>
+                                        <span class="alert-zone">📍 <%= alert.zone %></span>
+                                        <span class="alert-value">📊 <%= alert.value %></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert-actions">
+                                <button class="action-btn-small view-btn" title="Voir les détails">👁️</button>
+                                <button class="action-btn-small resolve-btn" title="Marquer comme résolu">✓</button>
+                                <button class="action-btn-small delete-btn" title="Supprimer">🗑️</button>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+
+                <!-- Message si aucune alerte -->
+                <div class="no-alerts" style="display: none;">
+                    <div class="no-alerts-icon">🎉</div>
+                    <h3>Aucune alerte</h3>
+                    <p>Tous les systèmes fonctionnent normalement</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

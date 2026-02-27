@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/security.css">
+    <link rel="stylesheet" href="/css/settings.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-section">
+                <img src="/images/yura-guardian-logo.png" alt="YURA GUARDIAN" class="sidebar-logo">
+                <h3>ROBOT DASHBOARD</h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/dashboard/security" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/dashboard/notifications" class="nav-item">
+                    <span class="icon">🔔</span>
+                    <span>Notifications</span>
+                </a>
+                <a href="/dashboard/history" class="nav-item">
+                    <span class="icon">⏱️</span>
+                    <span>History</span>
+                </a>
+                <a href="/dashboard/camera" class="nav-item">
+                    <span class="icon">📹</span>
+                    <span>Caméra</span>
+                </a>
+                <a href="/dashboard/map" class="nav-item">
+                    <span class="icon">🗺️</span>
+                    <span>Map</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="/dashboard/settings" class="nav-item active">
+                    <span class="icon">⚙️</span>
+                    <span>Paramètres</span>
+                </a>
+                <a href="/logout" class="nav-item">
+                    <span class="icon">🚪</span>
+                    <span>Déconnexion</span>
+                </a>
+                
+                <div class="user-profile">
+                    <div class="user-avatar-small"><%= user.name.charAt(0) %></div>
+                    <div class="user-details">
+                        <div class="user-name-small"><%= user.name %></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>⚙️ Paramètres</h1>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="settings-container">
+                    
+                    <!-- Section Notifications -->
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h2>🔔 Notifications</h2>
+                            <p>Gérer les alertes et notifications</p>
+                        </div>
+                        <div class="settings-grid">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Alertes sonores</h3>
+                                    <p>Émettre un son lors des nouvelles alertes</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="soundAlerts" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Notifications push</h3>
+                                    <p>Recevoir des notifications sur le navigateur</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="pushNotifs" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Alertes critiques uniquement</h3>
+                                    <p>Afficher seulement les alertes importantes</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="criticalOnly">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Robot -->
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h2>🤖 Robot</h2>
+                            <p>Configuration du robot de sécurité</p>
+                        </div>
+                        <div class="settings-grid">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Mode automatique</h3>
+                                    <p>Patrouille automatique programmée</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="autoMode" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Vitesse du robot</h3>
+                                    <p>Ajuster la vitesse de déplacement</p>
+                                </div>
+                                <div class="slider-container">
+                                    <input type="range" id="robotSpeed" min="1" max="10" value="5" class="range-slider">
+                                    <span class="range-value">5</span>
+                                </div>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Détection de mouvement</h3>
+                                    <p>Sensibilité de la détection</p>
+                                </div>
+                                <select id="motionSensitivity" class="select-input">
+                                    <option value="low">Faible</option>
+                                    <option value="medium" selected>Moyenne</option>
+                                    <option value="high">Élevée</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Caméra -->
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h2>📹 Caméra</h2>
+                            <p>Paramètres de surveillance vidéo</p>
+                        </div>
+                        <div class="settings-grid">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Enregistrement automatique</h3>
+                                    <p>Enregistrer lors de détection de mouvement</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="autoRecord" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Qualité vidéo</h3>
+                                    <p>Résolution de la caméra</p>
+                                </div>
+                                <select id="videoQuality" class="select-input">
+                                    <option value="720p">HD 720p</option>
+                                    <option value="1080p" selected>Full HD 1080p</option>
+                                    <option value="4k">4K Ultra HD</option>
+                                </select>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Vision nocturne</h3>
+                                    <p>Activer le mode infrarouge</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="nightVision" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Sécurité -->
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <h2>🔐 Sécurité</h2>
+                            <p>Paramètres de sécurité du système</p>
+                        </div>
+                        <div class="settings-grid">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Authentification à deux facteurs</h3>
+                                    <p>Protection supplémentaire du compte</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="twoFactor">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h3>Délai avant déconnexion</h3>
+                                    <p>Temps d'inactivité avant déconnexion auto</p>
+                                </div>
+                                <select id="sessionTimeout" class="select-input">
+                                    <option value="15">15 minutes</option>
+                                    <option value="30" selected>30 minutes</option>
+                                    <option value="60">1 heure</option>
+                                    <option value="0">Jamais</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Boutons d'action -->
+                    <div class="actions-section">
+                        <button class="btn-save" onclick="saveSettings()">
+                            💾 Enregistrer les modifications
+                        </button>
+                        <button class="btn-reset" onclick="resetSettings()">
+                            🔄 Réinitialiser
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/settings.js"></script>
+</body>
+</html>

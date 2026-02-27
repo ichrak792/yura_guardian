@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <%- include('../partials/admin-sidebar') %>
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <h1>Historique</h1>
+                    <span class="total-badge"><%= histories.length %> entrées</span>
+                </div>
+            </header>
+            <div class="content-wrapper">
+                <div class="history-container">
+                    <% if (histories.length === 0) { %>
+                        <div class="empty-state">
+                            <span style="font-size:3rem;">📋</span>
+                            <p>Aucun historique pour l'instant</p>
+                        </div>
+                    <% } else { %>
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Heure</th>
+                                    <th>Action</th>
+                                    <th>Utilisateur</th>
+                                    <th>Détails</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% histories.forEach(function(h) { %>
+                                <tr>
+                                    <td style="white-space:nowrap; color:#666; font-size:0.85rem;">
+                                        <%= new Date(h.timestamp).toLocaleDateString('fr-FR') %>
+                                        <br>
+                                        <strong><%= new Date(h.timestamp).toLocaleTimeString('fr-FR') %></strong>
+                                    </td>
+                                    <td>
+                                        <span class="history-action-badge"><%= h.action %></span>
+                                    </td>
+                                    <td>
+                                        <div class="user-cell">
+                                            <div class="user-avatar" style="width:30px;height:30px;font-size:0.8rem;">
+                                                <%= h.userName ? h.userName.charAt(0).toUpperCase() : '?' %>
+                                            </div>
+                                            <span><%= h.userName || 'Système' %></span>
+                                        </div>
+                                    </td>
+                                    <td style="color:#666; font-size:0.9rem;"><%= h.details || '-' %></td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

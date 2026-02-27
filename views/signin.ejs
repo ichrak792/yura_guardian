@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/signin.css">
+</head>
+<body>
+    <div class="signin-container">
+        <div class="left-panel">
+            <h1 class="welcome-text">BIENVENUE!</h1>
+            <p class="robot-desc">Je suis le robot Yura. Entrez dans mon univers et découvrez mes fonctionnalités</p>
+        </div>
+
+        <div class="right-panel">
+            <div class="signin-box">
+                <div class="header-section">
+        <div class="logo-title-row">
+        <img src="/images/logo%20robot.png" alt="YURA GUARDIAN" class="signin-logo">
+        <div>
+            <h2 class="signin-title">Connexion au compte</h2>
+            <p class="signin-subtitle">Ravi de vous revoir, connectez-vous à votre compte</p>
+        </div>
+    </div>
+</div>
+
+                <% if (error) { %>
+                    <div class="error-message">⚠️ <%= error %></div>
+                <% } %>
+
+                <form action="/signin" method="POST" class="signin-form">
+                    <div class="form-group">
+                        <label for="identifiant">Identifiant</label>
+                        <input type="text" id="identifiant" name="identifiant" required placeholder="Entrez votre identifiant">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Adresse email</label>
+                        <input type="email" id="email" name="email" required placeholder="exemple@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" name="password" required placeholder="••••••••">
+                        <a href="#" class="forgot-link">Mot de passe oublié?</a>
+                    </div>
+                    <button type="submit" class="signin-btn">se connecter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/security.css">
+    <link rel="stylesheet" href="/css/camera.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-section">
+                <img src="/images/yura-guardian-logo.png" alt="YURA GUARDIAN" class="sidebar-logo">
+                <h3>ROBOT DASHBOARD</h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/dashboard/security" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+               <a href="/notifications" class="nav-item">
+                    <span class="icon">🔔</span>
+                    <span>Notifications</span>
+                </a>
+                <a href="/dashboard/history" class="nav-item">
+                    <span class="icon">⏱️</span>
+                    <span>History</span>
+                </a>
+                <a href="/dashboard/camera" class="nav-item active">
+                    <span class="icon">📹</span>
+                    <span>Caméra</span>
+                </a>
+                <a href="/dashboard/map" class="nav-item">
+                    <span class="icon">🗺️</span>
+                    <span>Map</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" onclick="alert('Paramètres disponibles sur le dashboard')" class="nav-item">
+                    <span class="icon">⚙️</span>
+                    <span>Paramètres</span>
+                </a>
+                <a href="/logout" class="nav-item">
+                    <span class="icon">🚪</span>
+                    <span>Déconnexion</span>
+                </a>
+                
+                <div class="user-profile">
+                    <div class="user-avatar-small"><%= user.name.charAt(0) %></div>
+                    <div class="user-details">
+                        <div class="user-name-small"><%= user.name %></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>📹 Surveillance Caméra</h1>
+                <div class="camera-status">
+                    <span class="status-dot live"></span>
+                    <span class="status-text">EN DIRECT</span>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Contrôles principaux -->
+                <div class="camera-controls-bar">
+                    <button class="control-btn start-btn" id="startBtn" onclick="startCamera()">
+                        ▶️ Démarrer
+                    </button>
+                    <button class="control-btn stop-btn" id="stopBtn" onclick="stopCamera()" disabled>
+                        ⏹️ Arrêter
+                    </button>
+                    <button class="control-btn record-btn" id="recordBtn" onclick="toggleRecord()" disabled>
+                        ⏺️ Enregistrer
+                    </button>
+                    <button class="control-btn snapshot-btn" id="snapshotBtn" onclick="takeSnapshot()" disabled>
+                        📸 Capture
+                    </button>
+                    <button class="control-btn fullscreen-btn" onclick="toggleFullscreen()">
+                        ⛶ Plein écran
+                    </button>
+                </div>
+
+                <!-- Vue caméra principale -->
+                <div class="camera-main-view" id="cameraView">
+                    <div class="camera-placeholder" id="placeholder">
+                        <div class="placeholder-icon">📹</div>
+                        <p>Caméra en attente</p>
+                        <p class="placeholder-hint">Cliquez sur "Démarrer" pour lancer la surveillance</p>
+                    </div>
+                    <video id="cameraFeed" autoplay playsinline></video>
+                    <canvas id="snapshotCanvas" style="display: none;"></canvas>
+                    
+                    <!-- Overlay infos -->
+                    <div class="camera-overlay" id="overlay" style="display: none;">
+                        <div class="overlay-top">
+                            <div class="camera-name">📹 YURA CAM 01</div>
+                            <div class="timestamp" id="timestamp">--:--:--</div>
+                        </div>
+                        <div class="overlay-bottom">
+                            <div class="recording-indicator" id="recIndicator" style="display: none;">
+                                <span class="rec-dot"></span>
+                                <span>REC</span>
+                                <span id="recTime">00:00</span>
+                            </div>
+                            <div class="camera-info">
+                                <span>Zone A - Entrée principale</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grille de guidage -->
+                    <div class="camera-grid" id="gridLines" style="display: none;"></div>
+                </div>
+
+                <!-- Panneau de contrôles avancés -->
+                <div class="advanced-controls">
+                    <div class="control-section">
+                        <h3>🎨 Qualité</h3>
+                        <div class="control-group">
+                            <label>Résolution</label>
+                            <select id="resolution" onchange="changeResolution()">
+                                <option value="720">HD 720p</option>
+                                <option value="1080" selected>Full HD 1080p</option>
+                                <option value="4k">4K Ultra HD</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>FPS</label>
+                            <select id="fps">
+                                <option value="24">24 fps</option>
+                                <option value="30" selected>30 fps</option>
+                                <option value="60">60 fps</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <h3>🔧 Réglages</h3>
+                        <div class="control-group">
+                            <label>Luminosité</label>
+                            <input type="range" id="brightness" min="0" max="200" value="100" oninput="updateFilters()">
+                            <span class="range-val">100%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Contraste</label>
+                            <input type="range" id="contrast" min="0" max="200" value="100" oninput="updateFilters()">
+                            <span class="range-val">100%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Netteté</label>
+                            <input type="range" id="sharpness" min="0" max="200" value="100" oninput="updateFilters()">
+                            <span class="range-val">100%</span>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <h3>🌙 Modes</h3>
+                        <div class="toggle-group">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="nightMode" onchange="toggleNightVision()">
+                                <span>Vision nocturne</span>
+                            </label>
+                            <label class="toggle-label">
+                                <input type="checkbox" id="gridToggle" onchange="toggleGrid()">
+                                <span>Grille de guidage</span>
+                            </label>
+                            <label class="toggle-label">
+                                <input type="checkbox" id="motionDetect" onchange="toggleMotionDetection()">
+                                <span>Détection mouvement</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="control-section">
+                        <h3>📊 Statistiques</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">Durée</span>
+                                <span class="stat-value" id="duration">00:00:00</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">FPS</span>
+                                <span class="stat-value" id="currentFps">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Captures</span>
+                                <span class="stat-value" id="snapshotCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Miniatures des captures -->
+                <div class="snapshots-gallery" id="gallery" style="display: none;">
+                    <h3>📸 Captures récentes</h3>
+                    <div class="gallery-grid" id="galleryGrid"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/camera.js"></script>
+</body>
+</html>

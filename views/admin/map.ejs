@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+    <div class="admin-container">
+        <%- include('../partials/admin-sidebar') %>
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <h1>Map</h1>
+                </div>
+            </header>
+            <div class="content-wrapper">
+                <div class="map-section">
+                    <div class="map-side-controls">
+                        <button class="ctrl-btn start-btn" onclick="locateMe()">📍 Ma position</button>
+                        <button class="ctrl-btn stop-btn" onclick="resetMap()">🔄 Reset</button>
+                    </div>
+                    <div class="map-view">
+                        <div id="map" style="width:100%; height:100%; border-radius:12px;"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Default: Tunis, Tunisia
+        const defaultLat = 36.8065, defaultLng = 10.1815;
+        const map = L.map('map').setView([defaultLat, defaultLng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        const robotIcon = L.divIcon({
+            html: '<div style="font-size:2rem; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));">🤖</div>',
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+            className: ''
+        });
+
+        let robotMarker = L.marker([defaultLat, defaultLng], {icon: robotIcon})
+            .addTo(map)
+            .bindPopup('<b>Robot YURA</b><br>Position actuelle')
+            .openPopup();
+
+        function locateMe() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    const lat = pos.coords.latitude, lng = pos.coords.longitude;
+                    robotMarker.setLatLng([lat, lng]);
+                    map.setView([lat, lng], 15);
+                });
+            }
+        }
+
+        function resetMap() {
+            robotMarker.setLatLng([defaultLat, defaultLng]);
+            map.setView([defaultLat, defaultLng], 13);
+        }
+    </script>
+</body>
+</html>

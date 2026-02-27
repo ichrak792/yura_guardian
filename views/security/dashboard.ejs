@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/security.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-section">
+               
+            </div>
+            <nav class="sidebar-nav">
+                
+                <div class="nav-divider">Menu</div>
+                <a href="/dashboard/security" class="nav-item">
+                    <span class="icon">🏠</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/dashboard/history" class="nav-item">
+                    <span class="icon">⏱️</span>
+                    <span>Historique d'activités</span>
+                </a>
+                <a href="/dashboard/camera" class="nav-item">
+                    <span class="icon">📹</span>
+                    <span>Caméra</span>
+                </a>
+                <a href="/dashboard/map" class="nav-item">
+                    <span class="icon">🗺️</span>
+                    <span>Map</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+               <a href="/dashboard/notifications" class="nav-item">
+                    <span class="icon">🔔</span>
+                    <span>Notifications</span>
+                    <span class="badge-new">3</span>
+               </a>
+                <a href="#" class="nav-item">
+                    <span class="icon">⚙️</span>
+                    <span>Paramétres</span>
+                </a>
+                <div class="user-profile">
+                    <div class="user-avatar-small"><%= user.name.charAt(0).toUpperCase() %></div>
+                    <div class="user-details">
+                        <div class="user-name-small"><%= user.name %></div>
+                        <div class="user-role-small">Agent Sécurité</div>
+                    </div>
+                </div>
+                <a href="/logout" class="logout-link-sec">🚪 Se déconnecter</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>ROBOT DASHBOARD</h1>
+                <div style="display:flex; gap:15px; align-items:center;">
+                    <span style="color:rgba(255,255,255,0.7); font-size:0.9rem;" id="currentTime"></span>
+                    <button class="logout-btn" onclick="window.location.href='/logout'">Se déconnecter</button>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="dashboard-grid">
+                    <!-- Battery -->
+                    <div class="status-card battery-card">
+                        <h3>Niveau de Batterie</h3>
+                        <div class="battery-visual">
+                            <div class="battery-percent" id="batteryDisplay">75%</div>
+                            <div class="battery-bar">
+                                <div class="battery-fill" id="batteryFill" style="width:75%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Robot Controls -->
+                    <div class="controls-card">
+                        <h3>Controle robot</h3>
+                        <div class="controls-layout">
+                            <button class="control-btn forward" onclick="sendCmd('Forward')">
+                                <span class="arrow">↑</span>
+                            </button>
+                            <button class="control-btn left" onclick="sendCmd('Left')">
+                                <span class="arrow">←</span>
+                            </button>
+                            <button class="control-btn stop" onclick="sendCmd('STOP')">STOP</button>
+                            <button class="control-btn right" onclick="sendCmd('Right')">
+                                <span class="arrow">→</span>
+                            </button>
+                            <button class="control-btn backward" onclick="sendCmd('Backward')">
+                                <span class="arrow">↓</span>
+                            </button>
+                        </div>
+                        <div id="secCmdStatus" style="color:#4ade80; text-align:center; margin-top:10px; font-size:0.85rem; height:18px;"></div>
+                    </div>
+
+                    <!-- Camera View -->
+                    <div class="camera-card">
+                        <h3>Caméra en direct</h3>
+                        <div class="camera-display">
+                            <video id="camVideo" autoplay playsinline style="display:none; width:100%; height:100%; object-fit:cover; border-radius:8px;"></video>
+                            <div id="camPlaceholder" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+                                <div class="camera-icon-large">📹</div>
+                                <button onclick="startCam()" style="background:#2563eb; color:white; border:none; padding:6px 15px; border-radius:6px; cursor:pointer; font-size:0.8rem;">Démarrer</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Environment -->
+                    <div class="status-card environment-card">
+                        <h3>Environnement</h3>
+                        <div class="env-data">
+                            <div class="env-row">
+                                <span>💧 Humidité</span>
+                                <strong id="humidity">45%</strong>
+                            </div>
+                            <div class="env-row">
+                                <span>🌡️ Température</span>
+                                <strong id="temperature">28°C</strong>
+                            </div>
+                            <div class="env-row">
+                                <span>💨 Gaz</span>
+                                <strong id="gas">15 ppm</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History -->
+                    <div class="history-card">
+                        <h3>Historiques</h3>
+                        <div class="history-list">
+                            <% if (histories && histories.length > 0) { %>
+                                <% histories.slice(0, 6).forEach(function(h) { %>
+                                    <div class="history-item">
+                                        <span class="history-time">
+                                            <%= new Date(h.timestamp).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}) %>
+                                        </span>
+                                        <span class="history-action"><%= h.action %></span>
+                                    </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="history-item">
+                                    <span class="history-time">--:--</span>
+                                    <span class="history-action">Aucun historique</span>
+                                </div>
+                            <% } %>
+                        </div>
+                        <a href="/dashboard/history" style="color:rgba(255,255,255,0.5); font-size:0.8rem; text-decoration:none; display:block; margin-top:10px; text-align:right;">Voir tout →</a>
+                    </div>
+
+                    <!-- Robot Map -->
+                    <div class="map-card">
+                        <h3>Robot Map</h3>
+                        <div class="map-display">
+                            <div id="dashMap" style="width:100%; height:100%; border-radius:8px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Time
+        function updateTime() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleTimeString('fr-FR');
+        }
+        updateTime(); setInterval(updateTime, 1000);
+
+        // Mini Map
+        const dashMap = L.map('dashMap', { zoomControl: false }).setView([36.8065, 10.1815], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(dashMap);
+        const rIcon = L.divIcon({ html: '<div style="font-size:1.2rem;">🤖</div>', iconSize: [25,25], iconAnchor:[12,25], className:'' });
+        L.marker([36.8065, 10.1815], {icon: rIcon}).addTo(dashMap);
+
+        // Camera
+        let camStream = null;
+        async function startCam() {
+            try {
+                camStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const v = document.getElementById('camVideo');
+                v.srcObject = camStream;
+                v.style.display = 'block';
+                document.getElementById('camPlaceholder').style.display = 'none';
+            } catch(e) {}
+        }
+
+        // Robot Commands
+        function sendCmd(cmd) {
+            fetch('/admin/robot/command', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ command: cmd })
+            });
+            const s = document.getElementById('secCmdStatus');
+            s.textContent = `✅ ${cmd}`;
+            setTimeout(() => s.textContent = '', 2000);
+        }
+
+        // Keyboard
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') sendCmd('Forward');
+            else if (e.key === 'ArrowDown') sendCmd('Backward');
+            else if (e.key === 'ArrowLeft') sendCmd('Left');
+            else if (e.key === 'ArrowRight') sendCmd('Right');
+            else if (e.key === ' ') { e.preventDefault(); sendCmd('STOP'); }
+        });
+
+        // Simulate sensor updates
+        setInterval(() => {
+            document.getElementById('humidity').textContent = (42 + Math.random() * 8).toFixed(0) + '%';
+            document.getElementById('temperature').textContent = (26 + Math.random() * 4).toFixed(1) + '°C';
+            document.getElementById('gas').textContent = (12 + Math.random() * 6).toFixed(0) + ' ppm';
+        }, 5000);
+
+        // Battery simulation
+        let bat = 75;
+        setInterval(() => {
+            bat = Math.max(0, bat - 0.1);
+            document.getElementById('batteryDisplay').textContent = bat.toFixed(0) + '%';
+            const fill = document.getElementById('batteryFill');
+            fill.style.width = bat + '%';
+            fill.style.background = bat > 50 ? '#4ade80' : bat > 20 ? '#facc15' : '#ef4444';
+        }, 10000);
+    </script>
+</body>
+</html>

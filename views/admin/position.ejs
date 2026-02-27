@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+
+<body>
+    <div class="admin-container">
+        <%- include('../partials/admin-sidebar') %>
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <h1>Position</h1>
+                </div>
+                <div class="top-nav">
+                    <a href="/admin/users">Notifications</a>
+                    <a href="/admin/history">Historiques</a>
+                    <a href="/admin/position" class="active">Position</a>
+                    <a href="#">Profil</a>
+                    <a href="#">Guide</a>
+                    <button class="btn-logout-top" onclick="window.location.href='/logout'">Se déconnecter</button>
+                </div>
+            </header>
+            <div class="content-wrapper">
+                <div class="position-layout">
+                    <!-- Robot Controls -->
+                    <div class="robot-controls-section">
+                        <h3 style="color:white; margin-bottom:20px; text-align:center;">Robot Controls</h3>
+                                            <div class="controls-grid">
+                            <button class="control-direction forward-btn" onclick="sendCommand('forward')">
+                                <span class="arrow">↑</span>
+                            </button>
+                            
+                            <button class="control-direction left-btn" onclick="sendCommand('left')">
+                                <span class="arrow">←</span>
+                            </button>
+                            
+                            <button class="control-direction stop-btn-center" onclick="sendCommand('stop')">
+                                STOP
+                            </button>
+                            
+                            <button class="control-direction right-btn" onclick="sendCommand('right')">
+                                <span class="arrow">→</span>
+                            </button>
+                            
+                            <button class="control-direction backward-btn" onclick="sendCommand('backward')">
+                                <span class="arrow">↓</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Camera + Map -->
+                    <div class="views-section">
+                        <div class="camera-mini">
+                            <video id="miniVideo" autoplay playsinline style="display:none; width:100%; height:100%; object-fit:cover; border-radius:12px;"></video>
+                            <div id="miniPlaceholder" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+                                <span style="font-size:3rem;">📹</span>
+                                <button class="ctrl-btn start-btn" onclick="startMiniCam()" style="font-size:0.85rem; padding:8px 20px;">Caméra</button>
+                            </div>
+                        </div>
+                        <div class="map-mini">
+                            <div id="miniMap" style="width:100%; height:100%; border-radius:12px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Mini map
+        const miniMap = L.map('miniMap').setView([36.8065, 10.1815], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(miniMap);
+        const robotIcon = L.divIcon({ html: '<div style="font-size:1.5rem;">🤖</div>', iconSize: [30, 30], iconAnchor: [15, 30], className: '' });
+        L.marker([36.8065, 10.1815], {icon: robotIcon}).addTo(miniMap).bindPopup('Robot YURA');
+
+        let camStream = null;
+        async function startMiniCam() {
+            try {
+                camStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const v = document.getElementById('miniVideo');
+                v.srcObject = camStream;
+                v.style.display = 'block';
+                document.getElementById('miniPlaceholder').style.display = 'none';
+            } catch(e) { alert('Caméra indisponible: ' + e.message); }
+        }
+
+        function sendCmd(cmd) {
+            fetch('/admin/robot/command', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ command: cmd })
+            });
+            const status = document.getElementById('cmdStatus');
+            status.textContent = `✅ Commande envoyée: ${cmd}`;
+            setTimeout(() => status.textContent = '', 2000);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') sendCmd('Forward');
+            else if (e.key === 'ArrowDown') sendCmd('Backward');
+            else if (e.key === 'ArrowLeft') sendCmd('Left');
+            else if (e.key === 'ArrowRight') sendCmd('Right');
+            else if (e.key === ' ') sendCmd('STOP');
+        });
+    </script>
+    <script>
+function sendCommand(command) {
+    console.log('🎮 Commande envoyée:', command);
+    
+    // Vibration sur mobile
+    if (navigator.vibrate) {
+        navigator.vibrate(50);
+    }
+    
+    // Effet visuel global
+    document.body.style.animation = 'shake 0.3s ease';
+    setTimeout(() => {
+        document.body.style.animation = '';
+    }, 300);
+    
+    // Message de confirmation
+    showFeedback(command);
+    
+    // Envoi au serveur
+    fetch('/admin/robot/command', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: command })
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log('✅ Commande exécutée:', data);
+    })
+    .catch(err => {
+        console.error('❌ Erreur:', err);
+    });
+}
+
+function showFeedback(command) {
+    const messages = {
+        'forward': '⬆️ Robot avance',
+        'backward': '⬇️ Robot recule',
+        'left': '⬅️ Robot tourne à gauche',
+        'right': '➡️ Robot tourne à droite',
+        'stop': '🛑 Robot arrêté'
+    };
+    
+    // Créer popup de feedback
+    const feedback = document.createElement('div');
+    feedback.className = 'command-feedback';
+    feedback.textContent = messages[command];
+    feedback.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 30px;
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color: white;
+        padding: 15px 30px;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+        z-index: 9999;
+        animation: slideIn 0.5s ease;
+    `;
+    
+    document.body.appendChild(feedback);
+    
+    setTimeout(() => {
+        feedback.style.animation = 'slideOut 0.5s ease';
+        setTimeout(() => feedback.remove(), 500);
+    }, 2000);
+}
+</script>
+
+<style>
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+}
+</style>
+</body>
+</html>

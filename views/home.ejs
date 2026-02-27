@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+    <div class="home-container">
+        <div class="decorative-corner top-left"></div>
+        <div class="logo-center">
+            <img src="/images/logo robot.png" alt="YURA GUARDIAN" class="main-logo">
+            
+        </div>
+        <div class="decorative-corner bottom-right"></div>
+        <div class="continue-section">
+            <button class="continue-btn" onclick="window.location.href='/signin'">
+                Continuer <span class="arrow">→</span>
+            </button>
+        </div>
+    </div>
+    <script>
+        window.addEventListener('load', function() {
+            const logo = document.querySelector('.main-logo');
+            if (logo) { logo.style.opacity = '1'; logo.style.transform = 'scale(1)'; }
+            setTimeout(() => {
+                const btn = document.querySelector('.continue-btn');
+                if (btn) { btn.style.opacity = '1'; btn.style.transform = 'translateY(0)'; }
+            }, 800);
+        });
+    </script>
+</body>
+</html>

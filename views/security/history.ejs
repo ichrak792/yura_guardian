@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/security.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo-section">
+               
+                <h3></h3>
+            </div>
+            <nav class="sidebar-nav">
+               
+                <div class="nav-divider">Menu</div>
+                <a href="/dashboard/security" class="nav-item">
+                    <span class="icon">🏠</span><span>Dashboard</span>
+                </a>
+                <a href="/dashboard/history" class="nav-item active">
+                    <span class="icon">⏱️</span><span>Historique d'activités</span>
+                </a>
+                <a href="/dashboard/camera" class="nav-item">
+                    <span class="icon">📹</span><span>Caméra</span>
+                </a>
+                <a href="/dashboard/map" class="nav-item">
+                    <span class="icon">🗺️</span><span>Map</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar-small"><%= user.name.charAt(0).toUpperCase() %></div>
+                    <div class="user-details">
+                        <div class="user-name-small"><%= user.name %></div>
+                    </div>
+                </div>
+                <a href="/logout" class="logout-link-sec">🚪 Se déconnecter</a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>HISTORIQUE</h1>
+                <button class="logout-btn" onclick="window.location.href='/logout'">Se déconnecter</button>
+            </header>
+            <div class="content-wrapper">
+                <div class="history-full-container">
+                    <% if (histories.length === 0) { %>
+                        <div style="text-align:center; color:rgba(255,255,255,0.5); padding:60px 0;">
+                            <div style="font-size:3rem; margin-bottom:15px;">📋</div>
+                            <p>Aucun historique disponible</p>
+                        </div>
+                    <% } else { %>
+                        <% histories.forEach(function(h) { %>
+                        <div class="history-full-item">
+                            <div class="history-time-full">
+                                <%= new Date(h.timestamp).toLocaleDateString('fr-FR') %>
+                                <br>
+                                <strong><%= new Date(h.timestamp).toLocaleTimeString('fr-FR') %></strong>
+                            </div>
+                            <div class="history-dot"></div>
+                            <div class="history-content">
+                                <div class="history-action-full"><%= h.action %></div>
+                                <% if (h.userName) { %>
+                                    <div class="history-user-full">👤 <%= h.userName %></div>
+                                <% } %>
+                                <% if (h.details) { %>
+                                    <div class="history-details-full"><%= h.details %></div>
+                                <% } %>
+                            </div>
+                        </div>
+                        <% }); %>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

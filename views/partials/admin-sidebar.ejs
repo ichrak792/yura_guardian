@@ -1,0 +1,41 @@
+<aside class="sidebar">
+    <div class="logo-section">
+        <img src="/images/logo robot.png" alt="YURA GUARDIAN" class="sidebar-logo" onerror="this.style.display='none'">
+        <span class="logo-fallback">YURA GUARDIAN</span>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="/admin/users" class="nav-item <%= page === 'users' ? 'active' : '' %>">
+            <span class="icon">👥</span>
+            <span>Utilisateurs</span>
+        </a>
+        <a href="/admin/camera" class="nav-item <%= page === 'camera' ? 'active' : '' %>">
+            <span class="icon">📹</span>
+            <span>Caméra</span>
+        </a>
+        <a href="/admin/map" class="nav-item <%= page === 'map' ? 'active' : '' %>">
+            <span class="icon">🗺️</span>
+            <span>Map</span>
+        </a>
+        <a href="/admin/position" class="nav-item <%= page === 'position' ? 'active' : '' %>">
+            <span class="icon">🎮</span>
+            <span>Position</span>
+        </a>
+        <a href="/admin/history" class="nav-item <%= page === 'history' ? 'active' : '' %>">
+            <span class="icon">📋</span>
+            <span>Historique</span>
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <div class="sidebar-avatar"><%= user ? user.name.charAt(0).toUpperCase() : 'A' %></div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name"><%= user ? user.name : 'Admin' %></div>
+                <div class="sidebar-user-role">Administrateur</div>
+            </div>
+        </div>
+        <a href="/logout" class="logout-link">
+            <span class="icon">🚪</span>
+            <span>Se déconnecter</span>
+        </a>
+    </div>
+</aside>

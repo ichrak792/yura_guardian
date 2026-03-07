@@ -8,26 +8,111 @@
 </head>
 <body>
     <div class="home-container">
-        <div class="decorative-corner top-left"></div>
-        <div class="logo-center">
-            <img src="/images/logo robot.png" alt="YURA GUARDIAN" class="main-logo">
-            
+        <!-- Animated Background -->
+        <div class="animated-bg">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
         </div>
-        <div class="decorative-corner bottom-right"></div>
-        <div class="continue-section">
+
+        <!-- Main Content -->
+        <div class="home-content">
+            <div class="logo-wrapper">
+                <!-- Colorful Glow Effect -->
+                <div class="logo-glow-container">
+                    <div class="logo-glow glow-1"></div>
+                    <div class="logo-glow glow-2"></div>
+                    <div class="logo-glow glow-3"></div>
+                </div>
+                
+                <!-- Main Logo with Color Animation -->
+                <img src="/images/logo robot.png" alt="YURA GUARDIAN" class="main-logo" loading="lazy">
+                
+                <!-- Color Ring Animation -->
+                <div class="color-ring"></div>
+                <div class="color-ring ring-2"></div>
+            </div>
+
+            <div class="text-section">
+                <h1 class="main-title">YURA GUARDIAN</h1>
+                <p class="subtitle">Surveillance robotisée de sécurité avancée</p>
+                <div class="features-list">
+                    <span class="feature-badge"> Robot Autonome</span>
+                    <span class="feature-badge"> Surveillance 24/7</span>
+                    <span class="feature-badge"> Sécurité Maximale</span>
+                </div>
+            </div>
+
             <button class="continue-btn" onclick="window.location.href='/signin'">
-                Continuer <span class="arrow">→</span>
+                Accéder au système
+                <span class="arrow">→</span>
             </button>
+
+            <!-- Loading indicator -->
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="spinner"></div>
+            </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="home-footer">
+            <p>&copy; 2026 YURA GUARDIAN. Tous droits réservés.</p>
+        </footer>
     </div>
+
     <script>
-        window.addEventListener('load', function() {
+        // Color animation for logo - ROUGE DOMINANT
+        const colors = [
+            '#dc2626', // Rouge vif
+            '#ef4444', // Rouge clair
+            '#991b1b', // Rouge foncé
+            '#b91c1c', // Rouge moyen
+            '#dc2626', // Repeat
+        ];
+        let colorIndex = 0;
+
+        function animateLogoColor() {
             const logo = document.querySelector('.main-logo');
-            if (logo) { logo.style.opacity = '1'; logo.style.transform = 'scale(1)'; }
+            const glows = document.querySelectorAll('.logo-glow');
+            
+            colorIndex = (colorIndex + 1) % colors.length;
+            const currentColor = colors[colorIndex];
+            
+            // Apply color filter to logo
+            logo.style.filter = `drop-shadow(0 0 30px ${currentColor}) drop-shadow(0 8px 25px ${currentColor}) brightness(1.1)`;
+            
+            // Animate glow elements
+            glows.forEach((glow, index) => {
+                setTimeout(() => {
+                    glow.style.borderColor = currentColor;
+                    glow.style.boxShadow = `0 0 40px ${currentColor}, inset 0 0 40px rgba(220, 38, 38, 0.3)`;
+                }, index * 80);
+            });
+
+            // Animate color rings
+            const colorRings = document.querySelectorAll('.color-ring');
+            colorRings.forEach((ring, index) => {
+                ring.style.borderTopColor = currentColor;
+                ring.style.boxShadow = `0 0 25px ${currentColor}`;
+            });
+        }
+
+        // Change color every 2.5 seconds
+        setInterval(animateLogoColor, 2500);
+        animateLogoColor(); // Initial call
+
+        // Smooth scroll behavior
+        document.querySelectorAll('a[href^="/"]').forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('loadingIndicator').style.display = 'flex';
+            });
+        });
+
+        // Remove loading indicator if page already loaded
+        window.addEventListener('load', () => {
             setTimeout(() => {
-                const btn = document.querySelector('.continue-btn');
-                if (btn) { btn.style.opacity = '1'; btn.style.transform = 'translateY(0)'; }
-            }, 800);
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }, 500);
         });
     </script>
 </body>

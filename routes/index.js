@@ -73,7 +73,15 @@ router.get('/admin/users', requireAuth, requireAdmin, async (req, res) => {
         const skip = (page - 1) * limit;
         const total = await User.countDocuments();
         const users = await User.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
-        res.render('admin/users', { title: 'Utilisateurs - YURA GUARDIAN', page: 'users', users, currentPage: page, totalPages: Math.ceil(total / limit), total });
+        res.render('admin/users', { 
+            title: 'Utilisateurs - YURA GUARDIAN', 
+            page: 'users', 
+            users, 
+            currentPage: page, 
+            totalPages: Math.ceil(total / limit), 
+            total,
+            user: req.session.user
+        });
     } catch (error) {
         res.status(500).send('Erreur serveur');
     }
@@ -103,130 +111,301 @@ router.post('/admin/users/delete/:id', requireAuth, requireAdmin, async (req, re
 router.post('/admin/users/toggle/:id', requireAuth, requireAdmin, async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
-        if (user) { user.status = user.status === 'active' ? 'inactive' : 'active'; await user.save(); }
+        if (user) { 
+            user.status = user.status === 'active' ? 'inactive' : 'active'; 
+            await user.save();
+        }
         res.redirect('/admin/users');
     } catch (error) {
         res.redirect('/admin/users');
     }
 });
 
-router.get('/admin/camera',   requireAuth, requireAdmin, (req, res) => res.render('admin/camera',   { title: 'Caméra - YURA GUARDIAN',    page: 'camera' }));
-router.get('/admin/map',      requireAuth, requireAdmin, (req, res) => res.render('admin/map',      { title: 'Carte - YURA GUARDIAN',      page: 'map' }));
-router.get('/admin/position', requireAuth, requireAdmin, (req, res) => res.render('admin/position', { title: 'Position - YURA GUARDIAN',   page: 'position' }));
+router.get('/admin/camera', requireAuth, requireAdmin, (req, res) => res.render('admin/camera', { 
+    title: 'Caméra - YURA GUARDIAN', 
+    page: 'camera',
+    user: req.session.user
+}));
+
+router.get('/admin/map', requireAuth, requireAdmin, (req, res) => res.render('admin/map', { 
+    title: 'Carte - YURA GUARDIAN', 
+    page: 'map',
+    user: req.session.user
+}));
+
+router.get('/admin/position', requireAuth, requireAdmin, (req, res) => res.render('admin/position', { 
+    title: 'Position - YURA GUARDIAN', 
+    page: 'position',
+    user: req.session.user
+}));
 
 router.get('/admin/history', requireAuth, requireAdmin, async (req, res) => {
     try {
         const histories = await History.find().sort({ timestamp: -1 }).limit(50);
-        res.render('admin/history', { title: 'Historique - YURA GUARDIAN', page: 'history', histories });
+        res.render('admin/history', { 
+            title: 'Historique - YURA GUARDIAN', 
+            page: 'history', 
+            histories,
+            user: req.session.user
+        });
     } catch (error) {
         res.status(500).send('Erreur serveur');
     }
 });
 
-// Robot command — version unique avec Notification
+// Robot command
 router.post('/admin/robot/command', requireAuth, async (req, res) => {
     try {
         const { command } = req.body;
-        await History.create({ action: `Robot: ${command}`, userName: req.session.user.name, details: `Commande envoyée: ${command}` });
-        await Notification.create({ type: 'robot', message: `Commande robot: ${command}`, userName: req.session.user.name });
+        await History.create({ 
+            action: `Robot: ${command}`, 
+            userName: req.session.user.name, 
+            details: `Commande envoyée: ${command}` 
+        });
+        await Notification.create({ 
+            type: 'robot', 
+            message: `Commande robot: ${command}`, 
+            userName: req.session.user.name 
+        });
         res.json({ success: true });
     } catch (e) {
         res.json({ success: false });
     }
 });
 
-// ===== NOTIFICATIONS (admin) =====
+// ===== NOTIFICATIONS PAGE (PRINCIPALE) =====
 router.get('/notifications', requireAuth, async (req, res) => {
     try {
-        const filter = req.query.filter || 'tous';
-        const type   = req.query.type   || 'toutes';
-        const now = new Date();
-        let dateFilter = {};
-        if (filter === 'aujourd_hui') {
-            const start = new Date(now); start.setHours(0,0,0,0);
-            const end   = new Date(now); end.setHours(23,59,59,999);
-            dateFilter = { createdAt: { $gte: start, $lte: end } };
-        } else if (filter === 'semaine') {
-            const start = new Date(now); start.setDate(now.getDate() - 7);
-            dateFilter = { createdAt: { $gte: start } };
-        } else if (filter === 'mois') {
-            const start = new Date(now); start.setDate(now.getDate() - 30);
-            dateFilter = { createdAt: { $gte: start } };
-        }
-        if (type !== 'toutes') dateFilter.type = type;
-        const notifications = await Notification.find(dateFilter).sort({ createdAt: -1 }).limit(100);
-        const unreadCount   = await Notification.countDocuments({ read: false });
-        res.render('notifications', { title: 'Notifications - YURA GUARDIAN', page: 'notifications', notifications, filter, type, unreadCount });
-    } catch(e) {
-        res.render('notifications', { title: 'Notifications', page: 'notifications', notifications: [], filter: 'tous', type: 'toutes', unreadCount: 0 });
+        const notifications = await Notification.find().sort({ createdAt: -1 }).limit(100);
+        const unreadCount = await Notification.countDocuments({ read: false });
+        
+        res.render('security/notifications', { 
+            title: 'Notifications - YURA GUARDIAN', 
+            page: 'notifications', 
+            notifications, 
+            unreadCount,
+            user: req.session.user
+        });
+    } catch (e) {
+        console.error('Erreur notifications:', e);
+        res.render('security/notifications', { 
+            title: 'Notifications - YURA GUARDIAN', 
+            page: 'notifications', 
+            notifications: [], 
+            unreadCount: 0,
+            user: req.session.user
+        });
     }
 });
 
 router.post('/notifications/read/:id', requireAuth, async (req, res) => {
-    await Notification.findByIdAndUpdate(req.params.id, { read: true });
-    res.redirect('/notifications');
-});
-
-router.post('/notifications/delete/:id', requireAuth, async (req, res) => {
-    await Notification.findByIdAndDelete(req.params.id);
-    res.redirect('/notifications');
-});
-
-router.post('/notifications/read-all', requireAuth, async (req, res) => {
-    await Notification.updateMany({ read: false }, { read: true });
-    res.redirect('/notifications');
-});
-
-// ===== ROUTES SECURITY =====
-router.get('/dashboard/security', requireAuth, async (req, res) => {
     try {
-        const histories = await History.find().sort({ timestamp: -1 }).limit(10);
-        res.render('security/dashboard', { title: 'Robot Dashboard - YURA GUARDIAN', page: 'dashboard', histories });
+        await Notification.findByIdAndUpdate(req.params.id, { read: true });
+        res.redirect('dashboard/notifications');
     } catch (error) {
-        res.render('security/dashboard', { title: 'Robot Dashboard - YURA GUARDIAN', page: 'dashboard', histories: [] });
+        res.redirect('dashboard/notifications');
     }
 });
 
-// Notifications security (alerts statiques)
-router.get('/dashboard/notifications', requireAuth, (req, res) => {
-    const alerts = [
-        { id:1,  type:'danger',  icon:'🌡️', title:'Température élevée',   message:'Température critique détectée à 45°C dans la zone A', time:'2 minutes',  zone:'Zone A',           value:'45°C',            isNew:true  },
-        { id:2,  type:'danger',  icon:'☣️', title:'Gaz détecté',           message:'Niveau de gaz dangereux: 45 ppm',                    time:'8 minutes',  zone:'Zone C',           value:'45 ppm',          isNew:false },
-        { id:3,  type:'warning', icon:'💧', title:'Humidité anormale',     message:'Taux d\'humidité critique: 85%',                     time:'5 minutes',  zone:'Zone B',           value:'85%',             isNew:true  },
-        { id:4,  type:'warning', icon:'🔋', title:'Batterie faible',       message:'Niveau de batterie critique: 15%',                   time:'12 minutes', zone:'Robot',            value:'15%',             isNew:false },
-        { id:5,  type:'info',   icon:'📹', title:'Mouvement détecté',     message:'Personne détectée par caméra 3 à l\'entrée',         time:'3 minutes',  zone:'Entrée principale',value:'Caméra 3',        isNew:true  },
-        { id:6,  type:'info',   icon:'🚪', title:'Accès autorisé',        message:'Badge scanné avec succès - Employé #245',            time:'10 minutes', zone:'Porte A',          value:'Badge #245',      isNew:false },
-        { id:7,  type:'info',   icon:'🤖', title:'Robot en mouvement',    message:'Robot a démarré la ronde de surveillance Zone B',    time:'15 minutes', zone:'Zone B',           value:'Ronde programmée',isNew:false },
-        { id:8,  type:'success',icon:'✅', title:'Ronde terminée',        message:'Ronde de sécurité Zone A-B-C terminée sans incident',time:'30 minutes', zone:'Toutes zones',     value:'0 incident',      isNew:false },
-        { id:9,  type:'success',icon:'💚', title:'Batterie rechargée',    message:'Robot rechargé à 100% - Prêt pour la prochaine mission',time:'45 minutes',zone:'Station de charge',value:'100%',           isNew:false },
-        { id:10, type:'success',icon:'🔐', title:'Sécurité maintenue',    message:'Aucune intrusion détectée dans les dernières 24h',   time:'1 heure',    zone:'Global',           value:'0 incident',      isNew:false }
-    ];
-    res.render('security/notifications', { title: 'Notifications - YURA GUARDIAN', page: 'notifications', alerts });
-});
-
-router.get('/dashboard/settings', requireAuth, (req, res) => {
-    res.render('security/settings', { title: 'Paramètres - YURA GUARDIAN', page: 'settings' });
-});
-
-router.post('/dashboard/settings/save', requireAuth, async (req, res) => {
+router.post('/notifications/delete/:id', requireAuth, async (req, res) => {
     try {
-        console.log('⚙️ Paramètres sauvegardés:', req.body);
-        res.json({ success: true, message: 'Paramètres sauvegardés avec succès!' });
+        await Notification.findByIdAndDelete(req.params.id);
+        res.redirect('dashboard/notifications');
     } catch (error) {
-        res.json({ success: false, message: 'Erreur lors de la sauvegarde' });
+        res.redirect('dashboard/notifications');
+    }
+});
+
+router.post('/notifications/read-all', requireAuth, async (req, res) => {
+    try {
+        await Notification.updateMany({ read: false }, { read: true });
+        res.redirect('/notifications');
+    } catch (error) {
+        res.redirect('/notifications');
+    }
+});
+
+// ===== ROUTES SECURITY DASHBOARD =====
+router.get('/dashboard/security', requireAuth, async (req, res) => {
+    try {
+        const histories = await History.find().sort({ timestamp: -1 }).limit(10);
+        res.render('security/dashboard', { 
+            title: 'Robot Dashboard - YURA GUARDIAN', 
+            page: 'dashboard', 
+            histories,
+            user: req.session.user
+        });
+    } catch (error) {
+        res.render('security/dashboard', { 
+            title: 'Robot Dashboard - YURA GUARDIAN', 
+            page: 'dashboard', 
+            histories: [],
+            user: req.session.user
+        });
     }
 });
 
 router.get('/dashboard/history', requireAuth, async (req, res) => {
     try {
         const histories = await History.find().sort({ timestamp: -1 }).limit(100);
-        res.render('security/history', { title: 'Historique - YURA GUARDIAN', page: 'history', histories });
+        res.render('security/history', { 
+            title: 'Historique - YURA GUARDIAN', 
+            page: 'history', 
+            histories,
+            user: req.session.user
+        });
     } catch (error) {
-        res.render('security/history', { title: 'Historique - YURA GUARDIAN', page: 'history', histories: [] });
+        res.render('security/history', { 
+            title: 'Historique - YURA GUARDIAN', 
+            page: 'history', 
+            histories: [],
+            user: req.session.user
+        });
     }
 });
 
-router.get('/dashboard/camera', requireAuth, (req, res) => res.render('security/camera', { title: 'Caméra - YURA GUARDIAN', page: 'camera' }));
-router.get('/dashboard/map',    requireAuth, (req, res) => res.render('security/map',    { title: 'Map - YURA GUARDIAN',    page: 'map' }));
+router.get('/dashboard/camera', requireAuth, (req, res) => res.render('security/camera', { 
+    title: 'Caméra - YURA GUARDIAN', 
+    page: 'camera',
+    user: req.session.user
+}));
 
+router.get('/dashboard/map', requireAuth, (req, res) => res.render('security/map', { 
+    title: 'Map - YURA GUARDIAN', 
+    page: 'map',
+    user: req.session.user
+}));
+
+router.get('/dashboard/settings', requireAuth, (req, res) => {
+    res.render('security/settings', { 
+        title: 'Paramètres - YURA GUARDIAN', 
+        page: 'settings',
+        user: req.session.user
+    });
+});
+// Page Notifications (Agent de sécurité)
+router.get('/dashboard/notifications', requireAuth, (req, res) => {
+    const alerts = [
+        {
+            id: 1,
+            type: 'danger',
+            icon: '🌡️',
+            title: 'Température élevée',
+            message: 'Température critique détectée à 45°C dans la zone A',
+            time: '2 minutes',
+            zone: 'Zone A',
+            value: '45°C',
+            isNew: true
+        },
+        {
+            id: 2,
+            type: 'warning',
+            icon: '💧',
+            title: 'Humidité anormale',
+            message: 'Taux d\'humidité critique: 85%',
+            time: '5 minutes',
+            zone: 'Zone B',
+            value: '85%',
+            isNew: true
+        },
+        {
+            id: 3,
+            type: 'danger',
+            icon: '☣️',
+            title: 'Gaz détecté',
+            message: 'Niveau de gaz dangereux: 45 ppm',
+            time: '8 minutes',
+            zone: 'Zone C',
+            value: '45 ppm',
+            isNew: false
+        },
+        {
+            id: 4,
+            type: 'warning',
+            icon: '🔋',
+            title: 'Batterie faible',
+            message: 'Niveau de batterie critique: 15%',
+            time: '12 minutes',
+            zone: 'Robot',
+            value: '15%',
+            isNew: false
+        },
+        {
+            id: 5,
+            type: 'info',
+            icon: '📹',
+            title: 'Mouvement détecté',
+            message: 'Activité suspecte détectée par caméra 3',
+            time: '15 minutes',
+            zone: 'Entrée principale',
+            value: 'Caméra 3',
+            isNew: false
+        },
+        {
+            id: 6,
+            type: 'success',
+            icon: '✅',
+            title: 'Système normal',
+            message: 'Tous les systèmes fonctionnent correctement',
+            time: '20 minutes',
+            zone: 'Global',
+            value: 'OK',
+            isNew: false
+        }
+    ];
+
+    res.render('security/notifications', {
+        title: 'Notifications - YURA GUARDIAN',
+        page: 'notifications',
+        alerts: alerts,
+        user: req.session.user
+    });
+});
+
+router.post('/dashboard/settings/save', requireAuth, async (req, res) => {
+    try {
+        console.log('⚙️ Paramètres sauvegardés:', req.body);
+        await History.create({ 
+            action: 'Paramètres modifiés', 
+            userName: req.session.user.name, 
+            details: 'Paramètres utilisateur mis à jour' 
+        });
+        res.json({ success: true, message: 'Paramètres sauvegardés avec succès!' });
+    } catch (error) {
+        res.json({ success: false, message: 'Erreur lors de la sauvegarde' });
+    }
+});
+// Change password
+router.post('/dashboard/settings/change-password', requireAuth, async (req, res) => {
+    try {
+        const { currentPassword, newPassword, confirmPassword } = req.body;
+        const user = await User.findById(req.session.user.id);
+
+        if (!user) {
+            return res.json({ success: false, message: 'Utilisateur introuvable' });
+        }
+        if (user.password !== currentPassword) {
+            return res.json({ success: false, message: 'Mot de passe actuel incorrect' });
+        }
+        if (newPassword.length < 6) {
+            return res.json({ success: false, message: 'Nouveau mot de passe trop court (min 6 caractères)' });
+        }
+        if (newPassword !== confirmPassword) {
+            return res.json({ success: false, message: 'Les mots de passe ne correspondent pas' });
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        await History.create({ 
+            action: 'Mot de passe modifié', 
+            userName: req.session.user.name, 
+            details: 'Changement de mot de passe réussi' 
+        });
+
+        res.json({ success: true, message: 'Mot de passe changé avec succès!' });
+    } catch (error) {
+        res.json({ success: false, message: 'Erreur serveur' });
+    }
+});
 module.exports = router;

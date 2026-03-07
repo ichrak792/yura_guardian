@@ -4,164 +4,637 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" href="/css/security.css">
-    <link rel="stylesheet" href="/css/notifications.css">
+    <script src="/js/theme.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --rouge: #c0392b;
+            --rouge-light: #e74c3c;
+            --noir: #0a0a0a;
+            --card: #111111;
+            --card2: #161616;
+            --border: rgba(192,57,43,0.18);
+            --gris: #888;
+            --gris2: #bbb;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--noir); color: #fff; display: flex; min-height: 100vh; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 300px; min-height: 100vh;
+            background: #0d0d0d;
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            position: fixed; top:0; left:0; bottom:0; z-index:100;
+        }
+        .logo-section { padding: 20px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; }
+        .logo-icon { width: 48px; height: 48px; background: var(--rouge); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 0 15px rgba(192,57,43,0.4); flex-shrink: 0; }
+        .logo-name { font-size: 1.1rem; font-weight: 800; color: #fff; letter-spacing: 2px; }
+        .logo-sub  { font-size: 0.65rem; color: var(--gris); letter-spacing: 2px; text-transform: uppercase; }
+        .robot-badge { margin: 16px 16px 6px; padding: 11px 18px; background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.5); border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 0.78rem; font-weight: 700; color: var(--rouge-light); letter-spacing: 1px; }
+        .badge-dot { width: 9px; height: 9px; background: var(--rouge-light); border-radius: 50%; animation: blink 1.2s infinite; box-shadow: 0 0 6px rgba(231,76,60,0.8); }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+        .nav-section { padding: 10px 0; flex:1; }
+        .nav-label { font-size: 0.62rem; font-weight: 700; color: var(--gris); letter-spacing: 2px; padding: 14px 18px 6px; text-transform: uppercase; }
+        .nav-item { display: flex; align-items: center; gap: 14px; padding: 12px 18px; color: #777; text-decoration: none; font-size: 0.9rem; font-weight: 500; border-left: 2px solid transparent; transition: all 0.18s; }
+        .nav-item:hover { color: #fff; background: rgba(192,57,43,0.07); }
+        .nav-item.active { color: #fff; background: rgba(192,57,43,0.13); border-left-color: var(--rouge); font-weight: 600; }
+        .nav-icon-wrap { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .nav-text { flex: 1; }
+        .nav-count { background: var(--rouge); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 12px; }
+        .sidebar-footer { border-top: 1px solid var(--border); padding: 10px 0; }
+        .user-row { display: flex; align-items: center; gap: 11px; padding: 12px 18px; }
+        .user-av { width: 36px; height: 36px; background: linear-gradient(135deg, var(--rouge), #7b241c); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; flex-shrink: 0; }
+        .user-name-s { font-size: 0.85rem; font-weight: 600; }
+        .user-role-s { font-size: 0.68rem; color: var(--gris); }
+
+        /* MAIN */
+        .main-content { margin-left: 300px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+        .top-bar { height: 52px; background: #0d0d0d; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; gap: 14px; position: sticky; top:0; z-index:50; }
+        .topbar-title { font-size: 0.8rem; color: var(--gris); letter-spacing: 1.5px; text-transform: uppercase; flex:1; }
+        .topbar-right { display: flex; align-items: center; gap: 10px; }
+        .topbar-bell { position: relative; cursor: pointer; }
+        .bell-badge { position: absolute; top:-4px; right:-4px; width:16px; height:16px; background: var(--rouge); border-radius: 50%; font-size: 0.6rem; color:#fff; font-weight:700; display: flex; align-items:center; justify-content:center; }
+        .topbar-user { display: flex; align-items: center; gap: 7px; background: rgba(192,57,43,0.12); border: 1px solid rgba(192,57,43,0.35); padding: 5px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; color: var(--rouge-light); }
+        .user-dot { width:7px; height:7px; background:var(--rouge-light); border-radius:50%; }
+        .top-action-btn { display: flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; color: #999; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.18s; }
+        .top-action-btn:hover { background: rgba(192,57,43,0.15); border-color: rgba(192,57,43,0.4); color: #fff; }
+        .top-action-btn.danger:hover { background: rgba(192,57,43,0.2); border-color: var(--rouge); color: var(--rouge-light); }
+
+        /* CONTENT */
+        .content { padding: 22px 24px; flex:1; }
+
+        /* PAGE HEADER */
+        .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+        .page-header h1 { font-size: 1.7rem; font-weight: 800; }
+        .page-header p  { font-size: 0.82rem; color: var(--gris); margin-top: 4px; }
+
+        /* STAT CARDS */
+        .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 18px; }
+        .stat-card { background: var(--card); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: border-color 0.2s; }
+        .stat-card:hover { border-color: rgba(192,57,43,0.3); }
+        .stat-icon-box { width: 42px; height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .stat-icon-box.danger  { background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.3); }
+        .stat-icon-box.warning { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); }
+        .stat-icon-box.info    { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.25); }
+        .stat-icon-box.success { background: rgba(39,174,96,0.12);  border: 1px solid rgba(39,174,96,0.25); }
+        .stat-num   { font-size: 1.6rem; font-weight: 800; color: #fff; }
+        .stat-label { font-size: 0.68rem; color: var(--gris); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; }
+
+        /* FILTER BAR */
+        .filter-bar { background: var(--card); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+        .filter-btns { display: flex; gap: 7px; flex-wrap: wrap; }
+        .filter-btn { padding: 6px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; color: #888; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.18s; }
+        .filter-btn:hover { background: rgba(192,57,43,0.1); border-color: rgba(192,57,43,0.3); color: #ccc; }
+        .filter-btn.active { background: rgba(192,57,43,0.2); border-color: var(--rouge); color: var(--rouge-light); }
+        .search-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #fff; font-size: 0.82rem; padding: 7px 14px; outline: none; width: 220px; transition: all 0.18s; }
+        .search-input::placeholder { color: #555; }
+        .search-input:focus { border-color: rgba(192,57,43,0.4); background: rgba(192,57,43,0.06); }
+
+        /* ALERTS LIST */
+        .alerts-list { display: flex; flex-direction: column; gap: 20px; }
+
+        .alerts-group-title {
+            font-size: 0.7rem; font-weight: 700; color: var(--gris);
+            letter-spacing: 2px; text-transform: uppercase;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .group-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+        /* ALERT CARD */
+        .alert-card {
+            background: var(--card); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px; padding: 14px 16px;
+            display: flex; align-items: flex-start; gap: 14px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s; cursor: default;
+            animation: fadeInUp 0.3s ease-out;
+        }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes slideOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(60px)} }
+
+        .alert-card:hover { background: #161616; }
+        .alert-card.danger  { border-left-color: var(--rouge-light); }
+        .alert-card.warning { border-left-color: #f59e0b; }
+        .alert-card.info    { border-left-color: #3b82f6; }
+        .alert-card.success { border-left-color: #27ae60; }
+
+        .alert-ico {
+            width: 40px; height: 40px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+        }
+        .alert-ico.danger  { background: rgba(192,57,43,0.15); }
+        .alert-ico.warning { background: rgba(245,158,11,0.12); }
+        .alert-ico.info    { background: rgba(59,130,246,0.12); }
+        .alert-ico.success { background: rgba(39,174,96,0.12); }
+
+        .alert-body { flex:1; min-width:0; }
+        .alert-top { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
+        .alert-title { font-size: 0.9rem; font-weight: 700; color: #fff; }
+        .alert-new-badge { font-size: 0.58rem; font-weight: 800; padding: 2px 7px; border-radius: 4px; background: var(--rouge); color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+        .alert-msg  { font-size: 0.8rem; color: #888; line-height: 1.45; margin-bottom: 7px; }
+        .alert-meta { display: flex; gap: 12px; flex-wrap: wrap; }
+        .alert-meta span { font-size: 0.7rem; color: #666; display: flex; align-items: center; gap: 4px; }
+        .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: #444; }
+
+        .alert-actions { display: flex; gap: 6px; flex-shrink: 0; align-items: flex-start; }
+        .act-btn {
+            width: 32px; height: 32px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 7px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.18s; color: #666;
+        }
+        .act-btn:hover { background: rgba(192,57,43,0.15); border-color: rgba(192,57,43,0.4); color: #fff; }
+        .act-btn.resolve:hover { background: rgba(39,174,96,0.15); border-color: rgba(39,174,96,0.4); color: #27ae60; }
+        .act-btn.del:hover { background: rgba(192,57,43,0.2); border-color: var(--rouge); color: var(--rouge-light); }
+    </style>
+  
 </head>
 <body>
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-          <div class="logo-section">
 
-                <h3></h3>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+   <div class="logo-section">
+    <img src="/images/logo robot.png" alt="YURA" style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
+    <div>
+        <div class="logo-name">YURA</div>
+        <div class="logo-sub">Guardian System</div>
+    </div>
+    </div>
+    <div class="robot-badge">
+        <div class="badge-dot"></div>
+        <span>ROBOT EN LIGNE</span>
+    </div>
+    <div class="nav-section">
+        <div class="nav-label">Contrôle</div>
+        <a href="/dashboard/security" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></span>
+            <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="/dashboard/camera" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></span>
+            <span class="nav-text">Live Feed</span>
+        </a>
+        <a href="/dashboard/map" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
+            <span class="nav-text">Navigation</span>
+        </a>
+        <a href="/notifications" class="nav-item active">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg></span>
+            <span class="nav-text">Alertes</span>
+            <span class="nav-count" id="navCount">3</span>
+        </a>
+        <a href="/dashboard/history" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2v5l3 3-1 1-3.5-3.5V3H8z"/></svg></span>
+            <span class="nav-text">Historique</span>
+        </a>
+                <a href="/dashboard/settings" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M7.5 1l-.8 2.4a5 5 0 00-1.4.8L3 3.5l-1.5 2.6 1.9 1.5a5 5 0 000 1.8L1.5 11l1.5 2.6 2.3-.8a5 5 0 001.4.8L7.5 16h1l.8-2.4a5 5 0 001.4-.8l2.3.8L14.5 11l-1.9-1.5a5 5 0 000-1.8l1.9-1.5L13 3.5l-2.3.7a5 5 0 00-1.4-.8L8.5 1h-1zM8 6a2 2 0 110 4A2 2 0 018 6z"/></svg></span>
+            <span class="nav-text">Paramètres</span>
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <div class="user-row">
+            <div class="user-av"><%= user.name.charAt(0).toUpperCase() %></div>
+            <div>
+                <div class="user-name-s"><%= user.name %></div>
+                <div class="user-role-s">Agent Sécurité</div>
             </div>
+        </div>
+        <a href="/logout" class="nav-item" style="color:#555;">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3v-1.5H3.5v-9H6V2zm4.5 3.5L13 8l-2.5 2.5-1-1L11 8H6V6.5h5l-1.5-1.5 1-1z"/></svg></span>
+            <span class="nav-text">Déconnexion</span>
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-content">
+    <div class="top-bar">
+        <span style="color:#888;margin-right:4px;"><svg width="18" height="18" viewBox="0 0 18 18" fill="#888"><rect y="3" width="18" height="2"/><rect y="8" width="18" height="2"/><rect y="13" width="18" height="2"/></svg></span>
+        <span class="topbar-title">Alertes &amp; Notifications</span>
+        <div class="topbar-right">
+            <button class="top-action-btn" onclick="markAllRead()">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,6 4,9 11,2"/></svg>
+                Tout lire
+            </button>
+            <button class="top-action-btn danger" onclick="deleteAllNotif()">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,3 11,3"/><path d="M4 3V2h4v1M2 3l1 8h6l1-8"/></svg>
+                Tout supprimer
+            </button>
+            <a href="/notifications" class="topbar-bell" style="text-decoration:none;">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="#888"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg>
+                <div class="bell-badge">3</div>
+            </a>
             
-            <nav class="sidebar-nav">
-                <div class="nav-divider">Menu</div>
-                <a href="/dashboard/security" class="nav-item">
-                    <span class="icon">📊</span>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/dashboard/notifications" class="nav-item active">
-                    <span class="icon">🔔</span>
-                    <span>Notifications</span>
-                    <span class="badge-new">2</span>
-                </a>
-                <a href="/dashboard/history" class="nav-item">
-                    <span class="icon">⏱️</span>
-                    <span>Historique d'activités</span>
-                </a>
-                <a href="/dashboard/camera" class="nav-item">
-                    <span class="icon">📹</span>
-                    <span>Caméra</span>
-                </a>
-                <a href="/dashboard/map" class="nav-item">
-                    <span class="icon">🗺️</span>
-                    <span>Map</span>
-                </a>
-            </nav>
-
-            <div class="sidebar-footer">
-                <a href="/logout" class="nav-item">
-                    <span class="icon">🚪</span>
-                    <span>Déconnexion</span>
-                </a>
-                
-                <div class="user-profile">
-                    <div class="user-avatar-small"><%= user.name.charAt(0) %></div>
-                    <div class="user-details">
-                        <div class="user-name-small"><%= user.name %></div>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="top-bar">
-                <h1> Notifications</h1>
-            </header>
-
-            <div class="content-wrapper">
-                <!-- Stats rapides -->
-                <div class="alerts-stats">
-                    <div class="stat-card danger-stat">
-                        <div class="stat-icon">⚠️</div>
-                        <div class="stat-info">
-                            <h3>2</h3>
-                            <p>Critiques</p>
-                        </div>
-                    </div>
-                    <div class="stat-card warning-stat">
-                        <div class="stat-icon">⚡</div>
-                        <div class="stat-info">
-                            <h3>2</h3>
-                            <p>Moyennes</p>
-                        </div>
-                    </div>
-                    <div class="stat-card info-stat">
-                        <div class="stat-icon">ℹ️</div>
-                        <div class="stat-info">
-                            <h3>5</h3>
-                            <p>Infos</p>
-                        </div>
-                    </div>
-                    <div class="stat-card success-stat">
-                        <div class="stat-icon">✅</div>
-                        <div class="stat-info">
-                            <h3>3</h3>
-                            <p>OK</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Barre de recherche -->
-                <div class="search-section">
-                    <div class="search-bar">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" placeholder="Rechercher par zone, type, message...">
-                        <button class="clear-search" id="clearSearch" style="display: none;">✕</button>
-                    </div>
-                </div>
-
-                <!-- Filtres par date -->
-                <div class="date-filters">
-                    <button class="date-btn active" data-period="today"> Aujourd'hui</button>
-                    <button class="date-btn" data-period="week"> Cette semaine</button>
-                    <button class="date-btn" data-period="month"> Ce mois</button>
-                </div>
-
-                <!-- Filtres par type -->
-                <div class="filters-section">
-                    <button class="filter-btn active" data-filter="all">Toutes</button>
-                    <button class="filter-btn" data-filter="danger">Critiques</button>
-                    <button class="filter-btn" data-filter="warning">Moyennes</button>
-                    <button class="filter-btn" data-filter="info">Infos</button>
-                    <button class="filter-btn" data-filter="success">État système</button>
-                </div>
-
-                <!-- Liste des alertes -->
-                <div class="alerts-container">
-                    <% alerts.forEach(function(alert) { %>
-                        <div class="alert-card alert-<%= alert.type %> <%= alert.isNew ? 'alert-new' : '' %>" data-type="<%= alert.type %>">
-                            <div class="alert-header">
-                                <div class="alert-icon-wrapper">
-                                    <span class="alert-icon"><%= alert.icon %></span>
-                                </div>
-                                <div class="alert-content">
-                                    <div class="alert-title-row">
-                                        <h3 class="alert-title"><%= alert.title %></h3>
-                                        <% if (alert.isNew) { %>
-                                            <span class="new-badge">NOUVEAU</span>
-                                        <% } %>
-                                    </div>
-                                    <p class="alert-message"><%= alert.message %></p>
-                                    <div class="alert-meta">
-                                        <span class="alert-time">⏱️ Il y a <%= alert.time %></span>
-                                        <span class="alert-zone">📍 <%= alert.zone %></span>
-                                        <span class="alert-value">📊 <%= alert.value %></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="alert-actions">
-                                <button class="action-btn-small view-btn" title="Voir les détails">👁️</button>
-                                <button class="action-btn-small resolve-btn" title="Marquer comme résolu">✓</button>
-                                <button class="action-btn-small delete-btn" title="Supprimer">🗑️</button>
-                            </div>
-                        </div>
-                    <% }); %>
-                </div>
-
-                <!-- Message si aucune alerte -->
-                <div class="no-alerts" style="display: none;">
-                    <div class="no-alerts-icon">🎉</div>
-                    <h3>Aucune alerte</h3>
-                    <p>Tous les systèmes fonctionnent normalement</p>
-                </div>
-            </div>
-        </main>
+           <a href="/dashboard/settings" class="topbar-user" style="text-decoration:none;">
+                <div class="user-dot"></div>Opérateur
+           </a>
+        </div>
     </div>
 
-    <script src="/js/notifications.js"></script>
+    <div class="content">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>Alertes &amp; Notifications</h1>
+                <p>Surveillance en temps réel — toutes les alertes du système</p>
+            </div>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="stat-row">
+            <div class="stat-card">
+                <div class="stat-icon-box danger">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="#e74c3c"><path d="M9 1L1 16h16L9 1zm0 4v5M9 13v1"/></svg>
+                </div>
+                <div>
+                    <div class="stat-num" id="criticalCount">2</div>
+                    <div class="stat-label">Critiques</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-box warning">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="#f59e0b"><circle cx="9" cy="9" r="7" fill="none" stroke="#f59e0b" stroke-width="1.5"/><path d="M9 6v4M9 12v1" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <div>
+                    <div class="stat-num" id="warningCount">3</div>
+                    <div class="stat-label">Moyennes</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-box info">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#3b82f6" stroke-width="1.5"><circle cx="9" cy="9" r="7"/><path d="M9 8v5M9 6v1" stroke-linecap="round"/></svg>
+                </div>
+                <div>
+                    <div class="stat-num" id="infoCount">4</div>
+                    <div class="stat-label">Infos</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-box success">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#27ae60" stroke-width="1.5"><circle cx="9" cy="9" r="7"/><polyline points="5,9 8,12 13,6"/></svg>
+                </div>
+                <div>
+                    <div class="stat-num" id="successCount">3</div>
+                    <div class="stat-label">Résolues</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+            <div class="filter-btns">
+                <button class="filter-btn active" onclick="filterAlerts('all', this)">Toutes</button>
+                <button class="filter-btn" onclick="filterAlerts('danger', this)">Critiques</button>
+                <button class="filter-btn" onclick="filterAlerts('warning', this)">Moyennes</button>
+                <button class="filter-btn" onclick="filterAlerts('info', this)">Infos</button>
+                <button class="filter-btn" onclick="filterAlerts('success', this)">Résolues</button>
+            </div>
+            <input type="text" class="search-input" placeholder="Rechercher une alerte..." oninput="searchAlerts(this.value)">
+        </div>
+
+        <!-- ALERTS -->
+        <div class="alerts-list" id="alertsList">
+
+            <!-- CRITIQUES -->
+            <div class="alerts-group" data-group="danger">
+                <div class="alerts-group-title">
+                    <div class="group-dot" style="background:#e74c3c;box-shadow:0 0 5px rgba(231,76,60,0.6);"></div>
+                    Alertes Critiques
+                </div>
+
+                <div class="alert-card danger" data-type="danger">
+                    <div class="alert-ico danger">🌡️</div>
+                    <div class="alert-body">
+                        <div class="alert-top">
+                            <span class="alert-title">Température Critique</span>
+                            <span class="alert-new-badge">Nouveau</span>
+                        </div>
+                        <div class="alert-msg">Température détectée à 45°C dans la Zone A — au-dessus du seuil de sécurité</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 2 min</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Zone A</span>
+                            <span class="meta-dot"></span>
+                            <span>45°C</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn resolve" onclick="resolveAlert(this)" title="Résoudre">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,6 4,9 11,2"/></svg>
+                        </button>
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="alert-card danger" data-type="danger">
+                    <div class="alert-ico danger">☣️</div>
+                    <div class="alert-body">
+                        <div class="alert-top">
+                            <span class="alert-title">Gaz Détecté</span>
+                            <span class="alert-new-badge">Nouveau</span>
+                        </div>
+                        <div class="alert-msg">Niveau de gaz dangereux détecté: 45 ppm — évacuation recommandée</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 5 min</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Zone C</span>
+                            <span class="meta-dot"></span>
+                            <span>45 ppm</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn resolve" onclick="resolveAlert(this)" title="Résoudre">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,6 4,9 11,2"/></svg>
+                        </button>
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MOYENNES -->
+            <div class="alerts-group" data-group="warning">
+                <div class="alerts-group-title">
+                    <div class="group-dot" style="background:#f59e0b;box-shadow:0 0 5px rgba(245,158,11,0.5);"></div>
+                    Alertes Moyennes
+                </div>
+
+                <div class="alert-card warning" data-type="warning">
+                    <div class="alert-ico warning">💧</div>
+                    <div class="alert-body">
+                        <div class="alert-top"><span class="alert-title">Humidité Anormale</span></div>
+                        <div class="alert-msg">Taux d'humidité critique: 85% — vérification recommandée</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 8 min</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Zone B</span>
+                            <span class="meta-dot"></span>
+                            <span>85%</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn resolve" onclick="resolveAlert(this)" title="Résoudre"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,6 4,9 11,2"/></svg></button>
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
+                    </div>
+                </div>
+
+                <div class="alert-card warning" data-type="warning">
+                    <div class="alert-ico warning">🔋</div>
+                    <div class="alert-body">
+                        <div class="alert-top"><span class="alert-title">Batterie Faible</span></div>
+                        <div class="alert-msg">Niveau de batterie critique: 15% — recharge recommandée</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 12 min</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Robot</span>
+                            <span class="meta-dot"></span>
+                            <span>15%</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn resolve" onclick="resolveAlert(this)" title="Résoudre"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,6 4,9 11,2"/></svg></button>
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
+                    </div>
+                </div>
+
+                <div class="alert-card warning" data-type="warning">
+                    <div class="alert-ico warning">🚨</div>
+                    <div class="alert-body">
+                        <div class="alert-top"><span class="alert-title">Détection de Mouvement</span></div>
+                        <div class="alert-msg">Mouvement détecté en dehors des heures d'ouverture</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 15 min</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Entrée principale</span>
+                            <span class="meta-dot"></span>
+                            <span>Zone A</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn resolve" onclick="resolveAlert(this)" title="Résoudre"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,6 4,9 11,2"/></svg></button>
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFOS -->
+            <div class="alerts-group" data-group="info">
+                <div class="alerts-group-title">
+                    <div class="group-dot" style="background:#3b82f6;box-shadow:0 0 5px rgba(59,130,246,0.5);"></div>
+                    Informations
+                </div>
+
+                <div class="alert-card info" data-type="info">
+                    <div class="alert-ico info">📹</div>
+                    <div class="alert-body">
+                        <div class="alert-top"><span class="alert-title">Mouvement Caméra</span></div>
+                        <div class="alert-msg">Personne détectée par caméra 3 à l'entrée</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 3 min</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Entrée</span>
+                            <span class="meta-dot"></span>
+                            <span>Caméra 3</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
+                    </div>
+                </div>
+
+                <div class="alert-card info" data-type="info">
+                    <div class="alert-ico info">🚪</div>
+                    <div class="alert-body">
+                        <div class="alert-top"><span class="alert-title">Accès Autorisé</span></div>
+                        <div class="alert-msg">Badge scanné avec succès — Employé #245</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 10 min</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Porte A</span>
+                            <span class="meta-dot"></span>
+                            <span>Badge #245</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
+                    </div>
+                </div>
+
+                <div class="alert-card info" data-type="info">
+                    <div class="alert-ico info">🤖</div>
+                    <div class="alert-body">
+                        <div class="alert-top"><span class="alert-title">Robot en Mouvement</span></div>
+                        <div class="alert-msg">Robot a démarré la ronde de surveillance Zone B</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 15 min</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Zone B</span>
+                            <span class="meta-dot"></span>
+                            <span>Ronde active</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
+                    </div>
+                </div>
+
+                <div class="alert-card info" data-type="info">
+                    <div class="alert-ico info">🔄</div>
+                    <div class="alert-body">
+                        <div class="alert-top"><span class="alert-title">Synchronisation</span></div>
+                        <div class="alert-msg">Données synchronisées avec le serveur central</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 20 min</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Serveur</span>
+                            <span class="meta-dot"></span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RÉSOLUES -->
+            <div class="alerts-group" data-group="success">
+                <div class="alerts-group-title">
+                    <div class="group-dot" style="background:#27ae60;box-shadow:0 0 5px rgba(39,174,96,0.5);"></div>
+                    Alertes Résolues
+                </div>
+
+                <div class="alert-card success" data-type="success">
+                    <div class="alert-ico success">✅</div>
+                    <div class="alert-body">
+                        <div class="alert-top"><span class="alert-title">Ronde Terminée</span></div>
+                        <div class="alert-msg">Ronde de sécurité Zone A-B-C terminée sans incident</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 30 min</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Toutes zones</span>
+                            <span class="meta-dot"></span>
+                            <span>0 incident</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
+                    </div>
+                </div>
+
+                <div class="alert-card success" data-type="success">
+                    <div class="alert-ico success">💚</div>
+                    <div class="alert-body">
+                        <div class="alert-top"><span class="alert-title">Batterie Rechargée</span></div>
+                        <div class="alert-msg">Robot rechargé à 100% — prêt pour la prochaine mission</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 45 min</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Station charge</span>
+                            <span class="meta-dot"></span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
+                    </div>
+                </div>
+
+                <div class="alert-card success" data-type="success">
+                    <div class="alert-ico success">🔐</div>
+                    <div class="alert-body">
+                        <div class="alert-top"><span class="alert-title">Sécurité Maintenue</span></div>
+                        <div class="alert-msg">Aucune intrusion détectée dans les 24h</div>
+                        <div class="alert-meta">
+                            <span>⏱ Il y a 1h</span>
+                            <span class="meta-dot"></span>
+                            <span>📍 Global</span>
+                            <span class="meta-dot"></span>
+                            <span>0 incident</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateStats() {
+        const c = { danger:0, warning:0, info:0, success:0 };
+        document.querySelectorAll('.alert-card').forEach(card => {
+            const t = card.dataset.type;
+            if(c[t] !== undefined) c[t]++;
+        });
+        document.getElementById('criticalCount').textContent = c.danger;
+        document.getElementById('warningCount').textContent  = c.warning;
+        document.getElementById('infoCount').textContent     = c.info;
+        document.getElementById('successCount').textContent  = c.success;
+        const total = c.danger + c.warning;
+        document.getElementById('bellCount').textContent = total;
+        document.getElementById('navCount').textContent  = total;
+    }
+
+    function filterAlerts(type, btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.alerts-group').forEach(group => {
+            if(type === 'all') {
+                group.style.display = '';
+            } else {
+                group.style.display = group.dataset.group === type ? '' : 'none';
+            }
+        });
+    }
+
+    function searchAlerts(val) {
+        const v = val.toLowerCase();
+        document.querySelectorAll('.alert-card').forEach(card => {
+            card.style.display = card.textContent.toLowerCase().includes(v) ? '' : 'none';
+        });
+    }
+
+    function resolveAlert(btn) {
+        const card = btn.closest('.alert-card');
+        card.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => { card.remove(); updateStats(); }, 280);
+    }
+
+    function deleteAlert(btn) {
+        const card = btn.closest('.alert-card');
+        card.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => { card.remove(); updateStats(); }, 280);
+    }
+
+    function markAllRead() {
+        document.querySelectorAll('.alert-new-badge').forEach(b => b.remove());
+    }
+
+    function deleteAllNotif() {
+        document.querySelectorAll('.alert-card').forEach(card => {
+            card.style.animation = 'slideOut 0.3s ease forwards';
+        });
+        setTimeout(() => {
+            document.querySelectorAll('.alert-card').forEach(c => c.remove());
+            updateStats();
+        }, 300);
+    }
+</script>
 </body>
 </html>

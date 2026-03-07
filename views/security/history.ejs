@@ -3,78 +3,383 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/css/security.css">
+    <title><%= title %></title> 
+    <script src="/js/theme.js"></script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --rouge:#c0392b; --rouge-light:#e74c3c;
+            --noir:#0a0a0a; --card:#111111; --card2:#161616;
+            --border:rgba(192,57,43,0.18); --gris:#888; --gris2:#bbb;
+        }
+        body { font-family:'Segoe UI',sans-serif; background:var(--noir); color:#fff; display:flex; min-height:100vh; }
+
+        /* SIDEBAR */
+        .sidebar { width:300px; min-height:100vh; background:#0d0d0d; border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+        .logo-section { padding:20px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
+        .logo-icon { width:48px; height:48px; background:var(--rouge); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; box-shadow:0 0 15px rgba(192,57,43,0.4); flex-shrink:0; }
+        .logo-name { font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:2px; }
+        .logo-sub  { font-size:0.65rem; color:var(--gris); letter-spacing:2px; text-transform:uppercase; }
+        .robot-badge { margin:16px 16px 6px; padding:11px 18px; background:rgba(192,57,43,0.15); border:1px solid rgba(192,57,43,0.5); border-radius:8px; display:flex; align-items:center; gap:10px; font-size:0.78rem; font-weight:700; color:var(--rouge-light); letter-spacing:1px; }
+        .badge-dot { width:9px; height:9px; background:var(--rouge-light); border-radius:50%; animation:blink 1.2s infinite; box-shadow:0 0 6px rgba(231,76,60,0.8); }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+        .nav-section { padding:10px 0; flex:1; }
+        .nav-label { font-size:0.62rem; font-weight:700; color:var(--gris); letter-spacing:2px; padding:14px 18px 6px; text-transform:uppercase; }
+        .nav-item { display:flex; align-items:center; gap:14px; padding:12px 18px; color:#777; text-decoration:none; font-size:0.9rem; font-weight:500; border-left:2px solid transparent; transition:all 0.18s; }
+        .nav-item:hover { color:#fff; background:rgba(192,57,43,0.07); }
+        .nav-item.active { color:#fff; background:rgba(192,57,43,0.13); border-left-color:var(--rouge); font-weight:600; }
+        .nav-icon-wrap { width:22px; height:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .nav-text { flex:1; }
+        .nav-count { background:var(--rouge); color:#fff; font-size:0.65rem; font-weight:700; padding:3px 8px; border-radius:12px; }
+        .sidebar-footer { border-top:1px solid var(--border); padding:10px 0; }
+        .user-row { display:flex; align-items:center; gap:11px; padding:12px 18px; }
+        .user-av { width:36px; height:36px; background:linear-gradient(135deg,var(--rouge),#7b241c); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; flex-shrink:0; }
+        .user-name-s { font-size:0.85rem; font-weight:600; }
+        .user-role-s { font-size:0.68rem; color:var(--gris); }
+
+        /* MAIN */
+        .main-content { margin-left:300px; flex:1; display:flex; flex-direction:column; min-height:100vh; }
+        .top-bar { height:52px; background:#0d0d0d; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 24px; gap:14px; position:sticky; top:0; z-index:50; }
+        .topbar-title { font-size:0.8rem; color:var(--gris); letter-spacing:1.5px; text-transform:uppercase; flex:1; }
+        .topbar-right { display:flex; align-items:center; gap:10px; }
+        .topbar-bell { position:relative; cursor:pointer; text-decoration:none; }
+        .bell-badge { position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:var(--rouge); border-radius:50%; font-size:0.6rem; color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; }
+        .topbar-user { display:flex; align-items:center; gap:7px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.35); padding:5px 14px; border-radius:20px; font-size:0.78rem; font-weight:600; color:var(--rouge-light); text-decoration:none; }
+        .user-dot { width:7px; height:7px; background:var(--rouge-light); border-radius:50%; }
+
+        /* CONTENT */
+        .content { padding:22px 24px; flex:1; }
+        .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+        .page-header h1 { font-size:1.7rem; font-weight:800; }
+        .page-header p  { font-size:0.82rem; color:var(--gris); margin-top:4px; }
+        .entry-badge { background:rgba(192,57,43,0.15); border:1px solid rgba(192,57,43,0.35); color:var(--rouge-light); font-size:0.75rem; font-weight:700; padding:5px 14px; border-radius:20px; }
+
+        /* STAT CARDS */
+        .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
+        .stat-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:16px; display:flex; align-items:center; gap:12px; transition:border-color 0.2s; }
+        .stat-card:hover { border-color:rgba(192,57,43,0.3); }
+        .stat-icon-box { width:42px; height:42px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.25); }
+        .stat-num   { font-size:1.6rem; font-weight:800; color:#fff; }
+        .stat-label { font-size:0.68rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; margin-top:2px; }
+
+        /* FILTER BAR */
+        .filter-bar { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:14px 16px; margin-bottom:18px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+        .filter-btns { display:flex; gap:7px; flex-wrap:wrap; }
+        .filter-btn { padding:6px 14px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:20px; color:#888; font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.18s; }
+        .filter-btn:hover { background:rgba(192,57,43,0.1); border-color:rgba(192,57,43,0.3); color:#ccc; }
+        .filter-btn.active { background:rgba(192,57,43,0.2); border-color:var(--rouge); color:var(--rouge-light); }
+        .search-input { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; color:#fff; font-size:0.82rem; padding:7px 14px; outline:none; width:220px; transition:all 0.18s; }
+        .search-input::placeholder { color:#555; }
+        .search-input:focus { border-color:rgba(192,57,43,0.4); background:rgba(192,57,43,0.06); }
+
+        /* TABLE */
+        .table-wrap { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:12px; overflow:hidden; }
+        .table-header { display:grid; grid-template-columns:160px 1fr 140px 1fr 90px; padding:11px 18px; background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.06); }
+        .table-header span { font-size:0.65rem; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:1px; }
+        .history-row { display:grid; grid-template-columns:160px 1fr 140px 1fr 90px; padding:13px 18px; border-bottom:1px solid rgba(255,255,255,0.04); align-items:center; transition:background 0.15s; animation:fadeIn 0.3s ease; }
+        .history-row:last-child { border-bottom:none; }
+        .history-row:hover { background:rgba(255,255,255,0.02); }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+        /* DATE CELL */
+        .date-cell { display:flex; flex-direction:column; gap:2px; }
+        .date-day  { font-size:0.78rem; font-weight:700; color:#fff; }
+        .date-time { font-size:0.68rem; color:var(--gris); }
+
+        /* ACTION BADGE */
+        .action-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:6px; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+        .badge-login    { background:rgba(39,174,96,0.15);  border:1px solid rgba(39,174,96,0.3);  color:#27ae60; }
+        .badge-logout   { background:rgba(136,136,136,0.12); border:1px solid rgba(136,136,136,0.2); color:#888; }
+        .badge-alert    { background:rgba(192,57,43,0.15);  border:1px solid rgba(192,57,43,0.3);  color:var(--rouge-light); }
+        .badge-patrol   { background:rgba(59,130,246,0.12); border:1px solid rgba(59,130,246,0.25); color:#3b82f6; }
+        .badge-system   { background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.25); color:#f59e0b; }
+        .badge-default  { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#aaa; }
+
+        /* USER CELL */
+        .user-cell { display:flex; align-items:center; gap:8px; }
+        .user-av-sm { width:28px; height:28px; background:linear-gradient(135deg,var(--rouge),#7b241c); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:700; flex-shrink:0; }
+        .user-name-cell { font-size:0.82rem; color:#ccc; }
+
+        /* DETAILS */
+        .details-cell { font-size:0.78rem; color:var(--gris); }
+
+        /* DELETE BTN */
+        .del-btn { width:28px; height:28px; background:transparent; border:1px solid rgba(255,255,255,0.07); border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#555; transition:all 0.18s; }
+        .del-btn:hover { background:rgba(192,57,43,0.15); border-color:rgba(192,57,43,0.4); color:var(--rouge-light); }
+
+        /* EMPTY */
+        .empty-state { padding:60px 24px; text-align:center; color:var(--gris); }
+        .empty-state svg { opacity:0.25; margin-bottom:16px; }
+        .empty-state p { font-size:0.9rem; }
+
+        /* PAGINATION */
+        .pagination { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-top:1px solid rgba(255,255,255,0.05); }
+        .pag-info { font-size:0.75rem; color:var(--gris); }
+        .pag-btns { display:flex; gap:6px; }
+        .pag-btn { width:30px; height:30px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; color:#888; font-size:0.75rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.18s; }
+        .pag-btn:hover { background:rgba(192,57,43,0.15); border-color:rgba(192,57,43,0.4); color:#fff; }
+        .pag-btn.active { background:rgba(192,57,43,0.2); border-color:var(--rouge); color:var(--rouge-light); font-weight:700; }
+    </style>
+    
 </head>
 <body>
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="logo-section">
-               
-                <h3></h3>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo-section">
+        <img src="/images/logo robot.png" alt="YURA" style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
+        <div>
+            <div class="logo-name">YURA</div>
+            <div class="logo-sub">Guardian System</div>
+        </div>
+    </div>
+    <div class="robot-badge">
+        <div class="badge-dot"></div>
+        <span>ROBOT EN LIGNE</span>
+    </div>
+    <div class="nav-section">
+        <div class="nav-label">Contrôle</div>
+        <a href="/dashboard/security" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></span>
+            <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="/dashboard/camera" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></span>
+            <span class="nav-text">Live Feed</span>
+        </a>
+        <a href="/dashboard/map" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
+            <span class="nav-text">Navigation</span>
+        </a>
+        <a href="/notifications" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg></span>
+            <span class="nav-text">Alertes</span>
+            <span class="nav-count">3</span>
+        </a>
+        <a href="/dashboard/history" class="nav-item active">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2v5l3 3-1 1-3.5-3.5V3H8z"/></svg></span>
+            <span class="nav-text">Historique</span>
+        </a>
+        <a href="/dashboard/settings" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M7.5 1l-.8 2.4a5 5 0 00-1.4.8L3 3.5l-1.5 2.6 1.9 1.5a5 5 0 000 1.8L1.5 11l1.5 2.6 2.3-.8a5 5 0 001.4.8L7.5 16h1l.8-2.4a5 5 0 001.4-.8l2.3.8L14.5 11l-1.9-1.5a5 5 0 000-1.8l1.9-1.5L13 3.5l-2.3.7a5 5 0 00-1.4-.8L8.5 1h-1zM8 6a2 2 0 110 4A2 2 0 018 6z"/></svg></span>
+            <span class="nav-text">Paramètres</span>
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <div class="user-row">
+            <div class="user-av"><%= user.name.charAt(0).toUpperCase() %></div>
+            <div>
+                <div class="user-name-s"><%= user.name %></div>
+                <div class="user-role-s">Agent Sécurité</div>
             </div>
-            <nav class="sidebar-nav">
-               
-                <div class="nav-divider">Menu</div>
-                <a href="/dashboard/security" class="nav-item">
-                    <span class="icon">🏠</span><span>Dashboard</span>
-                </a>
-                <a href="/dashboard/history" class="nav-item active">
-                    <span class="icon">⏱️</span><span>Historique d'activités</span>
-                </a>
-                <a href="/dashboard/camera" class="nav-item">
-                    <span class="icon">📹</span><span>Caméra</span>
-                </a>
-                <a href="/dashboard/map" class="nav-item">
-                    <span class="icon">🗺️</span><span>Map</span>
-                </a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar-small"><%= user.name.charAt(0).toUpperCase() %></div>
-                    <div class="user-details">
-                        <div class="user-name-small"><%= user.name %></div>
+        </div>
+        <a href="/logout" class="nav-item" style="color:#555;">
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3v-1.5H3.5v-9H6V2zm4.5 3.5L13 8l-2.5 2.5-1-1L11 8H6V6.5h5l-1.5-1.5 1-1z"/></svg></span>
+            <span class="nav-text">Déconnexion</span>
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-content">
+    <div class="top-bar">
+        <span style="color:#888;margin-right:4px;"><svg width="18" height="18" viewBox="0 0 18 18" fill="#888"><rect y="3" width="18" height="2"/><rect y="8" width="18" height="2"/><rect y="13" width="18" height="2"/></svg></span>
+        <span class="topbar-title">Historique des Activités</span>
+        <div class="topbar-right">
+            <a href="/notifications" class="topbar-bell">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="#888"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg>
+                <div class="bell-badge">3</div>
+            </a>
+            <a href="/dashboard/settings" class="topbar-user"><div class="user-dot"></div>Opérateur</a>
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>Historique</h1>
+                <p>Journal complet des activités du système</p>
+            </div>
+            <span class="entry-badge"><%= histories.length %> entrées</span>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="stat-row">
+            <div class="stat-card">
+                <div class="stat-icon-box">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#c0392b" stroke-width="1.5"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l3 3" stroke-linecap="round"/></svg>
+                </div>
+                <div>
+                    <div class="stat-num"><%= histories.length %></div>
+                    <div class="stat-label">Total</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-box" style="background:rgba(39,174,96,0.12);border-color:rgba(39,174,96,0.25)">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#27ae60" stroke-width="1.5"><path d="M3 9l5 5L15 4"/></svg>
+                </div>
+                <div>
+                    <div class="stat-num"><%= histories.filter(h=>h.action&&h.action.toLowerCase().includes('login')).length %></div>
+                    <div class="stat-label">Connexions</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-box" style="background:rgba(192,57,43,0.12);border-color:rgba(192,57,43,0.25)">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#e74c3c" stroke-width="1.5"><path d="M9 2L2 16h14L9 2zm0 5v4M9 13v1"/></svg>
+                </div>
+                <div>
+                    <div class="stat-num"><%= histories.filter(h=>h.action&&h.action.toLowerCase().includes('alert')).length %></div>
+                    <div class="stat-label">Alertes</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-box" style="background:rgba(59,130,246,0.12);border-color:rgba(59,130,246,0.25)">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#3b82f6" stroke-width="1.5"><rect x="2" y="2" width="14" height="14" rx="2"/><path d="M6 9l2 2 4-4"/></svg>
+                </div>
+                <div>
+                    <div class="stat-num"><%= histories.filter(h=>h.action&&h.action.toLowerCase().includes('patrol')).length %></div>
+                    <div class="stat-label">Patrouilles</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+            <div class="filter-btns">
+                <button class="filter-btn active" onclick="filterHistory('all',this)">Tout</button>
+                <button class="filter-btn" onclick="filterHistory('login',this)">Connexions</button>
+                <button class="filter-btn" onclick="filterHistory('alert',this)">Alertes</button>
+                <button class="filter-btn" onclick="filterHistory('patrol',this)">Patrouilles</button>
+                <button class="filter-btn" onclick="filterHistory('system',this)">Système</button>
+            </div>
+            <input type="text" class="search-input" placeholder="Rechercher..." oninput="searchHistory(this.value)">
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-wrap">
+            <div class="table-header">
+                <span>Date &amp; Heure</span>
+                <span>Action</span>
+                <span>Utilisateur</span>
+                <span>Détails</span>
+                <span></span>
+            </div>
+
+            <div id="historyList">
+            <% if (histories.length === 0) { %>
+                <div class="empty-state">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#888" stroke-width="1.5"><circle cx="24" cy="24" r="20"/><path d="M24 14v10l6 6"/></svg>
+                    <p>Aucun historique disponible</p>
+                </div>
+            <% } else { %>
+                <% histories.forEach(function(h) {
+                    const action = (h.action || '').toLowerCase();
+                    let badgeClass = 'badge-default';
+                    if(action.includes('login'))  badgeClass = 'badge-login';
+                    else if(action.includes('logout')) badgeClass = 'badge-logout';
+                    else if(action.includes('alert'))  badgeClass = 'badge-alert';
+                    else if(action.includes('patrol')) badgeClass = 'badge-patrol';
+                    else if(action.includes('system') || action.includes('sync')) badgeClass = 'badge-system';
+                    const d = new Date(h.timestamp);
+                    const dateStr = d.toLocaleDateString('fr-FR');
+                    const timeStr = d.toLocaleTimeString('fr-FR');
+                %>
+                <div class="history-row" data-action="<%= (h.action||'').toLowerCase() %>" data-text="<%= ((h.action||'')+(h.userName||'')+(h.details||'')).toLowerCase() %>">
+                    <div class="date-cell">
+                        <span class="date-day"><%= dateStr %></span>
+                        <span class="date-time"><%= timeStr %></span>
+                    </div>
+                    <div>
+                        <span class="action-badge <%= badgeClass %>"><%= h.action || 'Inconnu' %></span>
+                    </div>
+                    <div class="user-cell">
+                        <div class="user-av-sm"><%= h.userName ? h.userName.charAt(0).toUpperCase() : '?' %></div>
+                        <span class="user-name-cell"><%= h.userName || 'Système' %></span>
+                    </div>
+                    <div class="details-cell"><%= h.details || '—' %></div>
+                    <div style="display:flex;justify-content:center;">
+                        <button class="del-btn" onclick="deleteRow(this)" title="Supprimer">
+                            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/></svg>
+                        </button>
                     </div>
                 </div>
-                <a href="/logout" class="logout-link-sec">🚪 Se déconnecter</a>
+                <% }); %>
+            <% } %>
             </div>
-        </aside>
-        <main class="main-content">
-            <header class="top-bar">
-                <h1>HISTORIQUE</h1>
-                <button class="logout-btn" onclick="window.location.href='/logout'">Se déconnecter</button>
-            </header>
-            <div class="content-wrapper">
-                <div class="history-full-container">
-                    <% if (histories.length === 0) { %>
-                        <div style="text-align:center; color:rgba(255,255,255,0.5); padding:60px 0;">
-                            <div style="font-size:3rem; margin-bottom:15px;">📋</div>
-                            <p>Aucun historique disponible</p>
-                        </div>
-                    <% } else { %>
-                        <% histories.forEach(function(h) { %>
-                        <div class="history-full-item">
-                            <div class="history-time-full">
-                                <%= new Date(h.timestamp).toLocaleDateString('fr-FR') %>
-                                <br>
-                                <strong><%= new Date(h.timestamp).toLocaleTimeString('fr-FR') %></strong>
-                            </div>
-                            <div class="history-dot"></div>
-                            <div class="history-content">
-                                <div class="history-action-full"><%= h.action %></div>
-                                <% if (h.userName) { %>
-                                    <div class="history-user-full">👤 <%= h.userName %></div>
-                                <% } %>
-                                <% if (h.details) { %>
-                                    <div class="history-details-full"><%= h.details %></div>
-                                <% } %>
-                            </div>
-                        </div>
-                        <% }); %>
-                    <% } %>
-                </div>
+
+            <div class="pagination" id="pagination">
+                <span class="pag-info" id="pagInfo">Affichage de <%= histories.length %> entrées</span>
+                <div class="pag-btns" id="pagBtns"></div>
             </div>
-        </main>
+        </div>
+
     </div>
+</div>
+
+<script>
+    const ROWS_PER_PAGE = 15;
+    let currentPage = 1;
+    let visibleRows = [];
+
+    function getAllRows() {
+        return Array.from(document.querySelectorAll('.history-row'));
+    }
+
+    function filterHistory(type, btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        getAllRows().forEach(row => {
+            const action = row.dataset.action || '';
+            row.style.display = (type === 'all' || action.includes(type)) ? '' : 'none';
+        });
+        currentPage = 1;
+        updatePagination();
+    }
+
+    function searchHistory(val) {
+        const v = val.toLowerCase();
+        getAllRows().forEach(row => {
+            row.style.display = (row.dataset.text || '').includes(v) ? '' : 'none';
+        });
+        currentPage = 1;
+        updatePagination();
+    }
+
+    function deleteRow(btn) {
+        const row = btn.closest('.history-row');
+        row.style.opacity = '0';
+        row.style.transform = 'translateX(40px)';
+        row.style.transition = 'all 0.25s ease';
+        setTimeout(() => { row.remove(); updatePagination(); }, 250);
+    }
+
+    function updatePagination() {
+        visibleRows = getAllRows().filter(r => r.style.display !== 'none');
+        const total = visibleRows.length;
+        const pages = Math.ceil(total / ROWS_PER_PAGE);
+        document.getElementById('pagInfo').textContent = `Affichage de ${total} entrées`;
+
+        // show/hide rows per page
+        visibleRows.forEach((row, i) => {
+            row.style.display = (i >= (currentPage-1)*ROWS_PER_PAGE && i < currentPage*ROWS_PER_PAGE) ? '' : 'none';
+        });
+
+        // pagination buttons
+        const pagBtns = document.getElementById('pagBtns');
+        pagBtns.innerHTML = '';
+        if(pages <= 1) return;
+        for(let i = 1; i <= pages; i++) {
+            const b = document.createElement('button');
+            b.className = 'pag-btn' + (i === currentPage ? ' active' : '');
+            b.textContent = i;
+            b.onclick = () => { currentPage = i; updatePagination(); };
+            pagBtns.appendChild(b);
+        }
+    }
+
+    updatePagination();
+</script>
 </body>
 </html>

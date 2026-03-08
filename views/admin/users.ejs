@@ -4,150 +4,434 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" href="/css/admin.css">
+    <script>
+    (function(){
+        try {
+            const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
+            if (s.darkMode === false) {
+                const st = document.createElement('style');
+                st.id = '__yuraLight';
+                st.textContent = `
+                    body { background: #f0f2f5 !important; color: #111 !important; }
+                    .sidebar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
+                    .top-bar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
+                    .main-content { background: #f0f2f5 !important; }
+                    .content { background: #f0f2f5 !important; }
+                    .table-wrap { background: #fff !important; border-color: rgba(0,0,0,0.08) !important; }
+                    .modal-box { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
+                    .form-group input, .form-group select { background: #f5f5f5 !important; border-color: rgba(0,0,0,0.15) !important; color: #111 !important; }
+                    .nav-item { color: #555 !important; }
+                    .nav-item:hover { background: rgba(0,0,0,0.04) !important; color: #111 !important; }
+                    .nav-item.active { color: var(--rouge) !important; background: rgba(192,57,43,0.07) !important; }
+                    .logo-name, .user-name-s, h1, .modal-title { color: #111 !important; }
+                    .logo-sub, .user-role-s, .topbar-title, .form-label, .table-head span { color: #666 !important; }
+                    .topbar-user { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.2) !important; }
+                    .robot-badge { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.25) !important; }
+                    .user-row-item { border-color: rgba(0,0,0,0.05) !important; }
+                    .user-row-item:hover { background: #f8f8f8 !important; }
+                    .table-head { background: rgba(0,0,0,0.02) !important; border-color: rgba(0,0,0,0.06) !important; }
+                    .user-name-cell { color: #111 !important; }
+                    .user-id-cell { color: #888 !important; }
+                    .user-email-cell { color: #555 !important; }
+                    .action-btn { background: rgba(0,0,0,0.04) !important; border-color: rgba(0,0,0,0.1) !important; color: #555 !important; }
+                    .pag-btn { background: rgba(0,0,0,0.04) !important; border-color: rgba(0,0,0,0.1) !important; color: #555 !important; }
+                    .pag-info { color: #666 !important; }
+                    .search-input { background: #f0f0f0 !important; border-color: rgba(0,0,0,0.1) !important; color: #111 !important; }
+                    .filter-select { background: #f0f0f0 !important; border-color: rgba(0,0,0,0.1) !important; color: #555 !important; }
+                    .count-badge { background: rgba(192,57,43,0.1) !important; color: var(--rouge) !important; }
+                `;
+                document.head.appendChild(st);
+            }
+            if (s.colorTheme === 'blue-black') {
+                document.documentElement.style.setProperty('--rouge', '#2563eb');
+                document.documentElement.style.setProperty('--rouge-light', '#3b82f6');
+                document.documentElement.style.setProperty('--border', 'rgba(37,99,235,0.18)');
+            } else if (s.colorTheme === 'green-black') {
+                document.documentElement.style.setProperty('--rouge', '#16a34a');
+                document.documentElement.style.setProperty('--rouge-light', '#22c55e');
+                document.documentElement.style.setProperty('--border', 'rgba(22,163,74,0.18)');
+            }
+        } catch(e) {}
+    })();
+    </script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --rouge:#c0392b; --rouge-light:#e74c3c;
+            --noir:#0a0a0a; --card:#111111; --card2:#161616;
+            --border:rgba(192,57,43,0.18); --gris:#888; --gris2:#bbb;
+        }
+        body { font-family:'Segoe UI',sans-serif; background:var(--noir); color:#fff; display:flex; min-height:100vh; }
+
+        .sidebar { width:300px; min-height:100vh; background:#0d0d0d; border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+        .logo-section { padding:20px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
+        .logo-name { font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:2px; }
+        .logo-sub { font-size:0.65rem; color:var(--gris); letter-spacing:2px; text-transform:uppercase; }
+        .admin-badge-side { margin:12px 16px 4px; padding:8px 14px; background:rgba(192,57,43,0.2); border:1px solid rgba(192,57,43,0.5); border-radius:6px; font-size:0.7rem; font-weight:800; color:var(--rouge-light); letter-spacing:2px; text-transform:uppercase; text-align:center; }
+        .robot-badge { margin:8px 16px 6px; padding:10px 16px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.4); border-radius:8px; display:flex; align-items:center; gap:10px; font-size:0.75rem; font-weight:700; color:var(--rouge-light); }
+        .badge-dot { width:8px; height:8px; background:var(--rouge-light); border-radius:50%; animation:blink 1.2s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+        .nav-section { padding:8px 0; flex:1; overflow-y:auto; }
+        .nav-label { font-size:0.6rem; font-weight:700; color:var(--gris); letter-spacing:2px; padding:12px 18px 5px; text-transform:uppercase; }
+        .nav-item { display:flex; align-items:center; gap:13px; padding:11px 18px; color:#666; text-decoration:none; font-size:0.87rem; font-weight:500; border-left:2px solid transparent; transition:all 0.18s; }
+        .nav-item:hover { color:#fff; background:rgba(192,57,43,0.07); }
+        .nav-item.active { color:#fff; background:rgba(192,57,43,0.13); border-left-color:var(--rouge); font-weight:600; }
+        .nav-icon-wrap { width:20px; height:20px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .nav-text { flex:1; }
+        .nav-count { background:var(--rouge); color:#fff; font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:10px; }
+        .sidebar-footer { border-top:1px solid var(--border); padding:8px 0; }
+        .user-row { display:flex; align-items:center; gap:10px; padding:11px 18px; }
+        .user-av { width:34px; height:34px; background:linear-gradient(135deg,var(--rouge),#7b241c); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0; }
+        .user-name-s { font-size:0.82rem; font-weight:600; }
+        .user-role-s { font-size:0.65rem; color:var(--rouge-light); font-weight:600; }
+
+        .main-content { margin-left:300px; flex:1; display:flex; flex-direction:column; min-height:100vh; }
+        .top-bar { height:52px; background:#0d0d0d; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 24px; gap:12px; position:sticky; top:0; z-index:50; }
+        .topbar-title { font-size:0.78rem; color:var(--gris); letter-spacing:1.5px; text-transform:uppercase; flex:1; }
+        .topbar-right { display:flex; align-items:center; gap:10px; }
+        .topbar-bell { position:relative; cursor:pointer; text-decoration:none; }
+        .bell-badge { position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:var(--rouge); border-radius:50%; font-size:0.6rem; color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; }
+        .topbar-user { display:flex; align-items:center; gap:7px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.35); padding:5px 14px; border-radius:20px; font-size:0.75rem; font-weight:700; color:var(--rouge-light); text-decoration:none; }
+        .user-dot { width:7px; height:7px; background:var(--rouge-light); border-radius:50%; }
+        .admin-pill { background:rgba(192,57,43,0.25); border:1px solid rgba(192,57,43,0.5); padding:4px 10px; border-radius:4px; font-size:0.62rem; font-weight:800; color:var(--rouge-light); letter-spacing:1.5px; text-transform:uppercase; }
+
+        .content { padding:20px 24px; flex:1; }
+        .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+        .page-header-left { display:flex; align-items:center; gap:14px; }
+        .page-header h1 { font-size:1.6rem; font-weight:800; }
+        .count-badge { background:rgba(192,57,43,0.15); border:1px solid rgba(192,57,43,0.3); color:var(--rouge-light); font-size:0.75rem; font-weight:700; padding:4px 12px; border-radius:20px; }
+        .btn-add { display:flex; align-items:center; gap:7px; padding:9px 18px; background:var(--rouge); color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.18s; }
+        .btn-add:hover { background:var(--rouge-light); transform:translateY(-1px); }
+
+        .filters-bar { display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+        .search-wrap { position:relative; flex:1; min-width:200px; }
+        .search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--gris); }
+        .search-input { width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:8px 12px 8px 36px; color:#fff; font-size:0.82rem; outline:none; transition:border 0.18s; }
+        .search-input:focus { border-color:rgba(192,57,43,0.4); }
+        .search-input::placeholder { color:#555; }
+        .filter-select { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:8px 12px; color:#888; font-size:0.8rem; outline:none; cursor:pointer; }
+        .filter-select option { background:#1a1a1a; color:#fff; }
+
+        .table-wrap { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:12px; overflow:hidden; animation:fadeInUp 0.3s ease both; }
+        .table-head { display:grid; grid-template-columns:40px 1fr 140px 120px 200px 110px; padding:10px 18px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.05); }
+        .table-head span { font-size:0.62rem; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:1.2px; }
+        .user-row-item { display:grid; grid-template-columns:40px 1fr 140px 120px 200px 110px; padding:12px 18px; border-bottom:1px solid rgba(255,255,255,0.04); align-items:center; transition:background 0.15s; }
+        .user-row-item:last-child { border-bottom:none; }
+        .user-row-item:hover { background:rgba(255,255,255,0.02); }
+
+        .user-cell { display:flex; align-items:center; gap:11px; }
+        .user-av-table { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:800; flex-shrink:0; color:#fff; }
+        .user-name-cell { font-size:0.85rem; font-weight:600; color:#fff; }
+        .user-id-cell { font-size:0.72rem; color:#555; margin-top:2px; }
+
+        .status-pill { display:inline-flex; align-items:center; gap:5px; font-size:0.68rem; font-weight:700; padding:4px 10px; border-radius:20px; }
+        .status-pill.active { background:rgba(39,174,96,0.12); color:#27ae60; border:1px solid rgba(39,174,96,0.25); }
+        .status-pill.inactive { background:rgba(136,136,136,0.1); color:#666; border:1px solid rgba(136,136,136,0.2); }
+        .status-dot { width:6px; height:6px; border-radius:50%; }
+        .status-dot.active { background:#27ae60; }
+        .status-dot.inactive { background:#555; }
+        .role-pill { display:inline-flex; font-size:0.65rem; font-weight:700; padding:3px 9px; border-radius:4px; text-transform:uppercase; letter-spacing:0.5px; }
+        .role-pill.admin { background:rgba(192,57,43,0.18); color:var(--rouge-light); border:1px solid rgba(192,57,43,0.3); }
+        .role-pill.agent { background:rgba(59,130,246,0.12); color:#3b82f6; border:1px solid rgba(59,130,246,0.25); }
+        .user-email-cell { font-size:0.78rem; color:#555; }
+
+        .actions-cell { display:flex; align-items:center; gap:6px; }
+        .action-btn { width:30px; height:30px; border-radius:6px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); color:#666; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+        .action-btn:hover { background:rgba(192,57,43,0.15); border-color:rgba(192,57,43,0.35); color:#fff; }
+        .action-btn.toggle-on { background:rgba(39,174,96,0.12); border-color:rgba(39,174,96,0.3); color:#27ae60; }
+        .action-btn.toggle-on:hover { background:rgba(39,174,96,0.2); }
+        .action-btn.del:hover { background:rgba(192,57,43,0.2); border-color:rgba(192,57,43,0.4); color:var(--rouge-light); }
+
+        .pagination { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-top:1px solid rgba(255,255,255,0.05); }
+        .pag-info { font-size:0.75rem; color:var(--gris); }
+        .pag-btns { display:flex; gap:6px; }
+        .pag-btn { padding:6px 14px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; color:#888; font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.15s; text-decoration:none; }
+        .pag-btn:hover { background:rgba(192,57,43,0.12); border-color:rgba(192,57,43,0.3); color:#fff; }
+        .pag-btn.active { background:var(--rouge); border-color:var(--rouge); color:#fff; }
+        .pag-btn.disabled { opacity:0.3; pointer-events:none; }
+
+        .empty-state { padding:50px 20px; text-align:center; color:var(--gris); }
+
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; align-items:center; justify-content:center; }
+        .modal-overlay.open { display:flex; }
+        .modal-box { background:#111; border:1px solid var(--border); border-radius:14px; padding:28px; width:500px; max-width:95vw; max-height:90vh; overflow-y:auto; }
+        .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+        .modal-title { font-size:1.1rem; font-weight:800; }
+        .modal-close { width:30px; height:30px; background:rgba(255,255,255,0.06); border:none; border-radius:6px; color:#888; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; }
+        .modal-close:hover { background:rgba(192,57,43,0.2); color:#fff; }
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+        .form-group { display:flex; flex-direction:column; gap:6px; }
+        .form-group.full { grid-column:1/-1; }
+        .form-label { font-size:0.72rem; font-weight:600; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; }
+        .form-group input, .form-group select { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:9px 13px; color:#fff; font-size:0.85rem; outline:none; transition:border 0.18s; font-family:inherit; }
+        .form-group input:focus, .form-group select:focus { border-color:rgba(192,57,43,0.5); }
+        .form-group select option { background:#1a1a1a; }
+        .form-group input::placeholder { color:#444; }
+        .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:22px; }
+        .btn-cancel { padding:9px 18px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#888; font-size:0.82rem; font-weight:600; cursor:pointer; }
+        .btn-cancel:hover { background:rgba(255,255,255,0.09); color:#fff; }
+        .btn-submit { padding:9px 20px; background:var(--rouge); border:none; border-radius:8px; color:#fff; font-size:0.82rem; font-weight:700; cursor:pointer; transition:all 0.18s; }
+        .btn-submit:hover { background:var(--rouge-light); }
+        .error-msg { background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.3); color:var(--rouge-light); padding:10px 14px; border-radius:8px; font-size:0.8rem; margin-bottom:14px; }
+
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    </style>
 </head>
 <body>
-    <div class="admin-container">
-        <%- include('../partials/admin-sidebar') %>
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="top-bar-left">
-                    <h1>Utilisateurs</h1>
-                    <span class="total-badge"><%= total %> utilisateurs</span>
-                </div>
-                <div class="top-bar-right">
-                    <button class="btn-primary" onclick="document.getElementById('addModal').style.display='flex'">
-                        + Ajouter un utilisateur
-                    </button>
-                </div>
-            </header>
 
-            <div class="content-wrapper">
-                <% if (typeof error !== 'undefined' && error) { %>
-                    <div class="alert-error">⚠️ Cet identifiant ou email existe déjà.</div>
-                <% } %>
-
-                <div class="users-table-container">
-                    <table class="users-table">
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox"></th>
-                                <th>Name</th>
-                                <th>Status</th>
-                                <th>Role</th>
-                                <th>Email address</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% users.forEach(function(u) { %>
-                            <tr>
-                                <td><input type="checkbox"></td>
-                                <td>
-                                    <div class="user-cell">
-                                        <div class="user-avatar" style="background: <%= ['#667eea','#f093fb','#4facfe','#43e97b','#fa709a','#fee140'][Math.floor(Math.random()*6)] %>">
-                                            <%= u.name.charAt(0).toUpperCase() %>
-                                        </div>
-                                        <div>
-                                            <div class="user-name"><%= u.name %></div>
-                                            <div class="user-id">@<%= u.identifiant %></div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="status-badge <%= u.status === 'active' ? 'status-active' : 'status-inactive' %>">
-                                        ● <%= u.status === 'active' ? 'Active' : 'Inactive' %>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="role-tag role-<%= u.role %>">
-                                        <%= u.position || u.role %>
-                                    </span>
-                                </td>
-                                <td class="email-cell"><%= u.email %></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <form action="/admin/users/toggle/<%= u._id %>" method="POST" style="display:inline">
-                                            <button type="submit" class="action-btn" title="<%= u.status === 'active' ? 'Désactiver' : 'Activer' %>">
-                                                <%= u.status === 'active' ? '🔕' : '✅' %>
-                                            </button>
-                                        </form>
-                                        <form action="/admin/users/delete/<%= u._id %>" method="POST" style="display:inline" onsubmit="return confirm('Supprimer cet utilisateur?')">
-                                            <button type="submit" class="action-btn delete-btn" title="Supprimer">🗑️</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
-
-                    <div class="pagination">
-                        <% if (currentPage > 1) { %>
-                            <a href="/admin/users?page=<%= currentPage - 1 %>" class="pagination-btn">← Précédent</a>
-                        <% } %>
-                        <span class="page-info">Page <%= currentPage %> / <%= totalPages %></span>
-                        <% if (currentPage < totalPages) { %>
-                            <a href="/admin/users?page=<%= currentPage + 1 %>" class="pagination-btn">Suivant →</a>
-                        <% } %>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Modal Ajouter Utilisateur -->
-    <div class="modal-overlay" id="addModal" onclick="if(event.target===this)this.style.display='none'">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Ajouter un utilisateur</h2>
-                <button class="modal-close" onclick="document.getElementById('addModal').style.display='none'">✕</button>
-            </div>
-            <form action="/admin/users/add" method="POST" class="modal-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nom complet</label>
-                        <input type="text" name="name" required placeholder="Prénom Nom">
-                    </div>
-                    <div class="form-group">
-                        <label>Identifiant</label>
-                        <input type="text" name="identifiant" required placeholder="username">
-                    </div>
+<!-- MODAL -->
+<div class="modal-overlay" id="addModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-title">Ajouter un utilisateur</div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <% if(typeof error !== 'undefined' && error) { %>
+        <div class="error-msg">⚠️ Cet identifiant ou email existe déjà.</div>
+        <% } %>
+        <form action="/admin/users/add" method="POST">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Nom complet</label>
+                    <input type="text" name="name" placeholder="ex: Ahmed Ben Ali" required>
                 </div>
                 <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" name="email" required placeholder="email@yura.com">
+                    <label class="form-label">Identifiant</label>
+                    <input type="text" name="identifiant" placeholder="ex: ahmed.benali" required>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Mot de passe</label>
-                        <input type="password" name="password" required placeholder="••••••••">
-                    </div>
-                    <div class="form-group">
-                        <label>Rôle</label>
-                        <select name="role">
-                            <option value="security">Sécurité</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                    </div>
+                <div class="form-group full">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" placeholder="ex: ahmed@yura.com" required>
                 </div>
                 <div class="form-group">
-                    <label>Position / Fonction</label>
-                    <input type="text" name="position" placeholder="Ex: Agent de Surveillance">
+                    <label class="form-label">Mot de passe</label>
+                    <input type="password" name="password" placeholder="Min. 6 caractères" required>
                 </div>
                 <div class="form-group">
-                    <label>Statut</label>
+                    <label class="form-label">Rôle</label>
+                    <select name="role">
+                        <option value="agent">Agent Sécurité</option>
+                        <option value="admin">Administrateur</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Poste</label>
+                    <input type="text" name="position" placeholder="ex: Agent de Surveillance">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Statut</label>
                     <select name="status">
                         <option value="active">Actif</option>
                         <option value="inactive">Inactif</option>
                     </select>
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-secondary" onclick="document.getElementById('addModal').style.display='none'">Annuler</button>
-                    <button type="submit" class="btn-primary">Créer l'utilisateur</button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Annuler</button>
+                <button type="submit" class="btn-submit">Créer l'utilisateur</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo-section">
+        <img src="/images/logo robot.png" alt="YURA" style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
+        <div>
+            <div class="logo-name">YURA</div>
+            <div class="logo-sub">Guardian System</div>
         </div>
     </div>
+    <div class="admin-badge-side">⚡ ADMIN PANEL</div>
+    <div class="robot-badge">
+        <div class="badge-dot"></div>
+        <span>ROBOT EN LIGNE</span>
+    </div>
+    <div class="nav-section">
+        <div class="nav-label">Administration</div>
+        <a href="/admin/dashboard" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></span>
+            <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="/admin/users" class="nav-item active">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><circle cx="6" cy="5" r="3"/><path d="M0 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="13" cy="5" r="2.5"/><path d="M13 10c1.7 0 3 1.3 3 3"/></svg></span>
+            <span class="nav-text">Utilisateurs</span>
+        </a>
+        <a href="/admin/robot" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><rect x="4" y="2" width="8" height="6" rx="1"/><rect x="3" y="8" width="10" height="5" rx="1"/><circle cx="6" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><rect x="1" y="9" width="2" height="3" rx="1"/><rect x="13" y="9" width="2" height="3" rx="1"/></svg></span>
+            <span class="nav-text">Contrôle Robot</span>
+        </a>
+        <a href="/admin/history" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2v5l3 3-1 1-3.5-3.5V3H8z"/></svg></span>
+            <span class="nav-text">Historique</span>
+        </a>
+        <div class="nav-label">Surveillance</div>
+        <a href="/admin/camera" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></span>
+            <span class="nav-text">Caméras</span>
+        </a>
+        <a href="/admin/map" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
+            <span class="nav-text">Navigation</span>
+        </a>
+        <a href="/admin/notifications" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg></span>
+            <span class="nav-text">Alertes</span>
+            <span class="nav-count">3</span>
+        </a>
+        <div class="nav-label">Agent</div>
+        <a href="/dashboard/security" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L2 4v5c0 4.5 3 7.5 6 8.5C11 16.5 14 13.5 14 9V4L8 1z"/></svg></span>
+            <span class="nav-text">Vue Agent</span>
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <div class="user-row">
+            <div class="user-av"><%= user.name.charAt(0).toUpperCase() %></div>
+            <div>
+                <div class="user-name-s"><%= user.name %></div>
+                <div class="user-role-s">Administrateur</div>
+            </div>
+        </div>
+        <a href="/logout" class="nav-item" style="color:#555;">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3v-1.5H3.5v-9H6V2zm4.5 3.5L13 8l-2.5 2.5-1-1L11 8H6V6.5h5l-1.5-1.5 1-1z"/></svg></span>
+            <span class="nav-text">Déconnexion</span>
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-content">
+    <div class="top-bar">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="#888"><rect y="3" width="18" height="2"/><rect y="8" width="18" height="2"/><rect y="13" width="18" height="2"/></svg>
+        <span class="topbar-title">Gestion Utilisateurs</span>
+        <div class="topbar-right">
+            <span class="admin-pill">ADMIN</span>
+            <a href="/notifications" class="topbar-bell">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="#888"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg>
+                <div class="bell-badge">3</div>
+            </a>
+            <a href="/dashboard/settings" class="topbar-user"><div class="user-dot"></div><%= user.name %></a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>Utilisateurs</h1>
+                <span class="count-badge"><%= total %> utilisateurs</span>
+            </div>
+            <button class="btn-add" onclick="openModal()">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2"><line x1="6.5" y1="1" x2="6.5" y2="12"/><line x1="1" y1="6.5" x2="12" y2="6.5"/></svg>
+                Ajouter un utilisateur
+            </button>
+        </div>
+
+        <div class="filters-bar">
+            <div class="search-wrap">
+                <span class="search-icon">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="4"/><path d="M10 10l2.5 2.5"/></svg>
+                </span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un utilisateur..." oninput="filterUsers()">
+            </div>
+            <select class="filter-select" id="roleFilter" onchange="filterUsers()">
+                <option value="">Tous les rôles</option>
+                <option value="admin">Admin</option>
+                <option value="agent">Agent</option>
+            </select>
+            <select class="filter-select" id="statusFilter" onchange="filterUsers()">
+                <option value="">Tous les statuts</option>
+                <option value="active">Actif</option>
+                <option value="inactive">Inactif</option>
+            </select>
+        </div>
+
+        <div class="table-wrap">
+            <div class="table-head">
+                <span>#</span>
+                <span>Utilisateur</span>
+                <span>Statut</span>
+                <span>Rôle</span>
+                <span>Email</span>
+                <span>Actions</span>
+            </div>
+            <div id="usersList">
+            <% if(users && users.length > 0) { %>
+                <% users.forEach(function(u, i) { %>
+                <div class="user-row-item" data-name="<%= u.name ? u.name.toLowerCase() : '' %>" data-role="<%= u.role %>" data-status="<%= u.status %>">
+                    <span style="font-size:0.72rem;color:#444;font-weight:600;"><%= i + 1 %></span>
+                    <div class="user-cell">
+                        <div class="user-av-table" style="background:linear-gradient(135deg,<%= u.role === 'admin' ? 'var(--rouge),#7b241c' : '#1a4fa8,#0d3080' %>);">
+                            <%= u.name ? u.name.charAt(0).toUpperCase() : '?' %>
+                        </div>
+                        <div>
+                            <div class="user-name-cell"><%= u.name %></div>
+                            <div class="user-id-cell">@<%= u.identifiant %></div>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="status-pill <%= u.status === 'active' ? 'active' : 'inactive' %>">
+                            <span class="status-dot <%= u.status === 'active' ? 'active' : 'inactive' %>"></span>
+                            <%= u.status === 'active' ? 'Actif' : 'Inactif' %>
+                        </span>
+                    </div>
+                    <div>
+                        <span class="role-pill <%= u.role === 'admin' ? 'admin' : 'agent' %>">
+                            <%= u.role === 'admin' ? 'Admin' : 'Agent' %>
+                        </span>
+                    </div>
+                    <div class="user-email-cell"><%= u.email %></div>
+                    <div class="actions-cell">
+                        <form action="/admin/users/toggle/<%= u._id %>" method="POST" style="display:inline">
+                            <button type="submit" class="action-btn <%= u.status === 'active' ? '' : 'toggle-on' %>" title="<%= u.status === 'active' ? 'Désactiver' : 'Activer' %>">
+                                <% if(u.status === 'active') { %>
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>
+                                <% } else { %>
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,6 5,9 10,3"/></svg>
+                                <% } %>
+                            </button>
+                        </form>
+                        <form action="/admin/users/delete/<%= u._id %>" method="POST" style="display:inline" onsubmit="return confirm('Supprimer <%= u.name %> ?')">
+                            <button type="submit" class="action-btn del" title="Supprimer">
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8M5 3V2h2v1M4 3v7h4V3H4z"/></svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <% }); %>
+            <% } else { %>
+                <div class="empty-state"><p>Aucun utilisateur trouvé</p></div>
+            <% } %>
+            </div>
+            <% if(totalPages > 1) { %>
+            <div class="pagination">
+                <span class="pag-info">Page <%= currentPage %> / <%= totalPages %> — <%= total %> utilisateurs</span>
+                <div class="pag-btns">
+                    <a href="?page=<%= currentPage - 1 %>" class="pag-btn <%= currentPage <= 1 ? 'disabled' : '' %>">← Préc.</a>
+                    <% for(let p = 1; p <= totalPages; p++) { %><a href="?page=<%= p %>" class="pag-btn <%= p === currentPage ? 'active' : '' %>"><%= p %></a><% } %>
+                    <a href="?page=<%= currentPage + 1 %>" class="pag-btn <%= currentPage >= totalPages ? 'disabled' : '' %>">Suiv. →</a>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script>
+function openModal() { document.getElementById('addModal').classList.add('open'); }
+function closeModal() { document.getElementById('addModal').classList.remove('open'); }
+document.getElementById('addModal').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
+<% if(typeof error !== 'undefined' && error) { %>window.addEventListener('DOMContentLoaded',function(){openModal();});<% } %>
+function filterUsers() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const role   = document.getElementById('roleFilter').value;
+    const status = document.getElementById('statusFilter').value;
+    document.querySelectorAll('.user-row-item').forEach(function(row) {
+        const ok = (row.dataset.name||'').includes(search) && (!role||row.dataset.role===role) && (!status||row.dataset.status===status);
+        row.style.display = ok ? '' : 'none';
+    });
+}
+</script>
 </body>
 </html>

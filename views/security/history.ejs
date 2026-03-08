@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title> 
+    
     <script src="/js/theme.js"></script>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -120,6 +121,75 @@
         .pag-btn:hover { background:rgba(192,57,43,0.15); border-color:rgba(192,57,43,0.4); color:#fff; }
         .pag-btn.active { background:rgba(192,57,43,0.2); border-color:var(--rouge); color:var(--rouge-light); font-weight:700; }
     </style>
+    <script>
+(function(){
+    try {
+        const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
+        if (s.darkMode === false) {
+            const st = document.createElement('style');
+            st.id = '__yuraLight';
+            st.textContent = `
+                body { background: #f0f2f5 !important; color: #111 !important; }
+                .sidebar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
+                .top-bar { background: #0d0d0d !important; }
+                .main-content, .content { background: #f0f2f5 !important; }
+                .settings-card, .stat-card, .filter-bar, .table-wrap,
+                .alert-card, .cam-card, .adv-panel, .map-card,
+                .map-right, .cams-panel, .cam-thumbnail,
+                .ctrl-card, .env-card, .hist-card, .status-row,
+                .notifications-container, .alerts-group { background: #fff !important; border-color: rgba(0,0,0,0.08) !important; }
+                .card-head, .alerts-group-title { border-color: rgba(0,0,0,0.06) !important; }
+                .card-head-title, .setting-label, .alert-title,
+                .date-day, .user-name-s, .logo-name,
+                .info-val, h1, h2, h3 { color: #111 !important; }
+                .logo-sub, .user-role-s, .topbar-title, .info-lbl,
+                .alert-msg, .details-cell, .date-time,
+                .stat-label, .gris { color: #666 !important; }
+                .nav-item { color: #555 !important; }
+                .nav-item:hover { background: rgba(0,0,0,0.04) !important; color: #111 !important; }
+                .nav-item.active { color: var(--rouge) !important; background: rgba(192,57,43,0.07) !important; }
+                .setting-select, .search-input, .filter-btn {
+                    background: #f0f0f0 !important;
+                    border-color: rgba(0,0,0,0.12) !important;
+                    color: #111 !important;
+                }
+                .filter-btn { color: #555 !important; }
+                .filter-btn.active { background: rgba(192,57,43,0.12) !important; color: var(--rouge) !important; }
+                .toggle-slider { background: #ddd !important; border-color: #ccc !important; }
+                .info-row, .setting-row, .history-row { border-color: rgba(0,0,0,0.05) !important; }
+                .history-row:hover { background: #f5f5f5 !important; }
+                .table-header { background: rgba(0,0,0,0.03) !important; }
+                .table-header span { color: #666 !important; }
+                .act-btn, .del-btn, .card-action-btn, .pag-btn,
+                .bottom-btn.secondary, .cam-ctrl-btn, .dpad-btn {
+                    background: rgba(0,0,0,0.05) !important;
+                    border-color: rgba(0,0,0,0.1) !important;
+                    color: #555 !important;
+                }
+                .topbar-user { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.2) !important; }
+                .robot-badge { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.25) !important; }
+                .pag-info { color: #666 !important; }
+            `;
+            document.head.appendChild(st);
+        }
+        if (s.colorTheme === 'blue-black') {
+            document.documentElement.style.setProperty('--rouge', '#2563eb');
+            document.documentElement.style.setProperty('--rouge-light', '#3b82f6');
+            document.documentElement.style.setProperty('--border', 'rgba(37,99,235,0.18)');
+        } else if (s.colorTheme === 'green-black') {
+            document.documentElement.style.setProperty('--rouge', '#16a34a');
+            document.documentElement.style.setProperty('--rouge-light', '#22c55e');
+            document.documentElement.style.setProperty('--border', 'rgba(22,163,74,0.18)');
+        }
+        if (!s.animations) {
+            const na = document.createElement('style');
+            na.id = '__noAnim';
+            na.textContent = '* { animation: none !important; transition: none !important; }';
+            document.head.appendChild(na);
+        }
+    } catch(e) {}
+})();
+</script>
     
 </head>
 <body>

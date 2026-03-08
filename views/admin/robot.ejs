@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <script>
+    (function(){
+        try {
+            const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
+            if (s.darkMode === false) {
+                const st = document.createElement('style');
+                st.id = '__yuraLight';
+                st.textContent = `
+                    body { background: #f0f2f5 !important; color: #111 !important; }
+                    .sidebar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
+                    .top-bar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
+                    .main-content, .content { background: #f0f2f5 !important; }
+                    .card { background: #fff !important; border-color: rgba(0,0,0,0.08) !important; }
+                    .nav-item { color: #555 !important; }
+                    .nav-item:hover { background: rgba(0,0,0,0.04) !important; color: #111 !important; }
+                    .nav-item.active { color: var(--rouge) !important; background: rgba(192,57,43,0.07) !important; }
+                    .logo-name, .user-name-s, h1, .card-title { color: #111 !important; }
+                    .logo-sub, .user-role-s, .topbar-title { color: #666 !important; }
+                    .topbar-user { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.2) !important; }
+                    .robot-badge { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.25) !important; }
+                    .dpad-btn { background: rgba(0,0,0,0.06) !important; border-color: rgba(0,0,0,0.1) !important; color: #444 !important; }
+                    .cmd-btn { background: rgba(0,0,0,0.05) !important; border-color: rgba(0,0,0,0.1) !important; color: #555 !important; }
+                    .log-item { border-color: rgba(0,0,0,0.05) !important; }
+                    .log-cmd { color: #333 !important; }
+                    .log-time { color: #888 !important; }
+                    .zone-plan { background: #e8e8e8 !important; }
+                    .zone-box { border-color: rgba(0,0,0,0.15) !important; }
+                    .zone-box-label { color: #444 !important; }
+                    .speed-track { background: rgba(0,0,0,0.1) !important; }
+                `;
+                document.head.appendChild(st);
+            }
+            if (s.colorTheme === 'blue-black') {
+                document.documentElement.style.setProperty('--rouge', '#2563eb');
+                document.documentElement.style.setProperty('--rouge-light', '#3b82f6');
+                document.documentElement.style.setProperty('--border', 'rgba(37,99,235,0.18)');
+            } else if (s.colorTheme === 'green-black') {
+                document.documentElement.style.setProperty('--rouge', '#16a34a');
+                document.documentElement.style.setProperty('--rouge-light', '#22c55e');
+                document.documentElement.style.setProperty('--border', 'rgba(22,163,74,0.18)');
+            }
+        } catch(e) {}
+    })();
+    </script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --rouge:#c0392b; --rouge-light:#e74c3c;
+            --noir:#0a0a0a; --card:#111111;
+            --border:rgba(192,57,43,0.18); --gris:#888; --gris2:#bbb;
+        }
+        body { font-family:'Segoe UI',sans-serif; background:var(--noir); color:#fff; display:flex; min-height:100vh; }
+
+        /* SIDEBAR */
+        .sidebar { width:300px; min-height:100vh; background:#0d0d0d; border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+        .logo-section { padding:20px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
+        .logo-name { font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:2px; }
+        .logo-sub { font-size:0.65rem; color:var(--gris); letter-spacing:2px; text-transform:uppercase; }
+        .admin-badge-side { margin:12px 16px 4px; padding:8px 14px; background:rgba(192,57,43,0.2); border:1px solid rgba(192,57,43,0.5); border-radius:6px; font-size:0.7rem; font-weight:800; color:var(--rouge-light); letter-spacing:2px; text-transform:uppercase; text-align:center; }
+        .robot-badge { margin:8px 16px 6px; padding:10px 16px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.4); border-radius:8px; display:flex; align-items:center; gap:10px; font-size:0.75rem; font-weight:700; color:var(--rouge-light); }
+        .badge-dot { width:8px; height:8px; background:var(--rouge-light); border-radius:50%; animation:blink 1.2s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+        .nav-section { padding:8px 0; flex:1; overflow-y:auto; }
+        .nav-label { font-size:0.6rem; font-weight:700; color:var(--gris); letter-spacing:2px; padding:12px 18px 5px; text-transform:uppercase; }
+        .nav-item { display:flex; align-items:center; gap:13px; padding:11px 18px; color:#666; text-decoration:none; font-size:0.87rem; font-weight:500; border-left:2px solid transparent; transition:all 0.18s; }
+        .nav-item:hover { color:#fff; background:rgba(192,57,43,0.07); }
+        .nav-item.active { color:#fff; background:rgba(192,57,43,0.13); border-left-color:var(--rouge); font-weight:600; }
+        .nav-icon-wrap { width:20px; height:20px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .nav-text { flex:1; }
+        .nav-count { background:var(--rouge); color:#fff; font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:10px; }
+        .sidebar-footer { border-top:1px solid var(--border); padding:8px 0; }
+        .user-row { display:flex; align-items:center; gap:10px; padding:11px 18px; }
+        .user-av { width:34px; height:34px; background:linear-gradient(135deg,var(--rouge),#7b241c); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0; }
+        .user-name-s { font-size:0.82rem; font-weight:600; }
+        .user-role-s { font-size:0.65rem; color:var(--rouge-light); font-weight:600; }
+
+        /* MAIN */
+        .main-content { margin-left:300px; flex:1; display:flex; flex-direction:column; min-height:100vh; }
+        .top-bar { height:52px; background:#0d0d0d; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 24px; gap:12px; position:sticky; top:0; z-index:50; }
+        .topbar-title { font-size:0.78rem; color:var(--gris); letter-spacing:1.5px; text-transform:uppercase; flex:1; }
+        .topbar-right { display:flex; align-items:center; gap:10px; }
+        .topbar-bell { position:relative; cursor:pointer; text-decoration:none; }
+        .bell-badge { position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:var(--rouge); border-radius:50%; font-size:0.6rem; color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; }
+        .topbar-user { display:flex; align-items:center; gap:7px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.35); padding:5px 14px; border-radius:20px; font-size:0.75rem; font-weight:700; color:var(--rouge-light); text-decoration:none; }
+        .user-dot { width:7px; height:7px; background:var(--rouge-light); border-radius:50%; }
+        .admin-pill { background:rgba(192,57,43,0.25); border:1px solid rgba(192,57,43,0.5); padding:4px 10px; border-radius:4px; font-size:0.62rem; font-weight:800; color:var(--rouge-light); letter-spacing:1.5px; text-transform:uppercase; }
+
+        /* CONTENT */
+        .content { padding:20px 24px; flex:1; }
+        .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+        .page-header h1 { font-size:1.6rem; font-weight:800; }
+        .page-header p { font-size:0.8rem; color:var(--gris); margin-top:3px; }
+        .status-online { display:flex; align-items:center; gap:7px; background:rgba(39,174,96,0.1); border:1px solid rgba(39,174,96,0.3); padding:6px 14px; border-radius:20px; font-size:0.75rem; font-weight:700; color:#27ae60; }
+        .status-online-dot { width:7px; height:7px; background:#27ae60; border-radius:50%; animation:blink 1.5s infinite; }
+
+        /* LAYOUT */
+        .grid-main { display:grid; grid-template-columns:1fr 380px; gap:14px; margin-bottom:14px; }
+        .grid-bottom { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+        /* CARD */
+        .card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:20px; }
+        .card-title { font-size:0.7rem; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; }
+        .card-badge { font-size:0.62rem; padding:3px 8px; border-radius:10px; background:rgba(192,57,43,0.15); color:var(--rouge-light); border:1px solid rgba(192,57,43,0.25); font-weight:700; }
+
+        /* DPAD */
+        .dpad-wrap { display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:20px; }
+        .dpad-row { display:flex; gap:6px; align-items:center; }
+        .dpad-btn { width:56px; height:56px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#888; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-size:1.2rem; user-select:none; }
+        .dpad-btn:hover { background:rgba(192,57,43,0.18); border-color:rgba(192,57,43,0.45); color:#fff; transform:scale(1.05); }
+        .dpad-btn:active { transform:scale(0.95); background:rgba(192,57,43,0.3); }
+        .dpad-btn.center { background:rgba(192,57,43,0.12); border-color:rgba(192,57,43,0.35); color:var(--rouge-light); width:56px; height:56px; border-radius:50%; }
+        .dpad-btn.center:hover { background:rgba(192,57,43,0.25); }
+        .dpad-btn.stop-big { width:72px; height:72px; background:rgba(192,57,43,0.15); border:2px solid rgba(192,57,43,0.4); border-radius:50%; color:var(--rouge-light); font-size:0.75rem; font-weight:800; letter-spacing:0.5px; flex-direction:column; gap:3px; }
+        .dpad-btn.stop-big:hover { background:rgba(192,57,43,0.3); transform:scale(1.05); }
+
+        /* SPEED */
+        .speed-wrap { margin-bottom:16px; }
+        .speed-label { font-size:0.68rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px; display:flex; justify-content:space-between; }
+        .speed-val { color:var(--rouge-light); font-weight:700; }
+        .speed-track { width:100%; height:6px; background:rgba(255,255,255,0.07); border-radius:3px; position:relative; cursor:pointer; }
+        .speed-fill { height:100%; background:linear-gradient(90deg,var(--rouge),var(--rouge-light)); border-radius:3px; transition:width 0.2s; pointer-events:none; }
+        input[type=range] { width:100%; accent-color:var(--rouge); cursor:pointer; }
+
+        /* QUICK CMDS */
+        .quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
+        .cmd-btn { padding:10px 6px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; color:#888; font-size:0.72rem; font-weight:600; cursor:pointer; transition:all 0.18s; display:flex; flex-direction:column; align-items:center; gap:5px; }
+        .cmd-btn:hover { background:rgba(192,57,43,0.12); border-color:rgba(192,57,43,0.35); color:#fff; }
+        .cmd-btn.active-cmd { background:rgba(39,174,96,0.12); border-color:rgba(39,174,96,0.35); color:#27ae60; }
+        .cmd-btn svg { opacity:0.7; }
+        .cmd-btn:hover svg { opacity:1; }
+
+        /* ZONE PLAN */
+        .zone-plan { background:#0d0d0d; border-radius:10px; position:relative; height:260px; overflow:hidden; border:1px solid rgba(255,255,255,0.06); }
+        .zone-plan-grid { position:absolute; inset:0; background-image:linear-gradient(rgba(192,57,43,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,0.05) 1px,transparent 1px); background-size:40px 40px; }
+        .zone-box { position:absolute; border:1px solid; border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; transition:all 0.2s; }
+        .zone-box:hover { filter:brightness(1.3); transform:scale(1.02); }
+        .zone-box-label { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; }
+        .zone-box-name { font-size:0.55rem; opacity:0.8; }
+        .zone-a { top:10px; left:10px; width:110px; height:70px; background:rgba(39,174,96,0.12); border-color:rgba(39,174,96,0.4); color:#27ae60; }
+        .zone-b { top:10px; left:130px; width:130px; height:90px; background:rgba(59,130,246,0.1); border-color:rgba(59,130,246,0.35); color:#3b82f6; }
+        .zone-c { top:110px; left:10px; width:110px; height:80px; background:rgba(39,174,96,0.1); border-color:rgba(39,174,96,0.3); color:#27ae60; }
+        .zone-d { top:110px; left:130px; width:100px; height:60px; background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.12); color:#555; }
+        .zone-e { top:10px; right:10px; width:80px; height:180px; background:rgba(255,255,255,0.02); border-color:rgba(255,255,255,0.1); color:#444; }
+        .robot-marker { position:absolute; width:22px; height:22px; background:var(--rouge); border-radius:50%; border:2px solid var(--rouge-light); box-shadow:0 0 12px rgba(192,57,43,0.7); transition:all 0.6s ease; z-index:5; }
+        .robot-marker::after { content:''; position:absolute; inset:-5px; border-radius:50%; border:1px solid rgba(192,57,43,0.4); animation:ping 1.5s infinite; }
+        @keyframes ping { 0%{transform:scale(1);opacity:0.8} 100%{transform:scale(2);opacity:0} }
+
+        /* LOGS */
+        .logs-wrap { max-height:280px; overflow-y:auto; }
+        .logs-wrap::-webkit-scrollbar { width:3px; }
+        .logs-wrap::-webkit-scrollbar-thumb { background:rgba(192,57,43,0.3); border-radius:2px; }
+        .log-item { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .log-item:last-child { border-bottom:none; }
+        .log-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+        .log-cmd { font-size:0.8rem; color:var(--gris2); flex:1; }
+        .log-user { font-size:0.68rem; color:#555; }
+        .log-time { font-size:0.65rem; color:var(--gris); flex-shrink:0; }
+        .log-empty { text-align:center; color:var(--gris); font-size:0.8rem; padding:30px 0; }
+
+        /* FEEDBACK */
+        .feedback-bar { position:fixed; bottom:20px; right:24px; background:#1a1a1a; border:1px solid var(--border); border-radius:10px; padding:10px 16px; font-size:0.8rem; color:#fff; display:none; align-items:center; gap:8px; z-index:999; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
+        .feedback-bar.show { display:flex; animation:slideUp 0.25s ease; }
+        @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        .feedback-dot { width:8px; height:8px; border-radius:50%; background:#27ae60; }
+
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        .card { animation:fadeInUp 0.35s ease both; }
+    </style>
+</head>
+<body>
+
+<!-- FEEDBACK -->
+<div class="feedback-bar" id="feedbackBar">
+    <div class="feedback-dot"></div>
+    <span id="feedbackMsg">Commande envoyée</span>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo-section">
+        <img src="/images/logo robot.png" alt="YURA" style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
+        <div>
+            <div class="logo-name">YURA</div>
+            <div class="logo-sub">Guardian System</div>
+        </div>
+    </div>
+    <div class="admin-badge-side">⚡ ADMIN PANEL</div>
+    <div class="robot-badge">
+        <div class="badge-dot"></div>
+        <span>ROBOT EN LIGNE</span>
+    </div>
+    <div class="nav-section">
+        <div class="nav-label">Administration</div>
+        <a href="/admin/dashboard" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></span>
+            <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="/admin/users" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><circle cx="6" cy="5" r="3"/><path d="M0 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="13" cy="5" r="2.5"/><path d="M13 10c1.7 0 3 1.3 3 3"/></svg></span>
+            <span class="nav-text">Utilisateurs</span>
+        </a>
+        <a href="/admin/robot" class="nav-item active">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><rect x="4" y="2" width="8" height="6" rx="1"/><rect x="3" y="8" width="10" height="5" rx="1"/><circle cx="6" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><rect x="1" y="9" width="2" height="3" rx="1"/><rect x="13" y="9" width="2" height="3" rx="1"/></svg></span>
+            <span class="nav-text">Contrôle Robot</span>
+        </a>
+        <a href="/admin/history" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2v5l3 3-1 1-3.5-3.5V3H8z"/></svg></span>
+            <span class="nav-text">Historique</span>
+        </a>
+        <div class="nav-label">Surveillance</div>
+        <a href="/admin/camera" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></span>
+            <span class="nav-text">Caméras</span>
+        </a>
+        <a href="/admin/map" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
+            <span class="nav-text">Navigation</span>
+        </a>
+        <a href="/admin/notifications" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg></span>
+            <span class="nav-text">Alertes</span>
+            <span class="nav-count">3</span>
+        </a>
+        <div class="nav-label">Agent</div>
+        <a href="/dashboard/security" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L2 4v5c0 4.5 3 7.5 6 8.5C11 16.5 14 13.5 14 9V4L8 1z"/></svg></span>
+            <span class="nav-text">Vue Agent</span>
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <div class="user-row">
+            <div class="user-av"><%= user.name.charAt(0).toUpperCase() %></div>
+            <div>
+                <div class="user-name-s"><%= user.name %></div>
+                <div class="user-role-s">Administrateur</div>
+            </div>
+        </div>
+        <a href="/logout" class="nav-item" style="color:#555;">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3v-1.5H3.5v-9H6V2zm4.5 3.5L13 8l-2.5 2.5-1-1L11 8H6V6.5h5l-1.5-1.5 1-1z"/></svg></span>
+            <span class="nav-text">Déconnexion</span>
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-content">
+    <div class="top-bar">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="#888"><rect y="3" width="18" height="2"/><rect y="8" width="18" height="2"/><rect y="13" width="18" height="2"/></svg>
+        <span class="topbar-title">Contrôle Robot</span>
+        <div class="topbar-right">
+            <span class="admin-pill">ADMIN</span>
+            <a href="/notifications" class="topbar-bell">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="#888"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg>
+                <div class="bell-badge">3</div>
+            </a>
+            <a href="/dashboard/settings" class="topbar-user"><div class="user-dot"></div><%= user.name %></a>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>Contrôle Robot</h1>
+                <p>YURA-001 — Commandes directes et supervision</p>
+            </div>
+            <div class="status-online">
+                <div class="status-online-dot"></div>
+                YURA-001 EN LIGNE
+            </div>
+        </div>
+
+        <!-- ROW 1: Dpad + Zones -->
+        <div class="grid-main">
+
+            <!-- DPAD + CMDS -->
+            <div class="card">
+                <div class="card-title">
+                    Commandes Directionnelles
+                    <span class="card-badge" id="lastCmdBadge">En attente</span>
+                </div>
+
+                <!-- DPAD -->
+                <div class="dpad-wrap">
+                    <div class="dpad-row">
+                        <div style="width:56px"></div>
+                        <button class="dpad-btn" onclick="sendCmd('avancer')" title="Avancer [↑]">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 16V4M4 10l6-6 6 6"/></svg>
+                        </button>
+                        <div style="width:56px"></div>
+                    </div>
+                    <div class="dpad-row">
+                        <button class="dpad-btn" onclick="sendCmd('gauche')" title="Gauche [←]">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10h12M4 10l6-6M4 10l6 6"/></svg>
+                        </button>
+                        <button class="dpad-btn stop-big" onclick="sendCmd('stop')">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="10" height="10" rx="1"/></svg>
+                            STOP
+                        </button>
+                        <button class="dpad-btn" onclick="sendCmd('droite')" title="Droite [→]">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 10H4M16 10l-6-6M16 10l-6 6"/></svg>
+                        </button>
+                    </div>
+                    <div class="dpad-row">
+                        <div style="width:56px"></div>
+                        <button class="dpad-btn" onclick="sendCmd('reculer')" title="Reculer [↓]">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 4v12M4 10l6 6 6-6"/></svg>
+                        </button>
+                        <div style="width:56px"></div>
+                    </div>
+                </div>
+
+                <!-- SPEED -->
+                <div class="speed-wrap">
+                    <div class="speed-label">
+                        <span>Vitesse</span>
+                        <span class="speed-val" id="speedVal">50%</span>
+                    </div>
+                    <input type="range" min="0" max="100" value="50" id="speedSlider" oninput="updateSpeed(this.value)">
+                </div>
+
+                <!-- QUICK CMDS -->
+                <div class="card-title" style="margin-top:16px;">Modes</div>
+                <div class="quick-grid">
+                    <button class="cmd-btn" onclick="sendCmd('patrouille')">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+                        Patrouille
+                    </button>
+                    <button class="cmd-btn" onclick="sendCmd('base')">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 8l7-6 7 6M2 8v7h4V11h4v4h4V8"/></svg>
+                        Base
+                    </button>
+                    <button class="cmd-btn" onclick="sendCmd('scanner')">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M1 8h2M13 8h2M8 1v2M8 13v2"/></svg>
+                        Scanner
+                    </button>
+                    <button class="cmd-btn" onclick="sendCmd('charger')">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1l-5 7h5l-5 7"/></svg>
+                        Charger
+                    </button>
+                    <button class="cmd-btn" onclick="sendCmd('verrouiller')">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="10" height="8" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg>
+                        Verrouil.
+                    </button>
+                    <button class="cmd-btn" onclick="sendCmd('urgence')" style="border-color:rgba(192,57,43,0.3);color:var(--rouge-light);">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1L1 14h14L8 1zm0 5v4M8 11v1"/></svg>
+                        Urgence
+                    </button>
+                </div>
+            </div>
+
+            <!-- ZONE PLAN -->
+            <div class="card">
+                <div class="card-title">
+                    Plan des Zones
+                    <span class="card-badge" style="background:rgba(59,130,246,0.12);color:#3b82f6;border-color:rgba(59,130,246,0.25);" id="robotZone">Zone B</span>
+                </div>
+                <div class="zone-plan">
+                    <div class="zone-plan-grid"></div>
+                    <div class="zone-box zone-a" onclick="sendToZone('Zone A')">
+                        <div class="zone-box-label">Zone A</div>
+                        <div class="zone-box-name">Entrée</div>
+                    </div>
+                    <div class="zone-box zone-b" onclick="sendToZone('Zone B')">
+                        <div class="zone-box-label">Zone B</div>
+                        <div class="zone-box-name">Bureau</div>
+                    </div>
+                    <div class="zone-box zone-c" onclick="sendToZone('Zone C')">
+                        <div class="zone-box-label">Zone C</div>
+                        <div class="zone-box-name">Entrepôt</div>
+                    </div>
+                    <div class="zone-box zone-d" onclick="sendToZone('Zone D')">
+                        <div class="zone-box-label">Zone D</div>
+                        <div class="zone-box-name">Parking</div>
+                    </div>
+                    <div class="zone-box zone-e" onclick="sendToZone('Zone E')">
+                        <div class="zone-box-label">Zone E</div>
+                        <div class="zone-box-name">Toit</div>
+                    </div>
+                    <!-- Robot marker -->
+                    <div class="robot-marker" id="robotMarker" style="left:160px;top:30px;"></div>
+                </div>
+                <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+                    <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:#27ae60;">
+                        <div style="width:8px;height:8px;background:#27ae60;border-radius:2px;"></div>Active
+                    </div>
+                    <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:#3b82f6;">
+                        <div style="width:8px;height:8px;background:#3b82f6;border-radius:2px;"></div>Patrouille
+                    </div>
+                    <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:#555;">
+                        <div style="width:8px;height:8px;background:#333;border-radius:2px;"></div>Inactive
+                    </div>
+                    <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:var(--rouge-light);margin-left:auto;">
+                        <div style="width:8px;height:8px;background:var(--rouge);border-radius:50%;"></div>Robot
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 2: Logs -->
+        <div class="card">
+            <div class="card-title">
+                Journal des Commandes
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <span style="font-size:0.65rem;color:var(--gris);" id="logCount">0 commandes</span>
+                    <button onclick="clearLogs()" style="font-size:0.65rem;padding:3px 8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:5px;color:#666;cursor:pointer;">Vider</button>
+                </div>
+            </div>
+            <div class="logs-wrap" id="logsWrap">
+                <div class="log-empty" id="logEmpty">Aucune commande envoyée</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+let logCount = 0;
+let speed = 50;
+
+// SPEED
+function updateSpeed(val) {
+    speed = val;
+    document.getElementById('speedVal').textContent = val + '%';
+}
+
+// SEND CMD
+function sendCmd(cmd) {
+    // UI feedback
+    const badge = document.getElementById('lastCmdBadge');
+    badge.textContent = cmd.toUpperCase();
+    badge.style.background = 'rgba(39,174,96,0.15)';
+    badge.style.color = '#27ae60';
+    badge.style.borderColor = 'rgba(39,174,96,0.3)';
+    setTimeout(() => {
+        badge.style.background = '';
+        badge.style.color = '';
+        badge.style.borderColor = '';
+    }, 2000);
+
+    // Add log
+    addLog(cmd, 'manual');
+
+    // Show feedback
+    showFeedback('Commande "' + cmd + '" envoyée');
+
+    // Fetch
+    fetch('/admin/robot/command', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: cmd, speed: speed })
+    });
+
+    // Move robot on plan
+    if (cmd === 'avancer') moveRobot(0, -20);
+    else if (cmd === 'reculer') moveRobot(0, 20);
+    else if (cmd === 'gauche')  moveRobot(-20, 0);
+    else if (cmd === 'droite')  moveRobot(20, 0);
+}
+
+// SEND TO ZONE
+function sendToZone(zone) {
+    showFeedback('Robot → ' + zone);
+    addLog('Aller à ' + zone, 'zone');
+    document.getElementById('robotZone').textContent = zone;
+    const positions = {
+        'Zone A': {left:'55px', top:'35px'},
+        'Zone B': {left:'185px', top:'45px'},
+        'Zone C': {left:'55px', top:'145px'},
+        'Zone D': {left:'175px', top:'135px'},
+        'Zone E': {left:'295px', top:'90px'}
+    };
+    if (positions[zone]) {
+        const m = document.getElementById('robotMarker');
+        m.style.left = positions[zone].left;
+        m.style.top  = positions[zone].top;
+    }
+    fetch('/admin/robot/command', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: 'goto-' + zone })
+    });
+}
+
+// MOVE ROBOT
+function moveRobot(dx, dy) {
+    const m = document.getElementById('robotMarker');
+    const plan = m.parentElement;
+    let x = parseInt(m.style.left) + dx;
+    let y = parseInt(m.style.top)  + dy;
+    x = Math.max(5, Math.min(plan.offsetWidth  - 27, x));
+    y = Math.max(5, Math.min(plan.offsetHeight - 27, y));
+    m.style.left = x + 'px';
+    m.style.top  = y + 'px';
+}
+
+// ADD LOG
+function addLog(cmd, type) {
+    logCount++;
+    document.getElementById('logCount').textContent = logCount + ' commande' + (logCount > 1 ? 's' : '');
+    document.getElementById('logEmpty').style.display = 'none';
+
+    const colors = { manual:'#27ae60', zone:'#3b82f6', system:'#f59e0b' };
+    const now = new Date();
+    const time = now.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+
+    const item = document.createElement('div');
+    item.className = 'log-item';
+    item.innerHTML = `
+        <div class="log-dot" style="background:${colors[type]||'#888'}"></div>
+        <span class="log-cmd">→ ${cmd}</span>
+        <span class="log-user" style="color:#555">Vitesse: ${speed}%</span>
+        <span class="log-time">${time}</span>
+    `;
+    const wrap = document.getElementById('logsWrap');
+    wrap.insertBefore(item, wrap.firstChild);
+}
+
+// CLEAR LOGS
+function clearLogs() {
+    logCount = 0;
+    document.getElementById('logCount').textContent = '0 commandes';
+    document.getElementById('logsWrap').innerHTML = '<div class="log-empty" id="logEmpty">Aucune commande envoyée</div>';
+}
+
+// FEEDBACK
+let feedbackTimeout;
+function showFeedback(msg) {
+    const bar = document.getElementById('feedbackBar');
+    document.getElementById('feedbackMsg').textContent = msg;
+    bar.classList.add('show');
+    clearTimeout(feedbackTimeout);
+    feedbackTimeout = setTimeout(() => bar.classList.remove('show'), 2500);
+}
+
+// KEYBOARD
+document.addEventListener('keydown', function(e) {
+    const map = { ArrowUp:'avancer', ArrowDown:'reculer', ArrowLeft:'gauche', ArrowRight:'droite', ' ':'stop' };
+    if (map[e.key]) { e.preventDefault(); sendCmd(map[e.key]); }
+});
+</script>
+</body>
+</html>

@@ -4,67 +4,550 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" href="/css/admin.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <script>
+    (function(){
+        try {
+            const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
+            if (s.darkMode === false) {
+                const st = document.createElement('style');
+                st.id = '__yuraLight';
+                st.textContent = `
+                    body { background: #f0f2f5 !important; color: #111 !important; }
+                    .sidebar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
+                    .top-bar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
+                    .main-content, .content { background: #f0f2f5 !important; }
+                    .map-card, .info-card, .stat-card { background: #fff !important; border-color: rgba(0,0,0,0.08) !important; }
+                    .nav-item { color: #555 !important; }
+                    .nav-item:hover { background: rgba(0,0,0,0.04) !important; color: #111 !important; }
+                    .nav-item.active { color: var(--rouge) !important; background: rgba(192,57,43,0.07) !important; }
+                    .logo-name, .user-name-s, h1 { color: #111 !important; }
+                    .logo-sub, .user-role-s, .topbar-title { color: #666 !important; }
+                    .topbar-user { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.2) !important; }
+                    .robot-badge { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.25) !important; }
+                    .info-val { color: #111 !important; }
+                    .info-lbl { color: #888 !important; }
+                    .log-item { border-color: rgba(0,0,0,0.05) !important; }
+                    .log-text { color: #444 !important; }
+                    .map-btn { background: rgba(0,0,0,0.05) !important; border-color: rgba(0,0,0,0.1) !important; color: #555 !important; }
+                    .stat-num { color: #111 !important; }
+                    .stat-label { color: #888 !important; }
+                `;
+                document.head.appendChild(st);
+            }
+            if (s.colorTheme === 'blue-black') {
+                document.documentElement.style.setProperty('--rouge', '#2563eb');
+                document.documentElement.style.setProperty('--rouge-light', '#3b82f6');
+                document.documentElement.style.setProperty('--border', 'rgba(37,99,235,0.18)');
+            } else if (s.colorTheme === 'green-black') {
+                document.documentElement.style.setProperty('--rouge', '#16a34a');
+                document.documentElement.style.setProperty('--rouge-light', '#22c55e');
+                document.documentElement.style.setProperty('--border', 'rgba(22,163,74,0.18)');
+            }
+        } catch(e) {}
+    })();
+    </script>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --rouge:#c0392b; --rouge-light:#e74c3c;
+            --noir:#0a0a0a; --card:#111111;
+            --border:rgba(192,57,43,0.18); --gris:#888; --gris2:#bbb;
+        }
+        body { font-family:'Segoe UI',sans-serif; background:var(--noir); color:#fff; display:flex; min-height:100vh; }
+
+        /* SIDEBAR */
+        .sidebar { width:300px; min-height:100vh; background:#0d0d0d; border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+        .logo-section { padding:20px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
+        .logo-name { font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:2px; }
+        .logo-sub { font-size:0.65rem; color:var(--gris); letter-spacing:2px; text-transform:uppercase; }
+        .admin-badge-side { margin:12px 16px 4px; padding:8px 14px; background:rgba(192,57,43,0.2); border:1px solid rgba(192,57,43,0.5); border-radius:6px; font-size:0.7rem; font-weight:800; color:var(--rouge-light); letter-spacing:2px; text-transform:uppercase; text-align:center; }
+        .robot-badge { margin:8px 16px 6px; padding:10px 16px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.4); border-radius:8px; display:flex; align-items:center; gap:10px; font-size:0.75rem; font-weight:700; color:var(--rouge-light); }
+        .badge-dot { width:8px; height:8px; background:var(--rouge-light); border-radius:50%; animation:blink 1.2s infinite; }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+        .nav-section { padding:8px 0; flex:1; overflow-y:auto; }
+        .nav-label { font-size:0.6rem; font-weight:700; color:var(--gris); letter-spacing:2px; padding:12px 18px 5px; text-transform:uppercase; }
+        .nav-item { display:flex; align-items:center; gap:13px; padding:11px 18px; color:#666; text-decoration:none; font-size:0.87rem; font-weight:500; border-left:2px solid transparent; transition:all 0.18s; }
+        .nav-item:hover { color:#fff; background:rgba(192,57,43,0.07); }
+        .nav-item.active { color:#fff; background:rgba(192,57,43,0.13); border-left-color:var(--rouge); font-weight:600; }
+        .nav-icon-wrap { width:20px; height:20px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .nav-text { flex:1; }
+        .nav-count { background:var(--rouge); color:#fff; font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:10px; }
+        .sidebar-footer { border-top:1px solid var(--border); padding:8px 0; }
+        .user-row { display:flex; align-items:center; gap:10px; padding:11px 18px; }
+        .user-av { width:34px; height:34px; background:linear-gradient(135deg,var(--rouge),#7b241c); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0; }
+        .user-name-s { font-size:0.82rem; font-weight:600; }
+        .user-role-s { font-size:0.65rem; color:var(--rouge-light); font-weight:600; }
+
+        /* MAIN */
+        .main-content { margin-left:300px; flex:1; display:flex; flex-direction:column; min-height:100vh; }
+        .top-bar { height:52px; background:#0d0d0d; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 24px; gap:12px; position:sticky; top:0; z-index:50; }
+        .topbar-title { font-size:0.78rem; color:var(--gris); letter-spacing:1.5px; text-transform:uppercase; flex:1; }
+        .topbar-right { display:flex; align-items:center; gap:10px; }
+        .topbar-bell { position:relative; cursor:pointer; text-decoration:none; }
+        .bell-badge { position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:var(--rouge); border-radius:50%; font-size:0.6rem; color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; }
+        .topbar-user { display:flex; align-items:center; gap:7px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.35); padding:5px 14px; border-radius:20px; font-size:0.75rem; font-weight:700; color:var(--rouge-light); text-decoration:none; }
+        .user-dot { width:7px; height:7px; background:var(--rouge-light); border-radius:50%; }
+        .admin-pill { background:rgba(192,57,43,0.25); border:1px solid rgba(192,57,43,0.5); padding:4px 10px; border-radius:4px; font-size:0.62rem; font-weight:800; color:var(--rouge-light); letter-spacing:1.5px; text-transform:uppercase; }
+
+        /* CONTENT */
+        .content { padding:20px 24px; flex:1; display:flex; flex-direction:column; gap:14px; }
+        .page-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+        .page-header h1 { font-size:1.6rem; font-weight:800; }
+        .page-header p { font-size:0.8rem; color:var(--gris); margin-top:3px; }
+        .gps-chip { display:flex; align-items:center; gap:7px; background:rgba(39,174,96,0.1); border:1px solid rgba(39,174,96,0.3); padding:6px 14px; border-radius:20px; font-size:0.75rem; font-weight:700; color:#27ae60; }
+        .gps-dot { width:7px; height:7px; background:#27ae60; border-radius:50%; animation:blink 1.5s infinite; }
+
+        /* STAT ROW */
+        .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+        .stat-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:11px; padding:14px 16px; position:relative; overflow:hidden; transition:all 0.2s; }
+        .stat-card:hover { border-color:rgba(192,57,43,0.25); transform:translateY(-2px); }
+        .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--rouge); }
+        .stat-card.green::before { background:#27ae60; }
+        .stat-card.blue::before  { background:#3b82f6; }
+        .stat-card.orange::before{ background:#f59e0b; }
+        .stat-num { font-size:1.5rem; font-weight:800; color:#fff; }
+        .stat-label { font-size:0.65rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; margin-top:4px; }
+        .stat-icon { position:absolute; top:12px; right:12px; opacity:0.15; }
+
+        /* MAP LAYOUT */
+        .map-layout { display:grid; grid-template-columns:1fr 300px; gap:14px; flex:1; }
+
+        /* MAP */
+        .map-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
+        .map-toolbar { display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap:wrap; }
+        .map-btn { display:flex; align-items:center; gap:5px; padding:6px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:7px; color:#888; font-size:0.73rem; font-weight:600; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+        .map-btn:hover { background:rgba(192,57,43,0.12); border-color:rgba(192,57,43,0.3); color:#fff; }
+        .map-btn.active { background:rgba(192,57,43,0.18); border-color:rgba(192,57,43,0.45); color:var(--rouge-light); }
+        .map-sep { width:1px; height:22px; background:rgba(255,255,255,0.06); margin:0 2px; }
+        #map { flex:1; min-height:380px; }
+
+        /* RIGHT PANEL */
+        .right-col { display:flex; flex-direction:column; gap:12px; }
+        .info-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:11px; padding:16px; }
+        .card-title { font-size:0.65rem; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
+        .card-badge { font-size:0.6rem; padding:3px 7px; border-radius:8px; font-weight:700; }
+        .card-badge.green { background:rgba(39,174,96,0.15); color:#27ae60; border:1px solid rgba(39,174,96,0.25); }
+        .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .info-item { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:8px; padding:10px 12px; }
+        .info-lbl { font-size:0.62rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px; }
+        .info-val { font-size:0.95rem; font-weight:700; color:#fff; }
+        .info-val.green  { color:#27ae60; }
+        .info-val.rouge  { color:var(--rouge-light); }
+        .info-val.orange { color:#f59e0b; }
+        .info-val.blue   { color:#3b82f6; }
+
+        /* WAYPOINTS */
+        .waypoints-list { display:flex; flex-direction:column; gap:0; }
+        .wp-item { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .wp-item:last-child { border-bottom:none; }
+        .wp-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+        .wp-dot.done { background:#27ae60; box-shadow:0 0 5px rgba(39,174,96,0.5); }
+        .wp-dot.current { background:var(--rouge); box-shadow:0 0 5px rgba(192,57,43,0.7); animation:blink 1s infinite; }
+        .wp-dot.pending { background:#333; border:1px solid #444; }
+        .wp-name { font-size:0.78rem; flex:1; }
+        .wp-name.done { color:#555; text-decoration:line-through; }
+        .wp-name.current { color:#fff; font-weight:600; }
+        .wp-name.pending { color:#444; }
+        .wp-dist { font-size:0.65rem; color:var(--gris); }
+
+        /* LOGS */
+        .log-list { max-height:180px; overflow-y:auto; }
+        .log-list::-webkit-scrollbar { width:3px; }
+        .log-list::-webkit-scrollbar-thumb { background:rgba(192,57,43,0.3); border-radius:2px; }
+        .log-item { display:flex; align-items:flex-start; gap:8px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .log-item:last-child { border-bottom:none; }
+        .log-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+        .log-text { font-size:0.75rem; color:#777; flex:1; line-height:1.4; }
+        .log-time { font-size:0.62rem; color:#444; flex-shrink:0; }
+
+        /* ROBOT MARKER */
+        .robot-marker-icon { background:transparent; border:none; }
+
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        .stat-card { animation:fadeInUp 0.3s ease both; }
+        .stat-card:nth-child(1){animation-delay:0.04s}
+        .stat-card:nth-child(2){animation-delay:0.08s}
+        .stat-card:nth-child(3){animation-delay:0.12s}
+        .stat-card:nth-child(4){animation-delay:0.16s}
+        .map-card { animation:fadeInUp 0.35s ease both; }
+    </style>
 </head>
 <body>
-    <div class="admin-container">
-        <%- include('../partials/admin-sidebar') %>
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="top-bar-left">
-                    <h1>Map</h1>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo-section">
+        <img src="/images/logo robot.png" alt="YURA" style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
+        <div>
+            <div class="logo-name">YURA</div>
+            <div class="logo-sub">Guardian System</div>
+        </div>
+    </div>
+    <div class="admin-badge-side">⚡ ADMIN PANEL</div>
+    <div class="robot-badge">
+        <div class="badge-dot"></div>
+        <span>ROBOT EN LIGNE</span>
+    </div>
+    <div class="nav-section">
+        <div class="nav-label">Administration</div>
+        <a href="/admin/dashboard" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></span>
+            <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="/admin/users" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><circle cx="6" cy="5" r="3"/><path d="M0 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="13" cy="5" r="2.5"/><path d="M13 10c1.7 0 3 1.3 3 3"/></svg></span>
+            <span class="nav-text">Utilisateurs</span>
+        </a>
+        <a href="/admin/robot" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><rect x="4" y="2" width="8" height="6" rx="1"/><rect x="3" y="8" width="10" height="5" rx="1"/><circle cx="6" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><rect x="1" y="9" width="2" height="3" rx="1"/><rect x="13" y="9" width="2" height="3" rx="1"/></svg></span>
+            <span class="nav-text">Contrôle Robot</span>
+        </a>
+        <a href="/admin/history" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2v5l3 3-1 1-3.5-3.5V3H8z"/></svg></span>
+            <span class="nav-text">Historique</span>
+        </a>
+        <div class="nav-label">Surveillance</div>
+        <a href="/admin/camera" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></span>
+            <span class="nav-text">Caméras</span>
+        </a>
+        <a href="/admin/map" class="nav-item active">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
+            <span class="nav-text">Navigation</span>
+        </a>
+        <a href="/notifications" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg></span>
+            <span class="nav-text">Alertes</span>
+            <span class="nav-count">3</span>
+        </a>
+        <div class="nav-label">Agent</div>
+        <a href="/dashboard/security" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L2 4v5c0 4.5 3 7.5 6 8.5C11 16.5 14 13.5 14 9V4L8 1z"/></svg></span>
+            <span class="nav-text">Vue Agent</span>
+        </a>
+    </div>
+    <div class="sidebar-footer">
+        <div class="user-row">
+            <div class="user-av"><%= user.name.charAt(0).toUpperCase() %></div>
+            <div>
+                <div class="user-name-s"><%= user.name %></div>
+                <div class="user-role-s">Administrateur</div>
+            </div>
+        </div>
+        <a href="/logout" class="nav-item" style="color:#555;">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3v-1.5H3.5v-9H6V2zm4.5 3.5L13 8l-2.5 2.5-1-1L11 8H6V6.5h5l-1.5-1.5 1-1z"/></svg></span>
+            <span class="nav-text">Déconnexion</span>
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-content">
+    <div class="top-bar">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="#888"><rect y="3" width="18" height="2"/><rect y="8" width="18" height="2"/><rect y="13" width="18" height="2"/></svg>
+        <span class="topbar-title">Navigation & Position</span>
+        <div class="topbar-right">
+            <span class="admin-pill">ADMIN</span>
+            <a href="/notifications" class="topbar-bell">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="#888"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg>
+                <div class="bell-badge">3</div>
+            </a>
+            <a href="/dashboard/settings" class="topbar-user"><div class="user-dot"></div><%= user.name %></a>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>Navigation</h1>
+                <p>Position GPS et trajectoire YURA-001</p>
+            </div>
+            <div class="gps-chip">
+                <div class="gps-dot"></div>
+                GPS ACTIF — Signal fort
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stat-row">
+            <div class="stat-card">
+                <div class="stat-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="white"><path d="M16 2a9 9 0 00-9 9c0 7 9 19 9 19s9-12 9-19a9 9 0 00-9-9zm0 12a3 3 0 110-6 3 3 0 010 6z"/></svg></div>
+                <div class="stat-num" id="statLat">36.8065°</div>
+                <div class="stat-label">Latitude</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="white"><path d="M16 2a9 9 0 00-9 9c0 7 9 19 9 19s9-12 9-19a9 9 0 00-9-9zm0 12a3 3 0 110-6 3 3 0 010 6z"/></svg></div>
+                <div class="stat-num" id="statLng">10.1815°</div>
+                <div class="stat-label">Longitude</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="white"><path d="M16 4l3 9h9l-7 5 3 9-8-6-8 6 3-9-7-5h9z"/></svg></div>
+                <div class="stat-num" id="statSpeed">0.8 km/h</div>
+                <div class="stat-label">Vitesse</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="white"><path d="M16 2a7 7 0 100 14A7 7 0 0016 2zm0 2v5l3 3-1.4 1.4L14 10V4h2z"/></svg></div>
+                <div class="stat-num" id="statDuration">00:24:17</div>
+                <div class="stat-label">Durée patrouille</div>
+            </div>
+        </div>
+
+        <!-- MAP + RIGHT -->
+        <div class="map-layout">
+            <div class="map-card">
+                <div class="map-toolbar">
+                    <button class="map-btn" onclick="centerOnRobot()">
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="4"/><line x1="6.5" y1="1" x2="6.5" y2="3"/><line x1="6.5" y1="10" x2="6.5" y2="12"/><line x1="1" y1="6.5" x2="3" y2="6.5"/><line x1="10" y1="6.5" x2="12" y2="6.5"/></svg>
+                        Centrer
+                    </button>
+                    <button class="map-btn" id="trajBtn" onclick="toggleTrajectory()">
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 10C3 6 5 8 7 4s4-3 5-2"/></svg>
+                        Trajectoire
+                    </button>
+                    <button class="map-btn" onclick="addWaypoint()">
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6.5" cy="5" r="3"/><line x1="6.5" y1="1" x2="6.5" y2="3"/><line x1="6.5" y1="7" x2="6.5" y2="12"/></svg>
+                        Waypoint
+                    </button>
+                    <div class="map-sep"></div>
+                    <button class="map-btn" onclick="clearWaypoints()">
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="11" y2="11"/><line x1="11" y1="2" x2="2" y2="11"/></svg>
+                        Effacer
+                    </button>
+                    <button class="map-btn" onclick="locateMe()" style="margin-left:auto;">
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 1a5 5 0 00-5 5c0 3.9 5 7 5 7s5-3.1 5-7a5 5 0 00-5-5zm0 7a2 2 0 110-4 2 2 0 010 4z"/></svg>
+                        Ma position
+                    </button>
                 </div>
-            </header>
-            <div class="content-wrapper">
-                <div class="map-section">
-                    <div class="map-side-controls">
-                        <button class="ctrl-btn start-btn" onclick="locateMe()">📍 Ma position</button>
-                        <button class="ctrl-btn stop-btn" onclick="resetMap()">🔄 Reset</button>
+                <div id="map"></div>
+            </div>
+
+            <!-- RIGHT COL -->
+            <div class="right-col">
+                <!-- GPS INFO -->
+                <div class="info-card">
+                    <div class="card-title">
+                        Données GPS
+                        <span class="card-badge green">EN LIGNE</span>
                     </div>
-                    <div class="map-view">
-                        <div id="map" style="width:100%; height:100%; border-radius:12px;"></div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-lbl">Altitude</div>
+                            <div class="info-val blue">12 m</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-lbl">Direction</div>
+                            <div class="info-val" id="dirVal">NE 47°</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-lbl">Précision GPS</div>
+                            <div class="info-val green">±1.2 m</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-lbl">Satellites</div>
+                            <div class="info-val">9</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-lbl">Distance totale</div>
+                            <div class="info-val orange" id="distVal">0.34 km</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-lbl">Zone actuelle</div>
+                            <div class="info-val rouge">Zone B</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WAYPOINTS -->
+                <div class="info-card">
+                    <div class="card-title">Plan de Patrouille</div>
+                    <div class="waypoints-list">
+                        <div class="wp-item">
+                            <div class="wp-dot done"></div>
+                            <span class="wp-name done">Zone A — Entrée</span>
+                            <span class="wp-dist">✓</span>
+                        </div>
+                        <div class="wp-item">
+                            <div class="wp-dot current"></div>
+                            <span class="wp-name current">Zone B — Bureau</span>
+                            <span class="wp-dist">En cours</span>
+                        </div>
+                        <div class="wp-item">
+                            <div class="wp-dot pending"></div>
+                            <span class="wp-name pending">Zone C — Entrepôt</span>
+                            <span class="wp-dist">~80m</span>
+                        </div>
+                        <div class="wp-item">
+                            <div class="wp-dot pending"></div>
+                            <span class="wp-name pending">Zone D — Parking</span>
+                            <span class="wp-dist">~150m</span>
+                        </div>
+                        <div class="wp-item">
+                            <div class="wp-dot pending"></div>
+                            <span class="wp-name pending">Base — Recharge</span>
+                            <span class="wp-dist">~220m</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LOGS -->
+                <div class="info-card">
+                    <div class="card-title">Journal Navigation</div>
+                    <div class="log-list" id="navLog">
+                        <div class="log-item">
+                            <div class="log-dot" style="background:#27ae60"></div>
+                            <span class="log-text">Zone A complétée — aucune anomalie</span>
+                            <span class="log-time">09:12</span>
+                        </div>
+                        <div class="log-item">
+                            <div class="log-dot" style="background:#3b82f6"></div>
+                            <span class="log-text">Démarrage patrouille Zone B</span>
+                            <span class="log-time">09:18</span>
+                        </div>
+                        <div class="log-item">
+                            <div class="log-dot" style="background:#f59e0b"></div>
+                            <span class="log-text">Vitesse réduite — obstacle détecté</span>
+                            <span class="log-time">09:22</span>
+                        </div>
+                        <div class="log-item">
+                            <div class="log-dot" style="background:var(--rouge)"></div>
+                            <span class="log-text">Température 42°C — surveillance accrue</span>
+                            <span class="log-time">09:30</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        // Default: Tunis, Tunisia
-        const defaultLat = 36.8065, defaultLng = 10.1815;
-        const map = L.map('map').setView([defaultLat, defaultLng], 13);
+</div>
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// MAP INIT
+const map = L.map('map', { zoomControl: false }).setView([36.8065, 10.1815], 17);
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '©OpenStreetMap ©CARTO', maxZoom: 20
+}).addTo(map);
+
+// ROBOT MARKER
+const robotIcon = L.divIcon({
+    className: 'robot-marker-icon',
+    html: `<div style="width:20px;height:20px;background:#c0392b;border-radius:50%;border:3px solid #e74c3c;box-shadow:0 0 14px rgba(192,57,43,0.9);position:relative;">
+        <div style="position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(192,57,43,0.5);animation:ping 1.5s infinite;"></div>
+    </div>`,
+    iconSize: [20, 20], iconAnchor: [10, 10]
+});
+
+let robotPos = [36.8065, 10.1815];
+const robotMarker = L.marker(robotPos, { icon: robotIcon }).addTo(map);
+robotMarker.bindPopup('<b style="color:#c0392b">YURA-001</b><br>Zone B — Bureau<br>Vitesse: 0.8 km/h');
+
+// TRAJECTORY
+let trajectoryPoints = [
+    [36.8060, 10.1810],
+    [36.8062, 10.1812],
+    [36.8064, 10.1814],
+    [36.8065, 10.1815]
+];
+let trajectoryLine = null;
+let showTraj = false;
+
+function toggleTrajectory() {
+    showTraj = !showTraj;
+    document.getElementById('trajBtn').classList.toggle('active', showTraj);
+    if (showTraj) {
+        trajectoryLine = L.polyline(trajectoryPoints, {
+            color: '#c0392b', weight: 2.5, opacity: 0.7, dashArray: '6,4'
         }).addTo(map);
+    } else {
+        if (trajectoryLine) { map.removeLayer(trajectoryLine); trajectoryLine = null; }
+    }
+}
 
-        const robotIcon = L.divIcon({
-            html: '<div style="font-size:2rem; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));">🤖</div>',
-            iconSize: [40, 40],
-            iconAnchor: [20, 40],
-            className: ''
+// WAYPOINTS
+let waypoints = [];
+let wpMarkers = [];
+
+function addWaypoint() {
+    const center = map.getCenter();
+    const wp = [center.lat, center.lng];
+    waypoints.push(wp);
+    const icon = L.divIcon({
+        className: '',
+        html: `<div style="width:12px;height:12px;background:#3b82f6;border-radius:50%;border:2px solid #60a5fa;box-shadow:0 0 8px rgba(59,130,246,0.7);"></div>`,
+        iconSize: [12,12], iconAnchor: [6,6]
+    });
+    wpMarkers.push(L.marker(wp, {icon}).addTo(map).bindPopup('Waypoint ' + waypoints.length));
+    addLog('Waypoint ' + waypoints.length + ' ajouté', '#3b82f6');
+}
+
+function clearWaypoints() {
+    wpMarkers.forEach(m => map.removeLayer(m));
+    wpMarkers = []; waypoints = [];
+    addLog('Waypoints effacés', '#888');
+}
+
+function centerOnRobot() {
+    map.setView(robotPos, 18, { animate: true });
+}
+
+function locateMe() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            const latlng = [pos.coords.latitude, pos.coords.longitude];
+            map.setView(latlng, 16, { animate: true });
+            L.marker(latlng).addTo(map).bindPopup('Votre position').openPopup();
         });
+    }
+}
 
-        let robotMarker = L.marker([defaultLat, defaultLng], {icon: robotIcon})
-            .addTo(map)
-            .bindPopup('<b>Robot YURA</b><br>Position actuelle')
-            .openPopup();
+// ADD LOG
+function addLog(text, color) {
+    const now = new Date();
+    const time = now.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+    const log = document.getElementById('navLog');
+    const item = document.createElement('div');
+    item.className = 'log-item';
+    item.innerHTML = `<div class="log-dot" style="background:${color}"></div><span class="log-text">${text}</span><span class="log-time">${time}</span>`;
+    log.insertBefore(item, log.firstChild);
+}
 
-        function locateMe() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    const lat = pos.coords.latitude, lng = pos.coords.longitude;
-                    robotMarker.setLatLng([lat, lng]);
-                    map.setView([lat, lng], 15);
-                });
-            }
-        }
+// ROBOT MOVEMENT
+let angle = 0;
+let dist = 0.34;
+let duration = 24 * 60 + 17;
+const dirs = ['N 0°','NE 47°','E 90°','SE 135°','S 180°','SO 225°','O 270°','NO 315°'];
+let dirIdx = 1;
 
-        function resetMap() {
-            robotMarker.setLatLng([defaultLat, defaultLng]);
-            map.setView([defaultLat, defaultLng], 13);
-        }
-    </script>
+setInterval(function() {
+    angle += 0.001;
+    robotPos = [
+        36.8065 + Math.sin(angle) * 0.0003,
+        10.1815 + Math.cos(angle) * 0.0003
+    ];
+    robotMarker.setLatLng(robotPos);
+    trajectoryPoints.push([...robotPos]);
+    if (trajectoryLine) trajectoryLine.setLatLngs(trajectoryPoints);
+
+    const speed = (0.5 + Math.random() * 0.8).toFixed(1);
+    dist = (dist + 0.001).toFixed(3);
+    duration++;
+
+    const h = Math.floor(duration/3600).toString().padStart(2,'0');
+    const m = Math.floor((duration%3600)/60).toString().padStart(2,'0');
+    const s = (duration%60).toString().padStart(2,'0');
+
+    document.getElementById('statLat').textContent    = robotPos[0].toFixed(4) + '°';
+    document.getElementById('statLng').textContent    = robotPos[1].toFixed(4) + '°';
+    document.getElementById('statSpeed').textContent  = speed + ' km/h';
+    document.getElementById('statDuration').textContent = h + ':' + m + ':' + s;
+    document.getElementById('distVal').textContent    = dist + ' km';
+    dirIdx = (dirIdx + (Math.random() > 0.95 ? 1 : 0)) % dirs.length;
+    document.getElementById('dirVal').textContent     = dirs[dirIdx];
+}, 3000);
+</script>
 </body>
 </html>

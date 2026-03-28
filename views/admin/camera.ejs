@@ -187,10 +187,7 @@
         </div>
     </div>
     <div class="admin-badge-side">⚡ ADMIN PANEL</div>
-    <div class="robot-badge">
-        <div class="badge-dot"></div>
-        <span>ROBOT EN LIGNE</span>
-    </div>
+    <div class="robot-badge"><div class="badge-dot"></div><span>ROBOT EN LIGNE</span></div>
     <div class="nav-section">
         <div class="nav-label">Administration</div>
         <a href="/admin/dashboard" class="nav-item">
@@ -210,7 +207,7 @@
             <span class="nav-text">Historique</span>
         </a>
         <div class="nav-label">Surveillance</div>
-        <a href="/admin/camera" class="nav-item active">
+        <a href="/admin/camera" class="nav-item">
             <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></span>
             <span class="nav-text">Caméras</span>
         </a>
@@ -223,11 +220,13 @@
             <span class="nav-text">Alertes</span>
             <span class="nav-count">3</span>
         </a>
-        <div class="nav-label">Agent</div>
-        <a href="/dashboard/security" class="nav-item">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L2 4v5c0 4.5 3 7.5 6 8.5C11 16.5 14 13.5 14 9V4L8 1z"/></svg></span>
-            <span class="nav-text">Vue Agent</span>
+        <div class="nav-label"></div>
+        <a href="/admin/settings" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a3 3 0 100 6A3 3 0 008 5zM2 8a6 6 0 1112 0A6 6 0 012 8z"/><path d="M7 1h2v2H7zM7 13h2v2H7zM1 7h2v2H1zM13 7h2v2h-2z"/></svg></span>
+            <span class="nav-text">Paramètres</span>
         </a>
+        
+       
     </div>
     <div class="sidebar-footer">
         <div class="user-row">
@@ -243,7 +242,6 @@
         </a>
     </div>
 </aside>
-
 <!-- MAIN -->
 <div class="main-content">
     <div class="top-bar">
@@ -251,7 +249,7 @@
         <span class="topbar-title">Surveillance Caméras</span>
         <div class="topbar-right">
             <span class="admin-pill">ADMIN</span>
-            <a href="/notifications" class="topbar-bell">
+            <a href="/admin/notifications" class="topbar-bell">
                 <svg width="18" height="18" viewBox="0 0 16 16" fill="#888"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg>
                 <div class="bell-badge">3</div>
             </a>

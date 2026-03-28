@@ -182,6 +182,7 @@
 </div>
 
 <!-- SIDEBAR -->
+<!-- SIDEBAR -->
 <aside class="sidebar">
     <div class="logo-section">
         <img src="/images/logo robot.png" alt="YURA" style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
@@ -191,10 +192,7 @@
         </div>
     </div>
     <div class="admin-badge-side">⚡ ADMIN PANEL</div>
-    <div class="robot-badge">
-        <div class="badge-dot"></div>
-        <span>ROBOT EN LIGNE</span>
-    </div>
+    <div class="robot-badge"><div class="badge-dot"></div><span>ROBOT EN LIGNE</span></div>
     <div class="nav-section">
         <div class="nav-label">Administration</div>
         <a href="/admin/dashboard" class="nav-item">
@@ -205,7 +203,7 @@
             <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><circle cx="6" cy="5" r="3"/><path d="M0 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="13" cy="5" r="2.5"/><path d="M13 10c1.7 0 3 1.3 3 3"/></svg></span>
             <span class="nav-text">Utilisateurs</span>
         </a>
-        <a href="/admin/robot" class="nav-item active">
+        <a href="/admin/robot" class="nav-item">
             <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><rect x="4" y="2" width="8" height="6" rx="1"/><rect x="3" y="8" width="10" height="5" rx="1"/><circle cx="6" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><rect x="1" y="9" width="2" height="3" rx="1"/><rect x="13" y="9" width="2" height="3" rx="1"/></svg></span>
             <span class="nav-text">Contrôle Robot</span>
         </a>
@@ -227,10 +225,10 @@
             <span class="nav-text">Alertes</span>
             <span class="nav-count">3</span>
         </a>
-        <div class="nav-label">Agent</div>
-        <a href="/dashboard/security" class="nav-item">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L2 4v5c0 4.5 3 7.5 6 8.5C11 16.5 14 13.5 14 9V4L8 1z"/></svg></span>
-            <span class="nav-text">Vue Agent</span>
+        <div class="nav-label"></div>
+        <a href="/admin/settings" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a3 3 0 100 6A3 3 0 008 5zM2 8a6 6 0 1112 0A6 6 0 012 8z"/><path d="M7 1h2v2H7zM7 13h2v2H7zM1 7h2v2H1zM13 7h2v2h-2z"/></svg></span>
+            <span class="nav-text">Paramètres</span>
         </a>
     </div>
     <div class="sidebar-footer">
@@ -255,7 +253,7 @@
         <span class="topbar-title">Contrôle Robot</span>
         <div class="topbar-right">
             <span class="admin-pill">ADMIN</span>
-            <a href="/notifications" class="topbar-bell">
+            <a href="/admin/notifications" class="topbar-bell">
                 <svg width="18" height="18" viewBox="0 0 16 16" fill="#888"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg>
                 <div class="bell-badge">3</div>
             </a>
@@ -353,6 +351,7 @@
                         Urgence
                     </button>
                 </div>
+         
             </div>
 
             <!-- ZONE PLAN -->
@@ -424,57 +423,41 @@
 let logCount = 0;
 let speed = 50;
 
-// SPEED
 function updateSpeed(val) {
     speed = val;
     document.getElementById('speedVal').textContent = val + '%';
 }
 
-// SEND CMD
 function sendCmd(cmd) {
-    // UI feedback
     const badge = document.getElementById('lastCmdBadge');
     badge.textContent = cmd.toUpperCase();
-    badge.style.background = 'rgba(39,174,96,0.15)';
-    badge.style.color = '#27ae60';
-    badge.style.borderColor = 'rgba(39,174,96,0.3)';
-    setTimeout(() => {
-        badge.style.background = '';
-        badge.style.color = '';
-        badge.style.borderColor = '';
-    }, 2000);
+    setTimeout(() => { badge.textContent = 'En attente'; }, 2000);
 
-    // Add log
     addLog(cmd, 'manual');
-
-    // Show feedback
     showFeedback('Commande "' + cmd + '" envoyée');
 
-    // Fetch
+    if (cmd === 'avancer')      moveRobot(0, -20);
+    else if (cmd === 'reculer') moveRobot(0, 20);
+    else if (cmd === 'gauche')  moveRobot(-20, 0);
+    else if (cmd === 'droite')  moveRobot(20, 0);
+
     fetch('/admin/robot/command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ command: cmd, speed: speed })
-    });
-
-    // Move robot on plan
-    if (cmd === 'avancer') moveRobot(0, -20);
-    else if (cmd === 'reculer') moveRobot(0, 20);
-    else if (cmd === 'gauche')  moveRobot(-20, 0);
-    else if (cmd === 'droite')  moveRobot(20, 0);
+    }).catch(() => {});
 }
 
-// SEND TO ZONE
 function sendToZone(zone) {
     showFeedback('Robot → ' + zone);
     addLog('Aller à ' + zone, 'zone');
     document.getElementById('robotZone').textContent = zone;
     const positions = {
-        'Zone A': {left:'55px', top:'35px'},
-        'Zone B': {left:'185px', top:'45px'},
-        'Zone C': {left:'55px', top:'145px'},
-        'Zone D': {left:'175px', top:'135px'},
-        'Zone E': {left:'295px', top:'90px'}
+        'Zone A': { left:'55px',  top:'35px'  },
+        'Zone B': { left:'185px', top:'45px'  },
+        'Zone C': { left:'55px',  top:'145px' },
+        'Zone D': { left:'175px', top:'135px' },
+        'Zone E': { left:'295px', top:'90px'  }
     };
     if (positions[zone]) {
         const m = document.getElementById('robotMarker');
@@ -485,10 +468,9 @@ function sendToZone(zone) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ command: 'goto-' + zone })
-    });
+    }).catch(() => {});
 }
 
-// MOVE ROBOT
 function moveRobot(dx, dy) {
     const m = document.getElementById('robotMarker');
     const plan = m.parentElement;
@@ -500,16 +482,12 @@ function moveRobot(dx, dy) {
     m.style.top  = y + 'px';
 }
 
-// ADD LOG
 function addLog(cmd, type) {
     logCount++;
     document.getElementById('logCount').textContent = logCount + ' commande' + (logCount > 1 ? 's' : '');
     document.getElementById('logEmpty').style.display = 'none';
-
     const colors = { manual:'#27ae60', zone:'#3b82f6', system:'#f59e0b' };
-    const now = new Date();
-    const time = now.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-
+    const time = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
     const item = document.createElement('div');
     item.className = 'log-item';
     item.innerHTML = `
@@ -522,14 +500,12 @@ function addLog(cmd, type) {
     wrap.insertBefore(item, wrap.firstChild);
 }
 
-// CLEAR LOGS
 function clearLogs() {
     logCount = 0;
     document.getElementById('logCount').textContent = '0 commandes';
     document.getElementById('logsWrap').innerHTML = '<div class="log-empty" id="logEmpty">Aucune commande envoyée</div>';
 }
 
-// FEEDBACK
 let feedbackTimeout;
 function showFeedback(msg) {
     const bar = document.getElementById('feedbackBar');
@@ -539,7 +515,6 @@ function showFeedback(msg) {
     feedbackTimeout = setTimeout(() => bar.classList.remove('show'), 2500);
 }
 
-// KEYBOARD
 document.addEventListener('keydown', function(e) {
     const map = { ArrowUp:'avancer', ArrowDown:'reculer', ArrowLeft:'gauche', ArrowRight:'droite', ' ':'stop' };
     if (map[e.key]) { e.preventDefault(); sendCmd(map[e.key]); }

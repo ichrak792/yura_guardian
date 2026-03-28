@@ -31,6 +31,7 @@
                     .mini-stat { background: #f5f5f5 !important; border-color: rgba(0,0,0,0.06) !important; }
                     .zone-row { border-color: rgba(0,0,0,0.05) !important; }
                     .zone-name { color: #333 !important; }
+                    .alert-mini-text { color: #333 !important; }
                 `;
                 document.head.appendChild(st);
             }
@@ -42,6 +43,12 @@
                 document.documentElement.style.setProperty('--rouge', '#16a34a');
                 document.documentElement.style.setProperty('--rouge-light', '#22c55e');
                 document.documentElement.style.setProperty('--border', 'rgba(22,163,74,0.18)');
+            }
+            if (!s.animations) {
+                const na = document.createElement('style');
+                na.id = '__noAnim';
+                na.textContent = '* { animation: none !important; transition: none !important; }';
+                document.head.appendChild(na);
             }
         } catch(e) {}
     })();
@@ -55,14 +62,13 @@
         }
         body { font-family:'Segoe UI',sans-serif; background:var(--noir); color:#fff; display:flex; min-height:100vh; }
 
-        /* SIDEBAR */
         .sidebar { width:300px; min-height:100vh; background:#0d0d0d; border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:100; }
         .logo-section { padding:20px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
         .logo-name { font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:2px; }
         .logo-sub { font-size:0.65rem; color:var(--gris); letter-spacing:2px; text-transform:uppercase; }
         .admin-badge-side { margin:12px 16px 4px; padding:8px 14px; background:rgba(192,57,43,0.2); border:1px solid rgba(192,57,43,0.5); border-radius:6px; font-size:0.7rem; font-weight:800; color:var(--rouge-light); letter-spacing:2px; text-transform:uppercase; text-align:center; }
         .robot-badge { margin:8px 16px 6px; padding:10px 16px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.4); border-radius:8px; display:flex; align-items:center; gap:10px; font-size:0.75rem; font-weight:700; color:var(--rouge-light); }
-        .badge-dot { width:8px; height:8px; background:var(--rouge-light); border-radius:50%; animation:blink 1.2s infinite; }
+        .badge-dot { width:8px; height:8px; background:var(--rouge-light); border-radius:50%; animation:blink 1.2s infinite; flex-shrink:0; }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
         .nav-section { padding:8px 0; flex:1; overflow-y:auto; }
         .nav-label { font-size:0.6rem; font-weight:700; color:var(--gris); letter-spacing:2px; padding:12px 18px 5px; text-transform:uppercase; }
@@ -75,24 +81,22 @@
         .sidebar-footer { border-top:1px solid var(--border); padding:8px 0; }
         .user-row { display:flex; align-items:center; gap:10px; padding:11px 18px; }
         .user-av { width:34px; height:34px; background:linear-gradient(135deg,var(--rouge),#7b241c); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0; }
-        .user-name-s { font-size:0.82rem; font-weight:600; }
+        .user-name-s { font-size:0.82rem; font-weight:600; color:#fff; }
         .user-role-s { font-size:0.65rem; color:var(--rouge-light); font-weight:600; }
 
-        /* MAIN */
         .main-content { margin-left:300px; flex:1; display:flex; flex-direction:column; min-height:100vh; }
         .top-bar { height:52px; background:#0d0d0d; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 24px; gap:12px; position:sticky; top:0; z-index:50; }
         .topbar-title { font-size:0.78rem; color:var(--gris); letter-spacing:1.5px; text-transform:uppercase; flex:1; }
         .topbar-right { display:flex; align-items:center; gap:10px; }
-        .topbar-bell { position:relative; cursor:pointer; text-decoration:none; }
+        .topbar-bell { position:relative; cursor:pointer; text-decoration:none; display:flex; align-items:center; }
         .bell-badge { position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:var(--rouge); border-radius:50%; font-size:0.6rem; color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; }
         .topbar-user { display:flex; align-items:center; gap:7px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.35); padding:5px 14px; border-radius:20px; font-size:0.75rem; font-weight:700; color:var(--rouge-light); text-decoration:none; letter-spacing:0.5px; }
         .user-dot { width:7px; height:7px; background:var(--rouge-light); border-radius:50%; }
         .admin-pill { background:rgba(192,57,43,0.25); border:1px solid rgba(192,57,43,0.5); padding:4px 10px; border-radius:4px; font-size:0.62rem; font-weight:800; color:var(--rouge-light); letter-spacing:1.5px; text-transform:uppercase; }
 
-        /* CONTENT */
         .content { padding:20px 24px; flex:1; }
         .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
-        .page-header h1 { font-size:1.6rem; font-weight:800; }
+        .page-header h1 { font-size:1.6rem; font-weight:800; color:#fff; }
         .page-header p { font-size:0.8rem; color:var(--gris); margin-top:3px; }
         .header-actions { display:flex; gap:8px; }
         .btn-action { display:flex; align-items:center; gap:6px; padding:7px 16px; border-radius:8px; font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.18s; border:none; }
@@ -101,15 +105,14 @@
         .btn-secondary { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1) !important; color:#888; }
         .btn-secondary:hover { background:rgba(255,255,255,0.09); color:#fff; }
 
-        /* STAT CARDS */
         .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
         .stat-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:11px; padding:16px; transition:all 0.2s; position:relative; overflow:hidden; }
         .stat-card:hover { border-color:rgba(192,57,43,0.3); transform:translateY(-2px); }
         .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
         .stat-card.rouge::before { background:var(--rouge); }
         .stat-card.green::before { background:#27ae60; }
-        .stat-card.blue::before { background:#3b82f6; }
-        .stat-card.orange::before { background:#f59e0b; }
+        .stat-card.blue::before  { background:#3b82f6; }
+        .stat-card.orange::before{ background:#f59e0b; }
         .stat-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
         .stat-icon { width:38px; height:38px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
         .stat-icon.rouge  { background:rgba(192,57,43,0.15); border:1px solid rgba(192,57,43,0.25); }
@@ -119,32 +122,27 @@
         .stat-trend { font-size:0.68rem; font-weight:700; padding:3px 7px; border-radius:10px; }
         .stat-trend.up   { background:rgba(39,174,96,0.15);  color:#27ae60; }
         .stat-trend.down { background:rgba(192,57,43,0.15); color:var(--rouge-light); }
-        .stat-num   { font-size:1.8rem; font-weight:800; color:#fff; line-height:1; }
+        .stat-num   { font-size:1.8rem; font-weight:800; color:#3c2a2a; line-height:1; }
         .stat-label { font-size:0.68rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; margin-top:4px; }
         .stat-sub   { font-size:0.7rem; color:var(--gris); margin-top:6px; }
 
-        /* GRID LAYOUT */
         .grid-2 { display:grid; grid-template-columns:1fr 340px; gap:14px; margin-bottom:14px; }
         .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:14px; }
-        .grid-2b { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
 
-        /* CARDS */
         .card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:11px; padding:18px; }
         .card-title { font-size:0.72rem; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; }
         .card-title-badge { font-size:0.62rem; padding:3px 8px; border-radius:10px; background:rgba(192,57,43,0.15); color:var(--rouge-light); border:1px solid rgba(192,57,43,0.25); }
 
-        /* CHART */
         .chart-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:11px; padding:18px; }
         .chart-wrap { position:relative; height:180px; }
         canvas { width:100% !important; }
 
-        /* ROBOT STATUS */
         .robot-status-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
         .mini-stat { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:10px 12px; }
         .mini-stat-label { font-size:0.65rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px; }
-        .mini-stat-val { font-size:1.1rem; font-weight:800; color:#fff; }
-        .mini-stat-val.rouge { color:var(--rouge-light); }
-        .mini-stat-val.green { color:#27ae60; }
+        .mini-stat-val { font-size:1.1rem; font-weight:800; color:#181515; }
+        .mini-stat-val.rouge  { color:var(--rouge-light); }
+        .mini-stat-val.green  { color:#27ae60; }
         .mini-stat-val.orange { color:#f59e0b; }
         .progress-bar { height:4px; background:rgba(255,255,255,0.08); border-radius:2px; margin-top:6px; overflow:hidden; }
         .progress-fill { height:100%; border-radius:2px; transition:width 0.5s; }
@@ -153,7 +151,6 @@
         .progress-fill.blue   { background:#3b82f6; }
         .progress-fill.orange { background:#f59e0b; }
 
-        /* ZONE CONTROL */
         .zone-row { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
         .zone-row:last-child { border-bottom:none; }
         .zone-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
@@ -165,7 +162,6 @@
         .zone-btn { width:26px; height:26px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:5px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#666; transition:all 0.15s; margin-left:6px; }
         .zone-btn:hover { background:rgba(192,57,43,0.15); border-color:rgba(192,57,43,0.4); color:#fff; }
 
-        /* USERS TABLE */
         .users-mini-table { width:100%; border-collapse:collapse; }
         .users-mini-table th { font-size:0.62rem; color:var(--gris); text-transform:uppercase; letter-spacing:1px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); text-align:left; font-weight:600; }
         .users-mini-table td { padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.03); font-size:0.8rem; vertical-align:middle; }
@@ -176,17 +172,16 @@
         .status-dot-pill.active   { background:rgba(39,174,96,0.12);  color:#27ae60; }
         .status-dot-pill.inactive { background:rgba(136,136,136,0.12); color:#666; }
         .role-pill { font-size:0.62rem; font-weight:700; padding:2px 7px; border-radius:4px; text-transform:uppercase; letter-spacing:0.5px; }
-        .role-pill.admin  { background:rgba(192,57,43,0.2);  color:var(--rouge-light); }
-        .role-pill.agent  { background:rgba(59,130,246,0.12); color:#3b82f6; }
+        .role-pill.admin { background:rgba(192,57,43,0.2);  color:var(--rouge-light); }
+        .role-pill.agent { background:rgba(59,130,246,0.12); color:#3b82f6; }
 
-        /* ACTIVITY */
         .activity-item { display:flex; align-items:flex-start; gap:10px; padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
         .activity-item:last-child { border-bottom:none; }
         .activity-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:4px; }
         .activity-text { font-size:0.78rem; color:var(--gris2); flex:1; line-height:1.4; }
         .activity-time { font-size:0.65rem; color:var(--gris); flex-shrink:0; }
 
-        /* ROBOT COMMANDS */
+        .section-title { font-size:0.65rem; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:2px; margin-bottom:10px; }
         .cmd-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
         .cmd-btn { padding:9px 6px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; color:#888; font-size:0.72rem; font-weight:600; cursor:pointer; transition:all 0.18s; display:flex; flex-direction:column; align-items:center; gap:4px; }
         .cmd-btn:hover { background:rgba(192,57,43,0.12); border-color:rgba(192,57,43,0.35); color:#fff; }
@@ -195,17 +190,14 @@
         .cmd-btn svg { opacity:0.7; }
         .cmd-btn:hover svg { opacity:1; }
 
-        /* SECTION TITLE */
-        .section-title { font-size:0.65rem; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:2px; margin-bottom:10px; }
-
-        /* ALERT MINI */
         .alert-mini { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:8px; margin-bottom:7px; border:1px solid transparent; }
+        .alert-mini:last-child { margin-bottom:0; }
         .alert-mini.danger  { background:rgba(192,57,43,0.08);  border-color:rgba(192,57,43,0.2); }
         .alert-mini.warning { background:rgba(245,158,11,0.07); border-color:rgba(245,158,11,0.2); }
         .alert-mini.info    { background:rgba(59,130,246,0.07); border-color:rgba(59,130,246,0.2); }
         .alert-mini-icon { font-size:1rem; flex-shrink:0; }
         .alert-mini-text { font-size:0.78rem; color:var(--gris2); flex:1; }
-        .alert-mini-time { font-size:0.65rem; color:var(--gris); }
+        .alert-mini-time { font-size:0.65rem; color:var(--gris); white-space:nowrap; }
 
         @keyframes fadeInUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
         .stat-card { animation:fadeInUp 0.4s ease both; }
@@ -217,7 +209,6 @@
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <aside class="sidebar">
     <div class="logo-section">
         <img src="/images/logo robot.png" alt="YURA" style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
@@ -227,10 +218,7 @@
         </div>
     </div>
     <div class="admin-badge-side">⚡ ADMIN PANEL</div>
-    <div class="robot-badge">
-        <div class="badge-dot"></div>
-        <span>ROBOT EN LIGNE</span>
-    </div>
+    <div class="robot-badge"><div class="badge-dot"></div><span>ROBOT EN LIGNE</span></div>
     <div class="nav-section">
         <div class="nav-label">Administration</div>
         <a href="/admin/dashboard" class="nav-item active">
@@ -258,14 +246,19 @@
             <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
             <span class="nav-text">Navigation</span>
         </a>
-       <a href="/admin/notifications" class="nav-item">
+        <a href="/admin/notifications" class="nav-item">
             <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg></span>
             <span class="nav-text">Alertes</span>
             <span class="nav-count">3</span>
         </a>
+        <div class="nav-label"></div>
+        <a href="/admin/settings" class="nav-item">
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M7.5 1l-.8 2.4a5 5 0 00-1.4.8L3 3.5l-1.5 2.6 1.9 1.5a5 5 0 000 1.8L1.5 11l1.5 2.6 2.3-.8a5 5 0 001.4.8L7.5 16h1l.8-2.4a5 5 0 001.4-.8l2.3.8L14.5 11l-1.9-1.5a5 5 0 000-1.8l1.9-1.5L13 3.5l-2.3.7a5 5 0 00-1.4-.8L8.5 1h-1zM8 6a2 2 0 110 4A2 2 0 018 6z"/></svg></span>
+            <span class="nav-text">Paramètres</span>
+        </a>
         <div class="nav-label">Agent</div>
         <a href="/dashboard/security" class="nav-item">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L2 4v5c0 4.5 3 7.5 6 8.5C11 16.5 14 13.5 14 9V4L8 1z"/></svg></span>
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L2 4v5c0 4 2.5 7 6 8 3.5-1 6-4 6-8V4L8 1z"/></svg></span>
             <span class="nav-text">Vue Agent</span>
         </a>
     </div>
@@ -284,23 +277,21 @@
     </div>
 </aside>
 
-<!-- MAIN -->
 <div class="main-content">
     <div class="top-bar">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="#888" style="flex-shrink:0"><rect y="3" width="18" height="2"/><rect y="8" width="18" height="2"/><rect y="13" width="18" height="2"/></svg>
         <span class="topbar-title">Administration Système</span>
         <div class="topbar-right">
             <span class="admin-pill">ADMIN</span>
-            <a href="/notifications" class="topbar-bell">
+            <a href="/admin/notifications" class="topbar-bell">
                 <svg width="18" height="18" viewBox="0 0 16 16" fill="#888"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg>
                 <div class="bell-badge">3</div>
             </a>
-            <a href="/dashboard/settings" class="topbar-user"><div class="user-dot"></div><%= user.name %></a>
+            <a href="/admin/settings" class="topbar-user"><div class="user-dot"></div><%= user.name %></a>
         </div>
     </div>
 
     <div class="content">
-        <!-- HEADER -->
         <div class="page-header">
             <div>
                 <h1>Dashboard Admin</h1>
@@ -318,16 +309,15 @@
             </div>
         </div>
 
-        <!-- STAT CARDS -->
         <div class="stat-row">
             <div class="stat-card rouge">
                 <div class="stat-top">
                     <div class="stat-icon rouge"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#e74c3c" stroke-width="1.5"><circle cx="7" cy="6" r="4"/><path d="M1 17c0-4.4 2.7-8 6-8"/><circle cx="14" cy="12" r="3"/><path d="M12 12h4M14 10v4"/></svg></div>
-                    <span class="stat-trend up" id="userTrend">+<%= users ? users.length : 0 %></span>
+                    <span class="stat-trend up">+<%= users ? users.length : 0 %></span>
                 </div>
-                <div class="stat-num" id="totalUsers"><%= users ? users.length : 0 %></div>
+                <div class="stat-num"><%= users ? users.length : 0 %></div>
                 <div class="stat-label">Utilisateurs</div>
-                <div class="stat-sub"><span id="activeUsers"><%= users ? users.filter(u=>u.status==='active').length : 0 %></span> actifs</div>
+                <div class="stat-sub"><%= users ? users.filter(u=>u.status==='active').length : 0 %> actifs</div>
             </div>
             <div class="stat-card green">
                 <div class="stat-top">
@@ -343,7 +333,7 @@
                     <div class="stat-icon blue"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#3b82f6" stroke-width="1.5"><path d="M9 2L2 6v6c0 5 4 8 7 9 3-1 7-4 7-9V6L9 2z"/></svg></div>
                     <span class="stat-trend up">EN LIGNE</span>
                 </div>
-                <div class="stat-num" id="sysUptime">99%</div>
+                <div class="stat-num">99%</div>
                 <div class="stat-label">Uptime Système</div>
                 <div class="stat-sub">YURA-001 actif</div>
             </div>
@@ -358,9 +348,7 @@
             </div>
         </div>
 
-        <!-- ROW 2: Chart + Robot Status -->
         <div class="grid-2">
-            <!-- CHART -->
             <div class="chart-card">
                 <div class="card-title">
                     Activité Système — 7 derniers jours
@@ -370,8 +358,6 @@
                     <canvas id="activityChart"></canvas>
                 </div>
             </div>
-
-            <!-- ROBOT STATUS -->
             <div class="card">
                 <div class="card-title">
                     Statut Robot
@@ -380,23 +366,31 @@
                 <div class="robot-status-grid">
                     <div class="mini-stat">
                         <div class="mini-stat-label">Batterie</div>
-                        <div class="mini-stat-val orange" id="batVal">72%</div>
-                        <div class="progress-bar"><div class="progress-fill orange" id="batBar" style="width:72%"></div></div>
+                        <div class="mini-stat-val orange" id="batVal">--</div>
+                        <div class="progress-bar"><div class="progress-fill orange" id="batBar" style="width:0%"></div></div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Obstacle</div>
+                        <div class="mini-stat-val rouge" id="obstacleVal">Aucun</div>
                     </div>
                     <div class="mini-stat">
                         <div class="mini-stat-label">Signal</div>
-                        <div class="mini-stat-val green" id="sigVal">98%</div>
-                        <div class="progress-bar"><div class="progress-fill green" id="sigBar" style="width:98%"></div></div>
+                        <div class="mini-stat-val green" id="sigVal">--</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill green" id="sigBar" style="width:0%"></div>
+                        </div>
                     </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-label">CPU</div>
-                        <div class="mini-stat-val" id="cpuVal">34%</div>
-                        <div class="progress-bar"><div class="progress-fill blue" id="cpuBar" style="width:34%"></div></div>
+                   <div class="mini-stat">
+                        <div class="mini-stat-label">Humidité</div>
+                        <div class="mini-stat-val green" id="humVal">--</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill blue" id="humBar" style="width:0%"></div>
+                        </div>
                     </div>
                     <div class="mini-stat">
                         <div class="mini-stat-label">Température</div>
-                        <div class="mini-stat-val" id="tempVal">38°C</div>
-                        <div class="progress-bar"><div class="progress-fill rouge" id="tempBar" style="width:38%"></div></div>
+                        <div class="mini-stat-val" id="tempVal">--</div>
+                        <div class="progress-bar"><div class="progress-fill rouge" id="tempBar" style="width:0%"></div></div>
                     </div>
                 </div>
                 <div class="section-title">Commandes rapides</div>
@@ -429,93 +423,73 @@
             </div>
         </div>
 
-        <!-- ROW 3: Users + Zones + Alertes -->
         <div class="grid-3">
-            <!-- USERS -->
             <div class="card">
                 <div class="card-title">
                     Utilisateurs récents
                     <a href="/admin/users" style="font-size:0.65rem;color:var(--rouge-light);text-decoration:none;font-weight:600;">Voir tout →</a>
                 </div>
                 <table class="users-mini-table">
-                    <thead>
-                        <tr>
-                            <th>Nom</th>
-                            <th>Rôle</th>
-                            <th>Statut</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Nom</th><th>Rôle</th><th>Statut</th></tr></thead>
                     <tbody>
                         <% if(users && users.length > 0) { %>
-                        <% users.slice(0,5).forEach(function(u){ %>
-                        <tr>
-                            <td>
-                                <div class="user-cell-mini">
-                                    <div class="user-av-mini"><%= u.name ? u.name.charAt(0).toUpperCase() : '?' %></div>
-                                    <span style="font-size:0.78rem;color:var(--gris2)"><%= u.name %></span>
-                                </div>
-                            </td>
-                            <td><span class="role-pill <%= u.role === 'admin' ? 'admin' : 'agent' %>"><%= u.role %></span></td>
-                            <td><span class="status-dot-pill <%= u.status === 'active' ? 'active' : 'inactive' %>"><%= u.status === 'active' ? 'Actif' : 'Inactif' %></span></td>
-                        </tr>
-                        <% }); %>
+                            <% users.slice(0,5).forEach(function(u){ %>
+                            <tr>
+                                <td>
+                                    <div class="user-cell-mini">
+                                        <div class="user-av-mini"><%= u.name ? u.name.charAt(0).toUpperCase() : '?' %></div>
+                                        <span style="font-size:0.78rem;color:var(--gris2)"><%= u.name %></span>
+                                    </div>
+                                </td>
+                                <td><span class="role-pill <%= u.role === 'admin' ? 'admin' : 'agent' %>"><%= u.role %></span></td>
+                                <td><span class="status-dot-pill <%= u.status === 'active' ? 'active' : 'inactive' %>"><%= u.status === 'active' ? 'Actif' : 'Inactif' %></span></td>
+                            </tr>
+                            <% }); %>
                         <% } else { %>
-                        <tr><td colspan="3" style="color:var(--gris);font-size:0.78rem;padding:12px 0;">Aucun utilisateur</td></tr>
+                            <tr><td colspan="3" style="color:var(--gris);font-size:0.78rem;padding:12px 0;">Aucun utilisateur</td></tr>
                         <% } %>
                     </tbody>
                 </table>
             </div>
 
-            <!-- ZONES PATROUILLE -->
             <div class="card">
                 <div class="card-title">Zones de Patrouille</div>
                 <div class="zone-row">
                     <div class="zone-dot" style="background:#27ae60;box-shadow:0 0 5px rgba(39,174,96,0.6)"></div>
                     <span class="zone-name">Zone A — Entrée</span>
                     <span class="zone-status active">Active</span>
-                    <button class="zone-btn" onclick="toggleZone(this,'A')" title="Toggle">
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/></svg>
-                    </button>
+                    <button class="zone-btn" onclick="toggleZone(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/></svg></button>
                 </div>
                 <div class="zone-row">
                     <div class="zone-dot" style="background:#3b82f6;box-shadow:0 0 5px rgba(59,130,246,0.6)"></div>
                     <span class="zone-name">Zone B — Bureau</span>
                     <span class="zone-status patrol">Patrouille</span>
-                    <button class="zone-btn" onclick="toggleZone(this,'B')" title="Toggle">
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/></svg>
-                    </button>
+                    <button class="zone-btn" onclick="toggleZone(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/></svg></button>
                 </div>
                 <div class="zone-row">
                     <div class="zone-dot" style="background:#27ae60;box-shadow:0 0 5px rgba(39,174,96,0.6)"></div>
                     <span class="zone-name">Zone C — Entrepôt</span>
                     <span class="zone-status active">Active</span>
-                    <button class="zone-btn" onclick="toggleZone(this,'C')" title="Toggle">
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/></svg>
-                    </button>
+                    <button class="zone-btn" onclick="toggleZone(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/></svg></button>
                 </div>
                 <div class="zone-row">
                     <div class="zone-dot" style="background:#555"></div>
                     <span class="zone-name">Zone D — Parking</span>
                     <span class="zone-status inactive">Inactive</span>
-                    <button class="zone-btn" onclick="toggleZone(this,'D')" title="Toggle">
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/></svg>
-                    </button>
+                    <button class="zone-btn" onclick="toggleZone(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/></svg></button>
                 </div>
                 <div class="zone-row" style="border-bottom:none;">
                     <div class="zone-dot" style="background:#555"></div>
                     <span class="zone-name">Zone E — Toit</span>
                     <span class="zone-status inactive">Inactive</span>
-                    <button class="zone-btn" onclick="toggleZone(this,'E')" title="Toggle">
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/></svg>
-                    </button>
+                    <button class="zone-btn" onclick="toggleZone(this)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/></svg></button>
                 </div>
             </div>
 
-            <!-- ALERTES RECENTES -->
             <div class="card">
                 <div class="card-title">
                     Alertes Récentes
-                    <a href="/notifications" style="font-size:0.65rem;color:var(--rouge-light);text-decoration:none;font-weight:600;">Voir tout →</a>
+                    <a href="/admin/notifications" style="font-size:0.65rem;color:var(--rouge-light);text-decoration:none;font-weight:600;">Voir tout →</a>
                 </div>
                 <div class="alert-mini danger">
                     <span class="alert-mini-icon">🌡️</span>
@@ -545,7 +519,6 @@
             </div>
         </div>
 
-        <!-- ROW 4: Activity Log -->
         <div class="card">
             <div class="card-title">
                 Journal d'Activité Récent
@@ -553,20 +526,20 @@
             </div>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
                 <% if(histories && histories.length > 0) { %>
-                <% const cols = [histories.slice(0,4), histories.slice(4,8), histories.slice(8,12)]; %>
-                <% cols.forEach(function(col, ci) { %>
-                <div style="<%= ci < 2 ? 'border-right:1px solid rgba(255,255,255,0.04);padding-right:16px;margin-right:16px;' : '' %>">
-                <% col.forEach(function(h) { %>
-                <div class="activity-item">
-                    <div class="activity-dot" style="background:<%= h.action && h.action.toLowerCase().includes('alert') ? '#e74c3c' : h.action && h.action.toLowerCase().includes('login') ? '#27ae60' : '#3b82f6' %>"></div>
-                    <span class="activity-text"><strong style="color:#ccc"><%= h.userName || 'Système' %></strong> — <%= h.action %></span>
-                    <span class="activity-time"><%= new Date(h.timestamp).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}) %></span>
-                </div>
-                <% }); %>
-                </div>
-                <% }); %>
+                    <% const cols = [histories.slice(0,4), histories.slice(4,8), histories.slice(8,12)]; %>
+                    <% cols.forEach(function(col, ci) { %>
+                    <div style="<%= ci < 2 ? 'border-right:1px solid rgba(255,255,255,0.04);padding-right:16px;margin-right:16px;' : '' %>">
+                        <% col.forEach(function(h) { %>
+                        <div class="activity-item">
+                            <div class="activity-dot" style="background:<%= h.action && h.action.toLowerCase().includes('alert') ? '#e74c3c' : h.action && h.action.toLowerCase().includes('login') ? '#27ae60' : '#3b82f6' %>"></div>
+                            <span class="activity-text"><strong style="color:#ccc"><%= h.userName || 'Système' %></strong> — <%= h.action %></span>
+                            <span class="activity-time"><%= new Date(h.timestamp).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}) %></span>
+                        </div>
+                        <% }); %>
+                    </div>
+                    <% }); %>
                 <% } else { %>
-                <div style="grid-column:1/-1;padding:20px 0;text-align:center;color:var(--gris);font-size:0.82rem;">Aucune activité récente</div>
+                    <div style="grid-column:1/-1;padding:20px 0;text-align:center;color:var(--gris);font-size:0.82rem;">Aucune activité récente</div>
                 <% } %>
             </div>
         </div>
@@ -576,92 +549,114 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
-// CHART
 const ctx = document.getElementById('activityChart').getContext('2d');
-const days = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 new Chart(ctx, {
     type: 'line',
     data: {
-        labels: days,
+        labels: ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],
         datasets: [
-            {
-                label: 'Connexions',
-                data: [4,7,5,8,6,3,9],
-                borderColor: '#c0392b',
-                backgroundColor: 'rgba(192,57,43,0.08)',
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#c0392b',
-                pointRadius: 4,
-                borderWidth: 2
-            },
-            {
-                label: 'Alertes',
-                data: [2,3,1,4,2,1,3],
-                borderColor: '#f59e0b',
-                backgroundColor: 'rgba(245,158,11,0.05)',
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#f59e0b',
-                pointRadius: 4,
-                borderWidth: 2
-            },
-            {
-                label: 'Commandes',
-                data: [8,12,9,15,11,7,14],
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59,130,246,0.05)',
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#3b82f6',
-                pointRadius: 4,
-                borderWidth: 2
-            }
+            { label:'Connexions', data:[4,7,5,8,6,3,9], borderColor:'#c0392b', backgroundColor:'rgba(192,57,43,0.08)', fill:true, tension:0.4, pointBackgroundColor:'#c0392b', pointRadius:4, borderWidth:2 },
+            { label:'Alertes', data:[2,3,1,4,2,1,3], borderColor:'#f59e0b', backgroundColor:'rgba(245,158,11,0.05)', fill:true, tension:0.4, pointBackgroundColor:'#f59e0b', pointRadius:4, borderWidth:2 },
+            { label:'Commandes', data:[8,12,9,15,11,7,14], borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.05)', fill:true, tension:0.4, pointBackgroundColor:'#3b82f6', pointRadius:4, borderWidth:2 }
         ]
     },
     options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { labels: { color: '#888', font: { size: 11 }, boxWidth: 10 } }
-        },
-        scales: {
-            x: { ticks: { color: '#666', font:{size:11} }, grid: { color: 'rgba(255,255,255,0.04)' } },
-            y: { ticks: { color: '#666', font:{size:11} }, grid: { color: 'rgba(255,255,255,0.04)' }, beginAtZero: true }
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{ labels:{ color:'#888', font:{size:11}, boxWidth:10 } } },
+        scales:{
+            x:{ ticks:{color:'#666',font:{size:11}}, grid:{color:'rgba(255,255,255,0.04)'} },
+            y:{ ticks:{color:'#666',font:{size:11}}, grid:{color:'rgba(255,255,255,0.04)'}, beginAtZero:true }
         }
     }
 });
 
-// ROBOT SENSORS
 function updateSensors() {
-    const bat  = 65 + Math.floor(Math.random()*15);
-    const cpu  = 20 + Math.floor(Math.random()*40);
-    const temp = 35 + Math.floor(Math.random()*15);
-    document.getElementById('batVal').textContent  = bat + '%';
-    document.getElementById('batBar').style.width  = bat + '%';
-    document.getElementById('cpuVal').textContent  = cpu + '%';
-    document.getElementById('cpuBar').style.width  = cpu + '%';
-    document.getElementById('tempVal').textContent = temp + '°C';
-    document.getElementById('tempBar').style.width = Math.min(temp,100) + '%';
-}
-setInterval(updateSensors, 4000);
+    fetch('/api/sensors').then(r=>r.json()).then(data => {
+        const d = data.data;
 
-// SEND COMMAND
+        // TEMPÉRATURE
+        const t = parseFloat(d.temperature);
+        if (!isNaN(t)) {
+            document.getElementById('tempVal').textContent = t.toFixed(1)+'°C';
+            document.getElementById('tempBar').style.width = Math.min(t/50*100,100)+'%';
+        }
+
+        // HUMIDITÉ ← bug corrigé: humVal au lieu de humidity
+        const h = parseFloat(d.humidity);
+        if (!isNaN(h)) {
+            document.getElementById('humVal').textContent = h.toFixed(1)+'%';
+            document.getElementById('humBar').style.width = Math.min(h,100)+'%';
+        }
+
+        // BATTERIE
+        const b = parseFloat(d.battery);
+        if (!isNaN(b)) {
+            document.getElementById('batVal').textContent = b+'%';
+            document.getElementById('batBar').style.width = Math.min(b,100)+'%';
+        }
+
+        // SIGNAL ← bug corrigé: était vide avant
+        const sigMap = {'EXCELLENT':'Excellent','GOOD':'Bon','FAIR':'Faible','POOR':'Mauvais'};
+        const sigPct  = {'EXCELLENT':100,'GOOD':75,'FAIR':50,'POOR':25};
+        if (d.signal && d.signal !== 'DISCONNECTED') {
+            document.getElementById('sigVal').textContent = sigMap[d.signal] || d.signal;
+            document.getElementById('sigBar').style.width = (sigPct[d.signal] || 50)+'%';
+        }
+        // DISTANCE + OBSTACLE
+const dist = parseFloat(d.distance);
+if (!isNaN(dist)) {
+    // Affiche distance si tu as un élément distVal
+    if(document.getElementById('distVal'))
+        document.getElementById('distVal').textContent = dist.toFixed(0)+' cm';
+}
+
+// ALERTE OBSTACLE
+if (d.obstacle === true) {
+    // Affiche alerte rouge en haut de page
+    let alertEl = document.getElementById('obstacleAlert');
+    if (!alertEl) {
+        alertEl = document.createElement('div');
+        alertEl.id = 'obstacleAlert';
+        alertEl.style.cssText = `
+            position:fixed; top:60px; right:20px; z-index:9999;
+            background:rgba(192,57,43,0.95); color:#fff;
+            padding:12px 20px; border-radius:10px;
+            font-weight:700; font-size:0.85rem;
+            border:1px solid rgba(255,100,100,0.5);
+            animation: fadeInUp 0.3s ease;
+        `;
+        document.body.appendChild(alertEl);
+    }
+    alertEl.textContent = '🚨 OBSTACLE DÉTECTÉ — ' + dist.toFixed(0) + ' cm';
+    alertEl.style.display = 'block';
+    
+    // Cache après 3 secondes
+    clearTimeout(window._obstacleTimer);
+    window._obstacleTimer = setTimeout(() => {
+        alertEl.style.display = 'none';
+    }, 3000);
+} else {
+    const alertEl = document.getElementById('obstacleAlert');
+    if (alertEl) alertEl.style.display = 'none';
+}
+
+    }).catch(()=>{});
+    
+}
 function sendCmd(cmd) {
     fetch('/admin/robot/command', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: cmd })
-    }).then(() => {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({command:cmd})
+    }).then(()=>{
         const btn = event.target.closest('.cmd-btn');
+        if(!btn) return;
         btn.style.background = 'rgba(39,174,96,0.2)';
         btn.style.borderColor = 'rgba(39,174,96,0.4)';
-        setTimeout(() => { btn.style.background=''; btn.style.borderColor=''; }, 1000);
-    });
+        setTimeout(()=>{ btn.style.background=''; btn.style.borderColor=''; }, 1000);
+    }).catch(()=>{});
 }
 
-// TOGGLE ZONE
-function toggleZone(btn, zone) {
+function toggleZone(btn) {
     const row = btn.closest('.zone-row');
     const statusEl = row.querySelector('.zone-status');
     const dot = row.querySelector('.zone-dot');
@@ -678,15 +673,16 @@ function toggleZone(btn, zone) {
     }
 }
 
-// EXPORT REPORT
 function exportReport() {
-    const data = `YURA GUARDIAN — Rapport Admin\n${'='.repeat(40)}\nDate: ${new Date().toLocaleString('fr-FR')}\nRobot: YURA-001 EN LIGNE\nAlertes actives: 5\n${'='.repeat(40)}\n`;
-    const blob = new Blob([data], {type:'text/plain'});
+    const txt = `YURA GUARDIAN — Rapport Admin\n${'='.repeat(40)}\nDate: ${new Date().toLocaleString('fr-FR')}\nRobot: YURA-001 EN LIGNE\nAlertes actives: 5\n${'='.repeat(40)}\n`;
+    const blob = new Blob([txt], {type:'text/plain'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'rapport-yura-' + new Date().toISOString().slice(0,10) + '.txt';
     a.click();
 }
+setInterval(updateSensors, 2000);
+updateSensors();
 </script>
 </body>
 </html>

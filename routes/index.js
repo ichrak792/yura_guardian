@@ -96,6 +96,7 @@ router.get('/admin/users', requireAdmin, async (req, res) => {
         const skip = (page - 1) * limit;
         const total = await User.countDocuments();
         const users = await User.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+        const successMsg = req.query.success === 'password' ? 'Mot de passe modifié avec succès!' : null;
         res.render('admin/users', {
             title: 'Utilisateurs - YURA GUARDIAN',
             page: 'users',
@@ -103,7 +104,9 @@ router.get('/admin/users', requireAdmin, async (req, res) => {
             currentPage: page,
             totalPages: Math.ceil(total / limit),
             total,
-            user: req.session.user
+            user: req.session.user,
+            successMsg,
+            error: req.query.error || null
         });
     } catch (error) {
         res.status(500).send('Erreur serveur');
@@ -143,6 +146,19 @@ router.post('/admin/users/toggle/:id', requireAdmin, async (req, res) => {
         res.redirect('/admin/users');
     }
 });
+router.post('/admin/users/change-password/:id', requireAdmin, async (req, res) => {
+    try {
+        const { newPassword } = req.body;
+        if (!newPassword || newPassword.length < 6) return res.redirect('/admin/users?error=password');
+        await User.findByIdAndUpdate(req.params.id, { password: newPassword });
+        await History.create({ action: 'Mot de passe modifié (admin)', userName: req.session.user.name, details: `Utilisateur ID: ${req.params.id}` });
+        res.redirect('/admin/users?success=password');
+    } catch (error) {
+        res.redirect('/admin/users');
+    }
+});
+
+
 router.get('/admin/robot', requireAdmin, (req, res) => res.render('admin/robot', {
     title: 'Contrôle Robot - YURA GUARDIAN',
     page: 'robot',
@@ -180,6 +196,24 @@ router.get('/admin/notifications', requireAdmin, async (req, res) => {
         });
     }
 });
+router.get('/admin/settings', requireAdmin, async (req, res) => {
+    try {
+        const total = await User.countDocuments();
+        res.render('admin/settings', {
+            title: 'Paramètres - YURA GUARDIAN',
+            page: 'settings',
+            total,
+            user: req.session.user
+        });
+    } catch(e) {
+        res.render('admin/settings', {
+            title: 'Paramètres - YURA GUARDIAN',
+            page: 'settings',
+            total: 0,
+            user: req.session.user
+        });
+    }
+});
 router.get('/admin/position', requireAdmin, (req, res) => res.render('admin/position', {
     title: 'Position - YURA GUARDIAN',
     page: 'position',
@@ -199,29 +233,70 @@ router.get('/admin/history', requireAdmin, async (req, res) => {
         res.status(500).send('Erreur serveur');
     }
 });
-
-// Robot command
-router.post('/admin/robot/command', requireAuth, async (req, res) => {
+router.get('/admin/settings', requireAdmin, async (req, res) => {
     try {
-        const { command } = req.body;
-        await History.create({
-            action: `Robot: ${command}`,
-            userName: req.session.user.name,
-            details: `Commande envoyée: ${command}`
+        const total = await User.countDocuments();
+        res.render('admin/settings', {
+            title: 'Paramètres - YURA GUARDIAN',
+            page: 'settings',
+            total,
+            user: req.session.user
         });
-        await Notification.create({
-            type: 'robot',
-            message: `Commande robot: ${command}`,
-            userName: req.session.user.name
+    } catch(e) {
+        res.render('admin/settings', {
+            title: 'Paramètres - YURA GUARDIAN',
+            page: 'settings',
+            total: 0,
+            user: req.session.user
         });
-        res.json({ success: true });
-    } catch (e) {
-        res.json({ success: false });
     }
+});
+// Robot command
+const bt = require('./bluetooth'); // adapti le chemin
+
+// Route déjà existante dans ton dashboard:
+router.post('/admin/robot/command', requireAdmin, (req, res) => {
+    const { command, speed } = req.body;
+    if (!command) return res.status(400).json({ error: 'No command' });
+
+    // Map commandes dashboard → Arduino
+    const cmdMap = {
+        'avancer':    'forward',
+        'reculer':    'backward',
+        'gauche':     'left',
+        'droite':     'right',
+        'stop':       'stop',
+        'patrouille': 'patrol',
+        'base':       'home',
+        'scanner':    'scan',
+        'charger':    'charge',
+        'urgence':    'stop'
+    };
+
+    const arduinoCmd = cmdMap[command] || command;
+
+    // Envoyer via Bluetooth
+    if (global.bluetoothConnected && global.sendCommandToRobot) {
+        global.sendCommandToRobot(arduinoCmd)
+            .then(() => res.json({ success: true, command: arduinoCmd }))
+            .catch(err => res.json({ success: false, error: err.message }));
+    } else {
+        console.log('⚠️ Robot non connecté — commande ignorée:', arduinoCmd);
+        res.json({ success: false, error: 'Robot non connecté' });
+    }
+});
+
+// Optionnel — status endpoint pour le dashboard
+router.get('/admin/robot/status', (req, res) => {
+  res.json(bt.getStatus());
 });
 
 // ===== NOTIFICATIONS =====
 router.get('/notifications', requireAuth, async (req, res) => {
+    // Admin → redirect l page admin
+    if (req.session.user.role === 'admin') {
+        return res.redirect('/admin/notifications');
+    }
     try {
         const notifications = await Notification.find().sort({ createdAt: -1 }).limit(100);
         const unreadCount = await Notification.countDocuments({ read: false });
@@ -369,5 +444,21 @@ router.post('/dashboard/settings/change-password', requireAgent, async (req, res
         res.json({ success: false, message: 'Erreur serveur' });
     }
 });
+router.get('/api/sensors', (req, res) => {
+    res.json({
+        success: true,
+        connected: global.bluetoothConnected || false,
+        data: {
+            temperature: global.sensorData.temperature,
+            humidity:    global.sensorData.humidity,
+            battery:     global.sensorData.battery,
+            signal:      global.sensorData.signal,
+            distance:    global.sensorData.distance,  // ← ajoute
+            obstacle:    global.sensorData.obstacle   // ← ajoute
+        }
+    });
+});
+
+
 
 module.exports = router;

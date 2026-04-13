@@ -6,7 +6,7 @@ mongoose.connect(mongoURL)
     .then(() => console.log('✅ Connecté à MongoDB'))
     .catch(err => console.error('❌ Erreur MongoDB:', err));
 
-// Schéma utilisateur
+// USER
 const userSchema = new mongoose.Schema({
     identifiant: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
@@ -17,10 +17,9 @@ const userSchema = new mongoose.Schema({
     position: { type: String, default: '' },
     createdAt: { type: Date, default: Date.now }
 });
-
 const User = mongoose.model('User', userSchema);
 
-// Schéma historique des actions robot
+// HISTORY
 const historySchema = new mongoose.Schema({
     action: { type: String, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -28,10 +27,9 @@ const historySchema = new mongoose.Schema({
     timestamp: { type: Date, default: Date.now },
     details: { type: String, default: '' }
 });
-
 const History = mongoose.model('History', historySchema);
 
-module.exports = { User, History };
+// NOTIFICATION
 const notificationSchema = new mongoose.Schema({
     type: { type: String, enum: ['robot', 'connexion', 'alerte', 'camera'], required: true },
     message: { type: String, required: true },
@@ -39,7 +37,6 @@ const notificationSchema = new mongoose.Schema({
     read: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now }
 });
-
 const Notification = mongoose.model('Notification', notificationSchema);
 
 module.exports = { User, History, Notification };

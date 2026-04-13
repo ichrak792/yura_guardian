@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title> 
-    
     <script src="/js/theme.js"></script>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -215,7 +214,7 @@
         </a>
         <a href="/dashboard/camera" class="nav-item">
             <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></span>
-            <span class="nav-text">Live Feed</span>
+            <span class="nav-text">Surveillance caméra</span>
         </a>
         <a href="/dashboard/map" class="nav-item">
             <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
@@ -313,18 +312,6 @@
                     <div class="stat-label">Patrouilles</div>
                 </div>
             </div>
-        </div>
-
-        <!-- FILTER BAR -->
-        <div class="filter-bar">
-            <div class="filter-btns">
-                <button class="filter-btn active" onclick="filterHistory('all',this)">Tout</button>
-                <button class="filter-btn" onclick="filterHistory('login',this)">Connexions</button>
-                <button class="filter-btn" onclick="filterHistory('alert',this)">Alertes</button>
-                <button class="filter-btn" onclick="filterHistory('patrol',this)">Patrouilles</button>
-                <button class="filter-btn" onclick="filterHistory('system',this)">Système</button>
-            </div>
-            <input type="text" class="search-input" placeholder="Rechercher..." oninput="searchHistory(this.value)">
         </div>
 
         <!-- TABLE -->

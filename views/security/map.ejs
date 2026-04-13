@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    
     <script src="/js/theme.js"></script>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -351,7 +350,7 @@
             <span class="nav-icon-wrap">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg>
             </span>
-            <span class="nav-text">Live Feed</span>
+            <span class="nav-text">Surveillance caméra</span>
         </a>
         <a href="/dashboard/map" class="nav-item active">
             <span class="nav-icon-wrap">
@@ -531,36 +530,6 @@
                     </div>
                 </div>
 
-                <!-- ZONES -->
-                <div class="info-card">
-                    <div class="info-card-header">
-                        <span class="info-card-icon">🔴</span>
-                        Zones de Sécurité
-                    </div>
-                    <div class="info-card-body">
-                        <div class="zone-item">
-                            <div class="zone-dot" style="background:#e74c3c;"></div>
-                            <span class="zone-name">Zone Entrée</span>
-                            <span class="zone-badge active">Alerte</span>
-                        </div>
-                        <div class="zone-item">
-                            <div class="zone-dot" style="background:#27ae60;"></div>
-                            <span class="zone-name">Zone Patrouille A</span>
-                            <span class="zone-badge patrol">Actif</span>
-                        </div>
-                        <div class="zone-item">
-                            <div class="zone-dot" style="background:#3b82f6;"></div>
-                            <span class="zone-name">Périmètre Nord</span>
-                            <span class="zone-badge inactive">Inactif</span>
-                        </div>
-                        <div class="zone-item">
-                            <div class="zone-dot" style="background:#f39c12;"></div>
-                            <span class="zone-name">Zone Surveillance</span>
-                            <span class="zone-badge patrol">Actif</span>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- ACTIONS -->
                 <div class="info-card">
                     <div class="info-card-header">
@@ -588,18 +557,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- LOG -->
-                <div class="info-card">
-                    <div class="info-card-header">
-                        <span class="info-card-icon">📋</span>
-                        Journal
-                    </div>
-                    <div class="info-card-body" style="padding:8px 14px;">
-                        <div class="log-list" id="logList"></div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>

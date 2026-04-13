@@ -376,9 +376,79 @@
             document.head.appendChild(na);
         }
     } catch(e) {}
-})();
+})(); 
 </script>
-    
+ <script>
+(function(){
+    try {
+        const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
+        if (s.darkMode === false) {
+            const st = document.createElement('style');
+            st.id = '__yuraLight';
+            st.textContent = `
+                body { background: #f0f2f5 !important; color: #111 !important; }
+                .sidebar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
+                .top-bar { background: #0d0d0d !important; }
+                .main-content, .content { background: #f0f2f5 !important; }
+                .card, .settings-card, .stat-card, .chart-card,
+                .cam-card, .ctrl-card, .env-card, .hist-card,
+                .activity-card, .map-card, .map-right,
+                .filter-bar, .table-wrap, .alert-card { 
+                    background: #fff !important; 
+                    border-color: rgba(0,0,0,0.08) !important; 
+                }
+                .nav-item { color: #555 !important; }
+                .nav-item:hover { background: rgba(0,0,0,0.04) !important; color: #111 !important; }
+                .nav-item.active { color: var(--rouge) !important; background: rgba(192,57,43,0.07) !important; }
+                h1, h2, h3, .stat-num, .card-title, .user-name-s,
+                .page-header h1, .card-head-title { color: #111 !important; }
+                .stat-label, .logo-sub, .user-role-s, .topbar-title,
+                .activity-time, .page-header p, .info-lbl,
+                .setting-label, .gris { color: #666 !important; }
+                .topbar-user { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.2) !important; }
+                .robot-badge { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.25) !important; }
+                .mini-stat { background: #f5f5f5 !important; border-color: rgba(0,0,0,0.06) !important; }
+                .zone-row, .setting-row, .info-row, .history-row,
+                .activity-item { border-color: rgba(0,0,0,0.05) !important; }
+                .zone-name, .alert-mini-text, .activity-text { color: #333 !important; }
+                .setting-select, .search-input {
+                    background: #f0f0f0 !important;
+                    color: #111 !important;
+                    border-color: rgba(0,0,0,0.12) !important;
+                }
+                .toggle-slider { background: #ddd !important; }
+                .dpad-btn, .cam-btn, .cmd-btn, .card-action-btn,
+                .bottom-btn.secondary, .pag-btn, .filter-btn {
+                    background: rgba(0,0,0,0.05) !important;
+                    border-color: rgba(0,0,0,0.1) !important;
+                    color: #555 !important;
+                }
+                .users-mini-table td, .users-mini-table th { 
+                    border-color: rgba(0,0,0,0.05) !important; 
+                    color: #333 !important;
+                }
+                .logo-name { color: #111 !important; }
+            `;
+            document.head.appendChild(st);
+        }
+        if (s.colorTheme === 'blue-black') {
+            document.documentElement.style.setProperty('--rouge', '#2563eb');
+            document.documentElement.style.setProperty('--rouge-light', '#3b82f6');
+            document.documentElement.style.setProperty('--border', 'rgba(37,99,235,0.18)');
+        } else if (s.colorTheme === 'green-black') {
+            document.documentElement.style.setProperty('--rouge', '#16a34a');
+            document.documentElement.style.setProperty('--rouge-light', '#22c55e');
+            document.documentElement.style.setProperty('--border', 'rgba(22,163,74,0.18)');
+        }
+        if (s.animations === false) {
+            const na = document.createElement('style');
+            na.id = '__noAnim';
+            na.textContent = '* { animation: none !important; transition: none !important; }';
+            document.head.appendChild(na);
+        }
+    } catch(e) {}
+})();
+</script>   
 </head>
 <body>
 
@@ -409,7 +479,7 @@
             <span class="nav-icon-wrap">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg>
             </span>
-            <span class="nav-text">Live Feed</span>
+            <span class="nav-text">Surveillance caméra</span>
         </a>
         <a href="/dashboard/map" class="nav-item">
             <span class="nav-icon-wrap">
@@ -484,41 +554,7 @@
             </div>
         </div>
 
-        <!-- STAT CARDS -->
-        <div class="stat-row">
-            <div class="stat-card">
-                <div class="stat-top">
-                    <span class="stat-label-top">Batterie</span>
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="#27ae60"><rect x="1" y="5" width="13" height="8" rx="1.5" stroke="#27ae60" stroke-width="1.5" fill="none"/><rect x="14" y="7" width="3" height="4" rx="1" fill="#27ae60"/><rect x="2.5" y="6.5" width="9" height="5" rx="0.5" fill="#27ae60"/></svg>
-                </div>
-                <div class="stat-val" id="batVal">87%</div>
-                <div class="stat-bar"><div class="stat-bar-fill" id="batBar" style="width:87%"></div></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-top">
-                    <span class="stat-label-top">Signal</span>
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="#e74c3c"><rect x="1" y="12" width="3" height="4" rx="0.5"/><rect x="5.5" y="9" width="3" height="7" rx="0.5"/><rect x="10" y="5" width="3" height="11" rx="0.5"/><rect x="14.5" y="1" width="3" height="15" rx="0.5"/></svg>
-                </div>
-                <div class="stat-val">Excellent</div>
-                <div class="stat-bar"><div class="stat-bar-fill" style="width:95%"></div></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-top">
-                    <span class="stat-label-top">CPU</span>
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#888" stroke-width="1.5"><rect x="4" y="4" width="10" height="10" rx="1"/><path d="M7 1v3M11 1v3M7 14v3M11 14v3M1 7h3M1 11h3M14 7h3M14 11h3"/></svg>
-                </div>
-                <div class="stat-val" id="cpuVal">34%</div>
-                <div class="stat-bar"><div class="stat-bar-fill" id="cpuBar" style="width:34%"></div></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-top">
-                    <span class="stat-label-top">Température</span>
-                    <svg width="14" height="18" viewBox="0 0 14 18" fill="#f39c12"><path d="M7 0a3 3 0 00-3 3v8.17A4 4 0 107 17.9V3a3 3 0 00-3-3z" opacity="0.3"/><rect x="5.5" y="3" width="3" height="7" rx="1.5"/><circle cx="7" cy="14" r="3"/></svg>
-                </div>
-                <div class="stat-val" id="tempVal">42°C</div>
-                <div class="stat-bar"><div class="stat-bar-fill" id="tempBar" style="width:55%"></div></div>
-            </div>
-        </div>
+    
 
         <!-- MAIN GRID -->
         <div class="main-grid">
@@ -698,39 +734,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- STATUS CARDS -->
-        <div class="status-row">
-            <div class="status-card">
-                <div class="status-icon">
-                    <svg width="22" height="22" viewBox="0 0 22 22" fill="white"><path d="M11 2L4 6v5c0 5 3.5 9 7 10 3.5-1 7-5 7-10V6l-7-4z" opacity="0.3"/><path d="M8 11l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
-                </div>
-                <div>
-                    <div class="status-label">Mode</div>
-                    <div class="status-val">Patrouille Auto</div>
-                </div>
-            </div>
-            <div class="status-card">
-                <div class="status-icon">
-                    <svg width="22" height="22" viewBox="0 0 22 22" fill="white"><path d="M11 1L2 5v7c0 6 4 10.5 9 12 5-1.5 9-6 9-12V5L11 1z" stroke="white" stroke-width="1.5" fill="rgba(255,255,255,0.2)"/><circle cx="11" cy="11" r="3" fill="white"/></svg>
-                </div>
-                <div>
-                    <div class="status-label">Sécurité</div>
-                    <div class="status-val">Niveau Maximum</div>
-                </div>
-            </div>
-            <div class="status-card">
-                <div class="status-icon">
-                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="white" stroke-width="2"><polyline points="2,14 7,9 11,13 15,7 20,11"/></svg>
-                </div>
-                <div>
-                    <div class="status-label">Uptime</div>
-                    <div class="status-val" id="uptime">0h 0m 0s</div>
-                </div>
-            </div>
-        </div>
-
-    </div>
+ </div>
 </div>
 
 <script>

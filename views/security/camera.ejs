@@ -298,6 +298,7 @@
     } catch(e) {}
 })();
 </script>
+
 </head>
 <body>
 
@@ -326,7 +327,7 @@
             <span class="nav-icon-wrap">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg>
             </span>
-            <span class="nav-text">Live Feed</span>
+            <span class="nav-text">Surveillance caméra</span>
         </a>
         <a href="/dashboard/map" class="nav-item">
             <span class="nav-icon-wrap">
@@ -413,10 +414,6 @@
                         <!-- Zoom + -->
                         <button class="cam-ctrl-btn" onclick="zoomIn()" title="Zoom +">
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="4"/><line x1="9.5" y1="9.5" x2="13" y2="13"/><line x1="4" y1="6" x2="8" y2="6"/><line x1="6" y1="4" x2="6" y2="8"/></svg>
-                        </button>
-                        <!-- Audio -->
-                        <button class="cam-ctrl-btn" id="audioBtn" onclick="toggleAudio()" title="Audio">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5h2l3-3v10L4 9H2V5z"/><path d="M9 4.5a3 3 0 010 5"/></svg>
                         </button>
                         <!-- Fullscreen -->
                         <button class="cam-ctrl-btn" onclick="goFull()" title="Plein écran">
@@ -524,9 +521,7 @@
 
             <% const cameras = [
                 {id:'CAM-01', name:'CAM-01 Principale', res:'1080p', online:true},
-                {id:'CAM-02', name:'CAM-02 Thermique',  res:'720p',  online:true},
                 {id:'CAM-03', name:'CAM-03 Arrière',    res:'1080p', online:true},
-                {id:'CAM-04', name:'CAM-04 Night Vision',res:'720p', online:false},
             ]; %>
 
             <% cameras.forEach(function(cam, i){ %>
@@ -698,5 +693,6 @@
         if(camStream) stopCam();
     }
 </script>
+
 </body>
 </html>

@@ -31,11 +31,11 @@ async function seedDatabase() {
         console.log('✅ Agent créé: agent1 / agent123');
 
         const users = [
-            { identifiant: 'user1', email: 'utilisateur1@yura.com', password: 'pass123', role: 'security', name: 'Utilisateur 1', status: 'active', position: 'Product Designer' },
-            { identifiant: 'user2', email: 'utilisateur2@yura.com', password: 'pass123', role: 'admin', name: 'Utilisateur 2', status: 'active', position: 'Product Manager' },
-            { identifiant: 'user3', email: 'utilisateur3@yura.com', password: 'pass123', role: 'security', name: 'Utilisateur 3', status: 'active', position: 'Frontend Developer' },
-            { identifiant: 'user4', email: 'utilisateur4@yura.com', password: 'pass123', role: 'security', name: 'Utilisateur 4', status: 'inactive', position: 'Backend Developer' },
-            { identifiant: 'user5', email: 'utilisateur5@yura.com', password: 'pass123', role: 'admin', name: 'Utilisateur 5', status: 'active', position: 'Fullstack Developer' },
+            { identifiant: 'user1', email: 'utilisateur1@yura.com', password: 'pass123', role: 'security', name: 'Utilisateur 1', status: 'active' },
+            { identifiant: 'user2', email: 'utilisateur2@yura.com', password: 'pass123', role: 'admin', name: 'Utilisateur 2', status: 'active' },
+            { identifiant: 'user3', email: 'utilisateur3@yura.com', password: 'pass123', role: 'security', name: 'Utilisateur 3', status: 'active'},
+            { identifiant: 'user4', email: 'utilisateur4@yura.com', password: 'pass123', role: 'security', name: 'Utilisateur 4', status: 'inactive' },
+            { identifiant: 'user5', email: 'utilisateur5@yura.com', password: 'pass123', role: 'admin', name: 'Utilisateur 5', status: 'active' },
         ];
 
         await User.insertMany(users);

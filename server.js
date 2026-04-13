@@ -5,7 +5,8 @@ const session = require('express-session');
 const { SerialPort } = require('serialport');
 const { ReadlineParser } = require('@serialport/parser-readline');
 require('dotenv').config();
-require('./db');
+const { User, History, Notification } = require('./db');
+
 
 const app = express();
 
@@ -48,45 +49,40 @@ function connectBluetooth() {
             global.bluetoothConnected = false;
         });
 
-        parser.on('data', (line) => {
-            const raw = line.trim();
-            console.log('🤖 Arduino RAW:', raw);
-            try {
-                if (raw.startsWith('Temp:')) {
-                    const val = parseFloat(raw.replace('Temp:', '').trim());
-                    if (!isNaN(val)) {
-                        global.sensorData.temperature = val;
-                        global.sensorData.signal = 'GOOD';
-                        console.log('🌡️ Temp:', val);
-                    }
-                }
-                else if (raw.startsWith('Hum:')) {
-                    const val = parseFloat(raw.replace('Hum:', '').trim());
-                    if (!isNaN(val)) {
-                        global.sensorData.humidity = val;
-                        console.log('💧 Hum:', val);
-                    }
-                }
-                else if (raw.startsWith('Bat:')) {
-                    const val = parseInt(raw.replace('Bat:', '').trim());
-                    if (!isNaN(val)) {
-                        global.sensorData.battery = val;
-                        console.log('🔋 Bat:', val);
-                    }
-                }
-                else if (raw.startsWith('Dist:')) {
-                    const val = parseFloat(raw.replace('Dist:', '').trim());
-                    if (!isNaN(val)) {
-                        global.sensorData.distance = val;
-                        global.sensorData.obstacle = val < 50;
-                        if (val < 50) console.log('🚨 OBSTACLE:', val, 'cm');
-                        console.log('📏 Dist:', val, 'cm');
-                    }
-                }
-            } catch(e) {
-                console.error('❌ Erreur parsing:', e.message);
+        parser.on('data', async (line) => {
+    const raw = line.trim();
+    console.log('🤖 Arduino RAW:', raw);
+
+    try {
+        if (raw.startsWith('Temp:')) {
+            const val = parseFloat(raw.replace('Temp:', '').trim());
+            if (!isNaN(val)) {
+                global.sensorData.temperature = val;
             }
-        });
+        }
+
+        // ✅ OBSTACLE (المهم)
+        if (raw.toLowerCase().includes('obstacle')) {
+
+            console.log('🚨 OBSTACLE DETECTED');
+
+            // 🔥 Notification
+            await Notification.create({
+                type: 'alerte',
+                message: '🚧 Obstacle détecté!'
+            });
+
+            // 🔥 Historique
+            await History.create({
+                action: 'Obstacle détecté',
+                userName: 'Robot'
+            });
+        } 
+
+    } catch(e) {
+        console.error('❌ DB error:', e.message);
+    }
+});
 
     } catch (error) {
         console.error('⚠️ Impossible de connecter le robot:', error.message);

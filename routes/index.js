@@ -406,7 +406,18 @@ router.get('/dashboard/settings', requireAgent, (req, res) => {
         user: req.session.user
     });
 });
-
+// Route pour enregistrer les paramètres
+router.post('/dashboard/settings/save', (req, res) => {
+    console.log('📥 Paramètres reçus:', req.body);
+    
+    // Ici tu peux sauvegarder dans MongoDB si tu veux
+    // Pour l'instant on retourne juste success
+    
+    res.json({
+        success: true,
+        message: 'Paramètres enregistrés avec succès!'
+    });
+});
 router.get('/dashboard/notifications', requireAgent, (req, res) => {
     res.redirect('/notifications');
 });

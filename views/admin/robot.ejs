@@ -323,84 +323,8 @@
                     <input type="range" min="0" max="100" value="50" id="speedSlider" oninput="updateSpeed(this.value)">
                 </div>
 
-                <!-- QUICK CMDS -->
-                <div class="card-title" style="margin-top:16px;">Modes</div>
-                <div class="quick-grid">
-                    <button class="cmd-btn" onclick="sendCmd('patrouille')">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
-                        Patrouille
-                    </button>
-                    <button class="cmd-btn" onclick="sendCmd('base')">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 8l7-6 7 6M2 8v7h4V11h4v4h4V8"/></svg>
-                        Base
-                    </button>
-                    <button class="cmd-btn" onclick="sendCmd('scanner')">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M1 8h2M13 8h2M8 1v2M8 13v2"/></svg>
-                        Scanner
-                    </button>
-                    <button class="cmd-btn" onclick="sendCmd('charger')">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1l-5 7h5l-5 7"/></svg>
-                        Charger
-                    </button>
-                    <button class="cmd-btn" onclick="sendCmd('verrouiller')">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="10" height="8" rx="1"/><path d="M5 7V5a3 3 0 016 0v2"/></svg>
-                        Verrouil.
-                    </button>
-                    <button class="cmd-btn" onclick="sendCmd('urgence')" style="border-color:rgba(192,57,43,0.3);color:var(--rouge-light);">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1L1 14h14L8 1zm0 5v4M8 11v1"/></svg>
-                        Urgence
-                    </button>
-                </div>
-         
-            </div>
-
-            <!-- ZONE PLAN -->
-            <div class="card">
-                <div class="card-title">
-                    Plan des Zones
-                    <span class="card-badge" style="background:rgba(59,130,246,0.12);color:#3b82f6;border-color:rgba(59,130,246,0.25);" id="robotZone">Zone B</span>
-                </div>
-                <div class="zone-plan">
-                    <div class="zone-plan-grid"></div>
-                    <div class="zone-box zone-a" onclick="sendToZone('Zone A')">
-                        <div class="zone-box-label">Zone A</div>
-                        <div class="zone-box-name">Entrée</div>
-                    </div>
-                    <div class="zone-box zone-b" onclick="sendToZone('Zone B')">
-                        <div class="zone-box-label">Zone B</div>
-                        <div class="zone-box-name">Bureau</div>
-                    </div>
-                    <div class="zone-box zone-c" onclick="sendToZone('Zone C')">
-                        <div class="zone-box-label">Zone C</div>
-                        <div class="zone-box-name">Entrepôt</div>
-                    </div>
-                    <div class="zone-box zone-d" onclick="sendToZone('Zone D')">
-                        <div class="zone-box-label">Zone D</div>
-                        <div class="zone-box-name">Parking</div>
-                    </div>
-                    <div class="zone-box zone-e" onclick="sendToZone('Zone E')">
-                        <div class="zone-box-label">Zone E</div>
-                        <div class="zone-box-name">Toit</div>
-                    </div>
-                    <!-- Robot marker -->
-                    <div class="robot-marker" id="robotMarker" style="left:160px;top:30px;"></div>
-                </div>
-                <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-                    <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:#27ae60;">
-                        <div style="width:8px;height:8px;background:#27ae60;border-radius:2px;"></div>Active
-                    </div>
-                    <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:#3b82f6;">
-                        <div style="width:8px;height:8px;background:#3b82f6;border-radius:2px;"></div>Patrouille
-                    </div>
-                    <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:#555;">
-                        <div style="width:8px;height:8px;background:#333;border-radius:2px;"></div>Inactive
-                    </div>
-                    <div style="display:flex;align-items:center;gap:5px;font-size:0.65rem;color:var(--rouge-light);margin-left:auto;">
-                        <div style="width:8px;height:8px;background:var(--rouge);border-radius:50%;"></div>Robot
-                    </div>
-                </div>
-            </div>
-        </div>
+               
+           
 
         <!-- ROW 2: Logs -->
         <div class="card">

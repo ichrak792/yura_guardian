@@ -360,59 +360,42 @@
                     <span class="card-title-badge" style="background:rgba(39,174,96,0.15);color:#27ae60;border-color:rgba(39,174,96,0.3);">EN LIGNE</span>
                 </div>
                 <div class="robot-status-grid">
-                    <div class="mini-stat">
-                        <div class="mini-stat-label">Batterie</div>
-                        <div class="mini-stat-val orange" id="batVal">--</div>
-                        <div class="progress-bar"><div class="progress-fill orange" id="batBar" style="width:0%"></div></div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-label">Obstacle</div>
-                        <div class="mini-stat-val rouge" id="obstacleVal">Aucun</div>
-                    </div>
-                    
-                   <div class="mini-stat">
-                        <div class="mini-stat-label">Humidité</div>
-                        <div class="mini-stat-val green" id="humVal">--</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill blue" id="humBar" style="width:0%"></div>
-                        </div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-label">Température</div>
-                        <div class="mini-stat-val" id="tempVal">--</div>
-                        <div class="progress-bar"><div class="progress-fill rouge" id="tempBar" style="width:0%"></div></div>
-                    </div>
-                </div>
-        </div>
 
-        <div class="grid-3">
-            <div class="card">
-                <div class="card-title">
-                    Utilisateurs récents
-                    <a href="/admin/users" style="font-size:0.65rem;color:var(--rouge-light);text-decoration:none;font-weight:600;">Voir tout →</a>
-                </div>
-                <table class="users-mini-table">
-                    <thead><tr><th>Nom</th><th>Rôle</th><th>Statut</th></tr></thead>
-                    <tbody>
-                        <% if(users && users.length > 0) { %>
-                            <% users.slice(0,5).forEach(function(u){ %>
-                            <tr>
-                                <td>
-                                    <div class="user-cell-mini">
-                                        <div class="user-av-mini"><%= u.name ? u.name.charAt(0).toUpperCase() : '?' %></div>
-                                        <span style="font-size:0.78rem;color:var(--gris2)"><%= u.name %></span>
-                                    </div>
-                                </td>
-                                <td><span class="role-pill <%= u.role === 'admin' ? 'admin' : 'agent' %>"><%= u.role %></span></td>
-                                <td><span class="status-dot-pill <%= u.status === 'active' ? 'active' : 'inactive' %>"><%= u.status === 'active' ? 'Actif' : 'Inactif' %></span></td>
-                            </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr><td colspan="3" style="color:var(--gris);font-size:0.78rem;padding:12px 0;">Aucun utilisateur</td></tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
+    <!-- BATTERY -->
+    <div class="mini-stat">
+        <div class="mini-stat-label">Batterie</div>
+        <div class="mini-stat-val orange" id="batVal">--%</div>
+        <div class="progress-bar">
+            <div class="progress-fill orange" id="batBar" style="width:0%"></div>
+        </div>
+    </div>
+
+    <!-- OBSTACLE -->
+    <div class="mini-stat">
+        <div class="mini-stat-label">Obstacle</div>
+        <div class="mini-stat-val rouge" id="obstacleVal">Aucun</div>
+    </div>
+
+    <!-- HUMIDITY -->
+    <div class="mini-stat">
+        <div class="mini-stat-label">Humidité</div>
+        <div class="mini-stat-val green" id="humVal">--%</div>
+        <div class="progress-bar">
+            <div class="progress-fill blue" id="humBar" style="width:0%"></div>
+        </div>
+    </div>
+
+    <!-- TEMPERATURE -->
+    <div class="mini-stat">
+        <div class="mini-stat-label">Température</div>
+        <div class="mini-stat-val rouge" id="tempVal">--°C</div>
+        <div class="progress-bar">
+            <div class="progress-fill rouge" id="tempBar" style="width:0%"></div>
+        </div>
+    </div>
+
+</div>
+       
 
         <div class="card">
             <div class="card-title">
@@ -441,6 +424,7 @@
 
     </div>
 </div>
+<span id="sim">--</span>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
@@ -490,13 +474,6 @@ function updateSensors() {
             document.getElementById('batBar').style.width = Math.min(b,100)+'%';
         }
 
-        // SIGNAL ← bug corrigé: était vide avant
-        const sigMap = {'EXCELLENT':'Excellent','GOOD':'Bon','FAIR':'Faible','POOR':'Mauvais'};
-        const sigPct  = {'EXCELLENT':100,'GOOD':75,'FAIR':50,'POOR':25};
-        if (d.signal && d.signal !== 'DISCONNECTED') {
-            document.getElementById('sigVal').textContent = sigMap[d.signal] || d.signal;
-            document.getElementById('sigBar').style.width = (sigPct[d.signal] || 50)+'%';
-        }
         // DISTANCE + OBSTACLE
 const dist = parseFloat(d.distance);
 if (!isNaN(dist)) {
@@ -576,6 +553,41 @@ function exportReport() {
     a.download = 'rapport-yura-' + new Date().toISOString().slice(0,10) + '.txt';
     a.click();
 }
+function updateSensors() {
+    fetch('/api/sensors')
+    .then(r => r.json())
+    .then(res => {
+        const d = res.data;
+
+        // TEMP
+        const t = parseFloat(d.temperature);
+        if (!isNaN(t)) {
+            document.getElementById('tempVal').textContent = t.toFixed(1) + "°C";
+            document.getElementById('tempBar').style.width = Math.min(t * 2, 100) + "%";
+        }
+
+        // HUM
+        const h = parseFloat(d.humidity);
+        if (!isNaN(h)) {
+            document.getElementById('humVal').textContent = h.toFixed(1) + "%";
+            document.getElementById('humBar').style.width = Math.min(h, 100) + "%";
+        }
+
+        // BAT
+        const b = parseFloat(d.battery);
+        if (!isNaN(b)) {
+            document.getElementById('batVal').textContent = b + "%";
+            document.getElementById('batBar').style.width = b + "%";
+        }
+
+        // OBSTACLE
+        document.getElementById('obstacleVal').textContent =
+            d.obstacle ? "🚨 Oui" : "Aucun";
+    })
+    .catch(err => console.log(err));
+}
+
+// auto refresh
 setInterval(updateSensors, 2000);
 updateSensors();
 </script>

@@ -268,30 +268,7 @@
             </div>
         </div>
 
-        <!-- STATS -->
-        <div class="stat-row">
-            <div class="stat-card">
-                <div class="stat-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="white"><path d="M16 2a9 9 0 00-9 9c0 7 9 19 9 19s9-12 9-19a9 9 0 00-9-9zm0 12a3 3 0 110-6 3 3 0 010 6z"/></svg></div>
-                <div class="stat-num" id="statLat">36.8065°</div>
-                <div class="stat-label">Latitude</div>
-            </div>
-            <div class="stat-card green">
-                <div class="stat-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="white"><path d="M16 2a9 9 0 00-9 9c0 7 9 19 9 19s9-12 9-19a9 9 0 00-9-9zm0 12a3 3 0 110-6 3 3 0 010 6z"/></svg></div>
-                <div class="stat-num" id="statLng">10.1815°</div>
-                <div class="stat-label">Longitude</div>
-            </div>
-            <div class="stat-card blue">
-                <div class="stat-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="white"><path d="M16 4l3 9h9l-7 5 3 9-8-6-8 6 3-9-7-5h9z"/></svg></div>
-                <div class="stat-num" id="statSpeed">0.8 km/h</div>
-                <div class="stat-label">Vitesse</div>
-            </div>
-            <div class="stat-card orange">
-                <div class="stat-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="white"><path d="M16 2a7 7 0 100 14A7 7 0 0016 2zm0 2v5l3 3-1.4 1.4L14 10V4h2z"/></svg></div>
-                <div class="stat-num" id="statDuration">00:24:17</div>
-                <div class="stat-label">Durée patrouille</div>
-            </div>
-        </div>
-
+       
         <!-- MAP + RIGHT -->
         <div class="map-layout">
             <div class="map-card">
@@ -321,104 +298,6 @@
                 <div id="map"></div>
             </div>
 
-            <!-- RIGHT COL -->
-            <div class="right-col">
-                <!-- GPS INFO -->
-                <div class="info-card">
-                    <div class="card-title">
-                        Données GPS
-                        <span class="card-badge green">EN LIGNE</span>
-                    </div>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <div class="info-lbl">Altitude</div>
-                            <div class="info-val blue">12 m</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-lbl">Direction</div>
-                            <div class="info-val" id="dirVal">NE 47°</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-lbl">Précision GPS</div>
-                            <div class="info-val green">±1.2 m</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-lbl">Satellites</div>
-                            <div class="info-val">9</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-lbl">Distance totale</div>
-                            <div class="info-val orange" id="distVal">0.34 km</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-lbl">Zone actuelle</div>
-                            <div class="info-val rouge">Zone B</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- WAYPOINTS -->
-                <div class="info-card">
-                    <div class="card-title">Plan de Patrouille</div>
-                    <div class="waypoints-list">
-                        <div class="wp-item">
-                            <div class="wp-dot done"></div>
-                            <span class="wp-name done">Zone A — Entrée</span>
-                            <span class="wp-dist">✓</span>
-                        </div>
-                        <div class="wp-item">
-                            <div class="wp-dot current"></div>
-                            <span class="wp-name current">Zone B — Bureau</span>
-                            <span class="wp-dist">En cours</span>
-                        </div>
-                        <div class="wp-item">
-                            <div class="wp-dot pending"></div>
-                            <span class="wp-name pending">Zone C — Entrepôt</span>
-                            <span class="wp-dist">~80m</span>
-                        </div>
-                        <div class="wp-item">
-                            <div class="wp-dot pending"></div>
-                            <span class="wp-name pending">Zone D — Parking</span>
-                            <span class="wp-dist">~150m</span>
-                        </div>
-                        <div class="wp-item">
-                            <div class="wp-dot pending"></div>
-                            <span class="wp-name pending">Base — Recharge</span>
-                            <span class="wp-dist">~220m</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- LOGS -->
-                <div class="info-card">
-                    <div class="card-title">Journal Navigation</div>
-                    <div class="log-list" id="navLog">
-                        <div class="log-item">
-                            <div class="log-dot" style="background:#27ae60"></div>
-                            <span class="log-text">Zone A complétée — aucune anomalie</span>
-                            <span class="log-time">09:12</span>
-                        </div>
-                        <div class="log-item">
-                            <div class="log-dot" style="background:#3b82f6"></div>
-                            <span class="log-text">Démarrage patrouille Zone B</span>
-                            <span class="log-time">09:18</span>
-                        </div>
-                        <div class="log-item">
-                            <div class="log-dot" style="background:#f59e0b"></div>
-                            <span class="log-text">Vitesse réduite — obstacle détecté</span>
-                            <span class="log-time">09:22</span>
-                        </div>
-                        <div class="log-item">
-                            <div class="log-dot" style="background:var(--rouge)"></div>
-                            <span class="log-text">Température 42°C — surveillance accrue</span>
-                            <span class="log-time">09:30</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
@@ -426,8 +305,8 @@
 const map = L.map('map', { zoomControl: false }).setView([36.8065, 10.1815], 17);
 L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '©OpenStreetMap ©CARTO', maxZoom: 20
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '©OpenStreetMap', maxZoom: 19
 }).addTo(map);
 
 // ROBOT MARKER

@@ -13,9 +13,11 @@
     "ejs": "^3.1.10",
     "express": "^4.22.1",
     "express-session": "^1.17.3",
+    "http-proxy-middleware": "^3.0.5",
     "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.7",
     "mongoose": "^8.0.0",
+    "python": "^0.0.4",
     "serialport": "^13.0.0"
   }
 }

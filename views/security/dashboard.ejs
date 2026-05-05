@@ -545,7 +545,7 @@
         <!-- PAGE HEADER -->
         <div class="page-header">
             <div>
-                <h1>TABLEAU DE BORD</h1>
+                <h1>Dashboard Agent de sécurité</h1>
                 <p>Contrôle en temps réel du robot de surveillance</p>
             </div>
             <div class="live-badge">
@@ -609,41 +609,11 @@
             </div>
 
             <!-- ACTIVITY -->
-            <div class="activity-card">
-                <div class="activity-header">
-                    <span class="activity-icon">
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="#c0392b"><path d="M7 0L8.5 5h5L9.5 8l1.5 5L7 10l-4 3 1.5-5L.5 5h5z"/></svg>
-                    </span>
-                    Activité Récente
-                </div>
-                <div class="activity-list">
-                    <% const acts = [
-                        {time:'14:32', text:'Mouvement détecté - Zone A', type:'danger'},
-                        {time:'14:28', text:'Patrouille terminée - Secteur 3', type:'success'},
-                        {time:'14:15', text:'Scan thermique complété', type:'neutral'},
-                        {time:'14:02', text:'Alerte intrusion - Périmètre Nord', type:'danger'},
-                        {time:'13:55', text:'Mise à jour firmware v2.4.1', type:'neutral'},
-                        {time:'13:40', text:'Calibration capteurs OK', type:'success'},
-                        {time:'13:22', text:'Ronde Zone B démarrée', type:'neutral'},
-                        {time:'13:10', text:'Température normalisée', type:'success'},
-                    ]; %>
-                    <% acts.forEach(function(a){ %>
-                        <div class="activity-item">
-                            <div class="activity-time"><%= a.time %></div>
-                            <div class="activity-dot dot-<%= a.type %>"></div>
-                            <div class="activity-text"><%= a.text %></div>
-                        </div>
-                    <% }); %>
-                    <% if(histories && histories.length > 0){ %>
-                        <% histories.slice(0,5).forEach(function(h){ %>
-                            <div class="activity-item">
-                                <div class="activity-time"><%= new Date(h.timestamp).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) %></div>
-                                <div class="activity-dot dot-neutral"></div>
-                                <div class="activity-text"><%= h.action %></div>
-                            </div>
-                        <% }); %>
-                    <% } %>
-                </div>
+            
+                    
+                  
+              
+                
             </div>
         </div>
 
@@ -683,32 +653,21 @@
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="#e74c3c"><path d="M7 0a2 2 0 00-2 2v6.17A3 3 0 107 13.9V2a2 2 0 00-2-2z" opacity="0.4"/><rect x="6" y="2" width="2" height="5" rx="1"/><circle cx="7" cy="11" r="2"/></svg>
                     Environnement
                 </div>
-                <div class="env-body">
-                    <div class="env-row">
-                        <span class="env-ico">💧</span>
-                        <div style="flex:1">
-                            <div class="env-label2">Humidité</div>
-                            <div class="env-val" id="humidity">45%</div>
-                            <div class="env-bar2"><div class="env-fill" id="humBar" style="width:45%"></div></div>
-                        </div>
-                    </div>
-                    <div class="env-row">
-                        <span class="env-ico">🌡️</span>
-                        <div style="flex:1">
-                            <div class="env-label2">Température</div>
-                            <div class="env-val" id="temperature">28°C</div>
-                            <div class="env-bar2"><div class="env-fill" id="tmpBar2" style="width:35%"></div></div>
-                        </div>
-                    </div>
-                    <div class="env-row">
-                        <span class="env-ico">💨</span>
-                        <div style="flex:1">
-                            <div class="env-label2">Gaz</div>
-                            <div class="env-val" id="gas">15 ppm</div>
-                            <div class="env-bar2"><div class="env-fill" id="gasBar" style="width:15%"></div></div>
-                        </div>
-                    </div>
-                </div>
+                 <div class="mini-stat">
+    <div class="mini-stat-label">Humidité</div>
+    <div class="mini-stat-val green" id="hum">--</div>
+    <div class="progress-bar">
+        <div class="progress-fill blue" id="humBar" style="width:0%"></div>
+    </div>
+</div>
+
+<div class="mini-stat">
+    <div class="mini-stat-label">Température</div>
+    <div class="mini-stat-val" id="temp">--</div>
+    <div class="progress-bar">
+        <div class="progress-fill rouge" id="tempBar" style="width:0%"></div>
+    </div>
+</div>
             </div>
 
             <!-- HISTORY -->
@@ -793,16 +752,20 @@
     });
 
     // SENSORS
-    setInterval(()=>{
-        const hum=42+Math.random()*8, tmp=26+Math.random()*4, gas=12+Math.random()*6;
-        document.getElementById('humidity').textContent    = hum.toFixed(0)+'%';
-        document.getElementById('temperature').textContent = tmp.toFixed(1)+'°C';
-        document.getElementById('gas').textContent         = gas.toFixed(0)+' ppm';
-        document.getElementById('humBar').style.width  = hum+'%';
-        document.getElementById('tmpBar2').style.width = (tmp/50*100)+'%';
-        document.getElementById('gasBar').style.width  = (gas/100*100)+'%';
-    }, 4000);
+   setInterval(() => {
+    fetch("http://192.168.0.155:5000/data")
+    .then(r => r.json())
+    .then(d => {
 
+        document.getElementById("hum").textContent = d.humidity + "%";
+        document.getElementById("temp").textContent = d.temperature + "°C";
+
+        document.getElementById("humBar").style.width = d.humidity + "%";
+        document.getElementById("tempBar").style.width = (d.temperature / 50 * 100) + "%";
+
+    })
+    .catch(err => console.log("API error:", err));
+}, 2000);
     // BATTERY
     let bat=87;
     setInterval(()=>{ bat=Math.max(0,bat-0.05); document.getElementById('batVal').textContent=bat.toFixed(0)+'%'; document.getElementById('batBar').style.width=bat+'%'; }, 8000);

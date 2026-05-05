@@ -7,11 +7,10 @@ const { ReadlineParser } = require('@serialport/parser-readline');
 require('dotenv').config();
 const { User, History, Notification } = require('./db');
 
-
 const app = express();
 
-// ===== CONFIGURATION BLUETOOTH HC-06 =====
-const ROBOT_PORT = 'COM9';
+// ===== CONFIGURATION SIM7600 =====
+const SIM_PORT = 'COM3'; // بدّلها حسب جهازك
 
 global.sensorData = {
     temperature: 0,
@@ -19,97 +18,110 @@ global.sensorData = {
     battery: 0,
     signal: 'DISCONNECTED',
     distance: 0,
-    obstacle: false
+    obstacle: false,
+    lat: 0,    
+    lng: 0    
 };
+global.simConnected = false;
 
-global.bluetoothConnected = false;
-
-let btPort = null;
+let simPort = null;
 let parser = null;
 
-// ===== FONCTION CONNEXION BLUETOOTH =====
-function connectBluetooth() {
+// ===== FONCTION CONNEXION SIM7600 =====
+function connectSIM7600() {
     try {
-        btPort = new SerialPort({ path: ROBOT_PORT, baudRate: 9600, autoOpen: true });
-        parser = btPort.pipe(new ReadlineParser({ delimiter: '\n' }));
+        simPort = new SerialPort({ path: SIM_PORT, baudRate: 115200 });
+        parser = simPort.pipe(new ReadlineParser({ delimiter: '\n' }));
 
-        btPort.on('open', () => {
-            console.log('✅ 🤖 Robot YURA GUARDIAN connecté!');
-            console.log('📡 Port:', ROBOT_PORT);
-            global.bluetoothConnected = true;
+        simPort.on('open', () => {
+            console.log('📡 SIM7600 CONNECTED');
+            global.simConnected = true;
+            global.sensorData.signal = "4G_CONNECTED";
         });
 
-        btPort.on('error', (err) => {
-            console.error('❌ Erreur Bluetooth:', err.message);
-            global.bluetoothConnected = false;
+        simPort.on('error', (err) => {
+            console.error('❌ SIM Error:', err.message);
+            global.simConnected = false;
+            global.sensorData.signal = "DISCONNECTED";
         });
 
-        btPort.on('close', () => {
-            console.log('🔌 Connexion Bluetooth fermée');
-            global.bluetoothConnected = false;
+        simPort.on('close', () => {
+            console.log('🔌 SIM disconnected');
+            global.simConnected = false;
+            global.sensorData.signal = "DISCONNECTED";
         });
 
         parser.on('data', async (line) => {
-    const raw = line.trim();
-    console.log('🤖 Arduino RAW:', raw);
+            const raw = line.trim();
+            console.log('📡 SIM RAW:', raw);
 
-    try {
-        if (raw.startsWith('Temp:')) {
-            const val = parseFloat(raw.replace('Temp:', '').trim());
-            if (!isNaN(val)) {
-                global.sensorData.temperature = val;
+            try {
+                const data = JSON.parse(raw);
+
+                // update sensors
+                global.sensorData = {
+                    ...global.sensorData,
+                    ...data
+                };
+
+                // OBSTACLE ALERT
+                if (data.obstacle) {
+
+                    console.log('🚨 OBSTACLE DETECTED');
+
+                    await Notification.create({
+                        type: 'alerte',
+                        message: '🚧 Obstacle détecté!'
+                    });
+
+                    await History.create({
+                        action: 'Obstacle détecté',
+                        userName: 'Robot'
+                    });
+
+                }
+
+            } catch (e) {
+                console.log('❌ bad data:', raw);
             }
-        }
-
-        // ✅ OBSTACLE (المهم)
-        if (raw.toLowerCase().includes('obstacle')) {
-
-            console.log('🚨 OBSTACLE DETECTED');
-
-            // 🔥 Notification
-            await Notification.create({
-                type: 'alerte',
-                message: '🚧 Obstacle détecté!'
-            });
-
-            // 🔥 Historique
-            await History.create({
-                action: 'Obstacle détecté',
-                userName: 'Robot'
-            });
-        } 
-
-    } catch(e) {
-        console.error('❌ DB error:', e.message);
-    }
-});
+        });
 
     } catch (error) {
-        console.error('⚠️ Impossible de connecter le robot:', error.message);
-        global.bluetoothConnected = false;
+        console.error('⚠️ SIM connect failed:', error.message);
+        global.simConnected = false;
     }
 }
 
-// ===== COMMANDE ROBOT =====
-global.sendCommandToRobot = function(command) {
-    return new Promise((resolve, reject) => {
-        if (!global.bluetoothConnected || !btPort || !btPort.isOpen) {
-            reject(new Error('Robot non connecté'));
-            return;
-        }
-        btPort.write(command + '\n', (err) => {
-            if (err) { reject(err); }
-            else {
-                console.log('📤 Commande envoyée:', command);
-                resolve();
-            }
-        });
-    });
-};
+// ===== START SIM =====
+console.log('[SIM] Connecting to', SIM_PORT);
+connectSIM7600();
+// ===== ARDUINO SERIAL =====   ← zid min hna
+const ARDUINO_PORT = 'COM5'; // badel b port Arduino mte3ek
+const arduinoSerial = new SerialPort({ path: ARDUINO_PORT, baudRate: 9600 });
+const arduinoParser = arduinoSerial.pipe(new ReadlineParser({ delimiter: '\n' }));
 
-// ===== DÉMARRER BLUETOOTH =====
-console.log('[BT] Tentative de connexion à', ROBOT_PORT, '...');
-connectBluetooth();
+arduinoSerial.on('open', () => {
+    console.log('Arduino connected on', ARDUINO_PORT);
+});
+
+arduinoParser.on('data', (line) => {
+    try {
+        const data = JSON.parse(line.trim());
+        if (!isNaN(data.temp))  global.sensorData.temperature = data.temp;
+        if (!isNaN(data.hum))   global.sensorData.humidity    = data.hum;
+        if (data.lat !== undefined) global.sensorData.lat     = data.lat;
+        if (data.lng !== undefined) global.sensorData.lng     = data.lng;
+        console.log('Arduino data:', global.sensorData);
+    } catch(e) {}
+});
+
+arduinoSerial.on('error', (err) => {
+    console.error('Arduino error:', err.message);
+});
+
+// ===== EXPRESS CONFIG =====   ← w taw yibda el code mte3ek
+app.set('view engine', 'ejs');
+
 
 // ===== EXPRESS CONFIG =====
 app.set('view engine', 'ejs');
@@ -118,19 +130,49 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(session({
     secret: process.env.SESSION_SECRET || 'yura-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
+
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
     next();
 });
+
 app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
     next();
+});
+
+// ===== API SENSORS =====
+app.get('/api/sensors', (req, res) => {
+    res.json({ data: global.sensorData });
+});
+// ===== CAMERA PROXY =====
+const { createProxyMiddleware } = require('http-proxy-middleware');
+app.use('/camera-stream', createProxyMiddleware({
+    target: 'http://192.168.0.155:5000',
+    changeOrigin: true,
+    pathRewrite: { '^/camera-stream': '/video' },
+    on: {
+        error: (err, req, res) => {
+            res.status(502).send('Camera offline');
+        }
+    }
+}));
+// ===== ARDUINO DATA FROM RPI =====
+app.post('/api/arduino-data', (req, res) => {
+    const data = req.body;
+    if (!isNaN(data.temp)) global.sensorData.temperature = data.temp;
+    if (!isNaN(data.hum))  global.sensorData.humidity    = data.hum;
+    if (data.lat !== undefined) global.sensorData.lat    = data.lat;
+    if (data.lng !== undefined) global.sensorData.lng    = data.lng;
+    console.log('✅ Data from RPi:', global.sensorData);
+    res.json({ ok: true });
 });
 
 // ===== ROUTES =====
@@ -163,16 +205,16 @@ app.listen(PORT, () => {
     console.log('='.repeat(50));
     console.log('🚀 Serveur YURA GUARDIAN démarré!');
     console.log(`📍 URL: http://localhost:${PORT}`);
-    console.log('📊 État Bluetooth:', global.bluetoothConnected ? '✅ Connecté' : '⚠️ Déconnecté');
+    console.log('📡 SIM status:', global.simConnected ? 'CONNECTED' : 'DISCONNECTED');
     console.log('='.repeat(50));
 });
 
-// ===== GRACEFUL SHUTDOWN =====
+// ===== SHUTDOWN =====
 process.on('SIGINT', () => {
-    console.log('\n🛑 Arrêt du serveur...');
-    if (btPort && btPort.isOpen) {
-        btPort.close(() => {
-            console.log('🔌 Bluetooth déconnecté');
+    console.log('\n🛑 Arrêt serveur...');
+    if (simPort && simPort.isOpen) {
+        simPort.close(() => {
+            console.log('🔌 SIM closed');
             process.exit(0);
         });
     } else {

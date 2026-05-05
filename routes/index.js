@@ -114,13 +114,71 @@ router.get('/admin/users', requireAdmin, async (req, res) => {
 });
 
 router.post('/admin/users/add', requireAdmin, async (req, res) => {
+    console.log('📝 Tentative ajout utilisateur');
+    console.log('Données reçues:', req.body);
+    
     try {
         const { identifiant, email, password, name, role, position, status } = req.body;
-        await User.create({ identifiant, email, password, name, role, position, status: status || 'active' });
-        await History.create({ action: 'Utilisateur créé', userName: req.session.user.name, details: `Nouvel utilisateur: ${name}` });
-        res.redirect('/admin/users');
+        
+        // Vérifier les champs obligatoires
+        if (!identifiant || !email || !password || !name || !role) {
+            console.log('❌ Champs manquants');
+            return res.redirect('/admin/users?error=missing');
+        }
+        
+        // Nettoyer les données (enlever espaces)
+        const cleanId = identifiant.trim();
+        const cleanEmail = email.trim().toLowerCase();
+        
+        // Vérifier si l'identifiant existe déjà
+        const existingId = await User.findOne({ identifiant: cleanId });
+        if (existingId) {
+            console.log('❌ Identifiant existe déjà:', cleanId);
+            return res.redirect('/admin/users?error=id_exists');
+        }
+        
+        // Vérifier si l'email existe déjà
+        const existingEmail = await User.findOne({ email: cleanEmail });
+        if (existingEmail) {
+            console.log('❌ Email existe déjà:', cleanEmail);
+            return res.redirect('/admin/users?error=email_exists');
+        }
+        
+        // Créer le nouvel utilisateur
+        const newUser = await User.create({
+            identifiant: cleanId,
+            email: cleanEmail,
+            password: password,
+            name: name,
+            role: role,
+            position: position || '',
+            status: status || 'active'
+        });
+        
+        console.log('✅ Utilisateur créé:', newUser.identifiant);
+        
+        // Ajouter dans l'historique
+        await History.create({
+            action: 'Utilisateur créé',
+            userName: req.session.user.name,
+            details: `Nouvel utilisateur: ${name} (${role})`
+        });
+        
+        res.redirect('/admin/users?success=created');
+        
     } catch (error) {
-        res.redirect('/admin/users?error=exists');
+        console.error('❌ Erreur création utilisateur:', error);
+        
+        // Identifier le type d'erreur
+        if (error.code === 11000) {
+            // Erreur de duplication MongoDB
+            const field = Object.keys(error.keyPattern)[0];
+            console.log('❌ Duplication détectée sur:', field);
+            return res.redirect(`/admin/users?error=${field}_exists`);
+        }
+        
+        // Autre erreur
+        res.redirect('/admin/users?error=server');
     }
 });
 

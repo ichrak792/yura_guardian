@@ -279,10 +279,7 @@
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6.5" cy="6.5" r="5"/><path d="M6.5 1v2M6.5 10v2M1 6.5h2M10 6.5h2"/></svg>
                 Apparence
             </button>
-            <button class="tab-btn" onclick="switchTab('robot')">
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="1" width="7" height="5" rx="1"/><rect x="2" y="6" width="9" height="5" rx="1"/><circle cx="5" cy="3.5" r="0.8" fill="currentColor"/><circle cx="8" cy="3.5" r="0.8" fill="currentColor"/></svg>
-                Robot
-            </button>
+
             <button class="tab-btn" onclick="switchTab('securite')">
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 1L1 4v4c0 3.5 2.5 5.5 5.5 6.5C9 13.5 12 11.5 12 8V4L6.5 1z"/></svg>
                 Sécurité
@@ -373,10 +370,10 @@
                         </div>
                         <div class="toggle-row">
                             <div class="toggle-info">
-                                <div class="toggle-label">Notifications email</div>
-                                <div class="toggle-desc">Recevoir les alertes critiques par email</div>
+                                <div class="toggle-label">🔊 Notification sonore</div>
+                                <div class="toggle-desc">Jouer un son d'alerte sur le dashboard en temps réel</div>
                             </div>
-                            <label class="toggle"><input type="checkbox" id="emailNotif" checked><span class="toggle-slider"></span></label>
+                            <label class="toggle"><input type="checkbox" id="soundNotif" onchange="toggleSoundNotif(this)"><span class="toggle-slider"></span></label>
                         </div>
                         <div class="toggle-row">
                             <div class="toggle-info">
@@ -385,13 +382,7 @@
                             </div>
                             <label class="toggle"><input type="checkbox" id="sysLogs" checked><span class="toggle-slider"></span></label>
                         </div>
-                        <div class="toggle-row">
-                            <div class="toggle-info">
-                                <div class="toggle-label">Maintenance automatique</div>
-                                <div class="toggle-desc">Nettoyage automatique des logs (30 jours)</div>
-                            </div>
-                            <label class="toggle"><input type="checkbox" id="autoMaint"><span class="toggle-slider"></span></label>
-                        </div>
+
                     </div>
                 </div>
 
@@ -409,20 +400,7 @@
                             </div>
                             <label class="toggle"><input type="checkbox" id="darkMode" checked onchange="toggleDarkMode(this)"><span class="toggle-slider"></span></label>
                         </div>
-                        <div class="toggle-row">
-                            <div class="toggle-info">
-                                <div class="toggle-label">Animations</div>
-                                <div class="toggle-desc">Effets de transition et animations UI</div>
-                            </div>
-                            <label class="toggle"><input type="checkbox" id="animations" checked><span class="toggle-slider"></span></label>
-                        </div>
-                        <div class="toggle-row">
-                            <div class="toggle-info">
-                                <div class="toggle-label">Sidebar compacte</div>
-                                <div class="toggle-desc">Réduire la largeur de la barre latérale</div>
-                            </div>
-                            <label class="toggle"><input type="checkbox" id="compactSidebar"><span class="toggle-slider"></span></label>
-                        </div>
+
 
                         <div class="section-title" style="margin-top:18px;">
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M4 7a3 3 0 016 0"/></svg>
@@ -434,28 +412,6 @@
                             <div class="color-option" id="color-green-black" style="background:linear-gradient(135deg,#16a34a,#0a0a0a);" onclick="setColor('green-black')" title="Vert / Noir"></div>
                             <div class="color-option" id="color-purple-black" style="background:linear-gradient(135deg,#7c3aed,#0a0a0a);" onclick="setColor('purple-black')" title="Violet / Noir"></div>
                             <div class="color-option" id="color-orange-black" style="background:linear-gradient(135deg,#ea580c,#0a0a0a);" onclick="setColor('orange-black')" title="Orange / Noir"></div>
-                        </div>
-                    
-                        <div class="toggle-row">
-                            <div class="toggle-info">
-                                <div class="toggle-label">Détection d'obstacles</div>
-                                <div class="toggle-desc">Arrêt automatique si obstacle détecté</div>
-                            </div>
-                            <label class="toggle"><input type="checkbox" id="obstacleDetect" checked><span class="toggle-slider"></span></label>
-                        </div>
-                        <div class="toggle-row">
-                            <div class="toggle-info">
-                                <div class="toggle-label">Alerte intrusion auto</div>
-                                <div class="toggle-desc">Créer une notification si mouvement détecté</div>
-                            </div>
-                            <label class="toggle"><input type="checkbox" id="intrusionAlert" checked><span class="toggle-slider"></span></label>
-                        </div>
-                        <div class="toggle-row">
-                            <div class="toggle-info">
-                                <div class="toggle-label">Enregistrement continu</div>
-                                <div class="toggle-desc">Enregistrer la caméra en permanence</div>
-                            </div>
-                            <label class="toggle"><input type="checkbox" id="contRecord"><span class="toggle-slider"></span></label>
                         </div>
                     </div>
                 </div>
@@ -499,21 +455,7 @@
                             <label class="toggle"><input type="checkbox" id="newConnAlert"><span class="toggle-slider"></span></label>
                         </div>
 
-                        <div class="section-title" style="margin-top:18px;">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1a6 6 0 100 12A6 6 0 007 1zm0 4v4M7 10v1"/></svg>
-                            Zone dangereuse
-                        </div>
-                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                            <button onclick="confirmAction('reset-logs')" style="padding:9px 16px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;">
-                                🗑 Vider les logs
-                            </button>
-                            <button onclick="confirmAction('reset-notifs')" style="padding:9px 16px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:#3b82f6;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;">
-                                🔔 Reset notifications
-                            </button>
-                            <button onclick="confirmAction('reset-all')" style="padding:9px 16px;background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.35);color:#e74c3c;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;">
-                                ⚠️ Reset complet
-                            </button>
-                        </div>
+
                     </div>
                 </div>
 
@@ -523,13 +465,7 @@
             <div>
                 <div class="settings-card">
                     <div class="section-title">Statut système</div>
-                    <div class="info-box">
-                        <div class="info-box-title">Serveur</div>
-                        <div class="info-row"><span class="info-key">Statut</span><span class="info-val green">En ligne ✓</span></div>
-                        <div class="info-row"><span class="info-key">Uptime</span><span class="info-val">99.8%</span></div>
-                        <div class="info-row"><span class="info-key">Version</span><span class="info-val">v2.4.1</span></div>
-                        <div class="info-row"><span class="info-key">Node.js</span><span class="info-val">v18.x</span></div>
-                    </div>
+
                     <div class="info-box">
                         <div class="info-box-title">Robot YURA-001</div>
                         <div class="info-row"><span class="info-key">Statut</span><span class="info-val green">Actif ✓</span></div>
@@ -537,12 +473,7 @@
                         <div class="info-row"><span class="info-key">Signal</span><span class="info-val green">Fort</span></div>
                         <div class="info-row"><span class="info-key">Mode</span><span class="info-val">Patrouille</span></div>
                     </div>
-                    <div class="info-box">
-                        <div class="info-box-title">Base de données</div>
-                        <div class="info-row"><span class="info-key">MongoDB</span><span class="info-val green">Connecté ✓</span></div>
-                        <div class="info-row"><span class="info-key">Utilisateurs</span><span class="info-val rouge"><%= typeof total !== 'undefined' ? total : '—' %></span></div>
-                        <div class="info-row"><span class="info-key">Dernière sync</span><span class="info-val">À l'instant</span></div>
-                    </div>
+
                 </div>
 
                 <div class="settings-card" style="margin-top:12px;">
@@ -576,7 +507,7 @@
 function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.remove('active'));
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    const tabs = ['compte','systeme','apparence','robot','securite'];
+    const tabs = ['compte','systeme','apparence','securite'];
     document.querySelectorAll('.tab-btn')[tabs.indexOf(tab)].classList.add('active');
     document.getElementById('panel-' + tab).classList.add('active');
 }
@@ -632,14 +563,11 @@ function saveAll() {
     btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 1a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/></svg> Sauvegarde...';
     try {
         const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
-        s.darkMode      = document.getElementById('darkMode').checked;
-        s.animations    = document.getElementById('animations').checked;
-        s.sysName       = document.getElementById('sysName').value;
-        s.sysLang       = document.getElementById('sysLang').value;
-        s.robotMaxSpeed = document.getElementById('robotMaxSpeed').value;
-        s.robotPatrol   = document.getElementById('robotPatrolSpeed').value;
-        s.robotBatAlert = document.getElementById('robotBatteryAlert').value;
-        s.sessionTimeout= document.getElementById('sessionTimeout').value;
+        s.darkMode       = document.getElementById('darkMode').checked;
+        s.animations     = document.getElementById('animations').checked;
+        s.soundNotif     = document.getElementById('soundNotif') ? document.getElementById('soundNotif').checked : false;
+        s.sysName        = document.getElementById('sysName') ? document.getElementById('sysName').value : '';
+        s.sessionTimeout = document.getElementById('sessionTimeout') ? document.getElementById('sessionTimeout').value : '60';
         localStorage.setItem('yuraSettings', JSON.stringify(s));
     } catch(e) {}
     setTimeout(function() {
@@ -694,20 +622,52 @@ function showToast(msg, type) {
     setTimeout(() => t.classList.remove('show'), 3500);
 }
 
+// SOUND NOTIFICATION
+function toggleSoundNotif(cb) {
+    try {
+        const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
+        s.soundNotif = cb.checked;
+        localStorage.setItem('yuraSettings', JSON.stringify(s));
+        if (cb.checked) {
+            // Test beep
+            playAlertBeep();
+            showToast('🔊 Notification sonore activée', 'success');
+        } else {
+            showToast('🔇 Notification sonore désactivée', 'success');
+        }
+    } catch(e) {}
+}
+
+function playAlertBeep() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        osc.frequency.setValueAtTime(660, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.4);
+    } catch(e) {}
+}
+
 // INIT — load saved settings
 window.addEventListener('DOMContentLoaded', function() {
     try {
         const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
         if (s.darkMode === false) document.getElementById('darkMode').checked = false;
+        if (s.soundNotif) document.getElementById('soundNotif').checked = true;
         if (s.colorTheme) {
             document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
             const el = document.getElementById('color-' + s.colorTheme);
             if (el) el.classList.add('selected');
         }
-        if (s.sysName)       document.getElementById('sysName').value = s.sysName;
-        if (s.sysLang)       document.getElementById('sysLang').value = s.sysLang;
-        if (s.robotMaxSpeed) document.getElementById('robotMaxSpeed').value = s.robotMaxSpeed;
-        if (s.sessionTimeout)document.getElementById('sessionTimeout').value = s.sessionTimeout;
+        if (s.sysName)        document.getElementById('sysName').value = s.sysName;
+        if (s.sessionTimeout) document.getElementById('sessionTimeout').value = s.sessionTimeout;
     } catch(e) {}
 });
 </script>

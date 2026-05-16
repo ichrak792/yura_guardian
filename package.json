@@ -17,6 +17,7 @@
     "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.7",
     "mongoose": "^8.0.0",
+    "mqtt": "^5.15.1",
     "python": "^0.0.4",
     "serialport": "^13.0.0"
   }

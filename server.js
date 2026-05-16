@@ -2,16 +2,12 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const { SerialPort } = require('serialport');
-const { ReadlineParser } = require('@serialport/parser-readline');
+const http = require('http');
 require('dotenv').config();
 const { User, History, Notification } = require('./db');
-
 const app = express();
 
-// ===== CONFIGURATION SIM7600 =====
-const SIM_PORT = 'COM3'; // بدّلها حسب جهازك
-
+// ===== SENSOR DATA GLOBAL =====
 global.sensorData = {
     temperature: 0,
     humidity: 0,
@@ -19,109 +15,113 @@ global.sensorData = {
     signal: 'DISCONNECTED',
     distance: 0,
     obstacle: false,
-    lat: 0,    
-    lng: 0    
+    lat: 0,
+    lng: 0
 };
 global.simConnected = false;
 
-let simPort = null;
-let parser = null;
+const IS_WINDOWS = process.platform === 'win32';
 
-// ===== FONCTION CONNEXION SIM7600 =====
-function connectSIM7600() {
-    try {
-        simPort = new SerialPort({ path: SIM_PORT, baudRate: 115200 });
-        parser = simPort.pipe(new ReadlineParser({ delimiter: '\n' }));
+if (IS_WINDOWS) {
+    const { SerialPort } = require('serialport');
+    const { ReadlineParser } = require('@serialport/parser-readline');
 
-        simPort.on('open', () => {
-            console.log('📡 SIM7600 CONNECTED');
-            global.simConnected = true;
-            global.sensorData.signal = "4G_CONNECTED";
-        });
+    const SIM_PORT = 'COM3';
+    const ARDUINO_PORT = 'COM5';
 
-        simPort.on('error', (err) => {
-            console.error('❌ SIM Error:', err.message);
+    let simPort = null;
+    let simParser = null;
+
+    function connectSIM7600() {
+        try {
+            simPort = new SerialPort({ path: SIM_PORT, baudRate: 115200 });
+            simParser = simPort.pipe(new ReadlineParser({ delimiter: '\n' }));
+
+            simPort.on('open', () => {
+                console.log('📡 SIM7600 CONNECTED on', SIM_PORT);
+                global.simConnected = true;
+                global.sensorData.signal = "4G_CONNECTED";
+            });
+
+            simPort.on('error', (err) => {
+                console.error('❌ SIM Error:', err.message);
+                global.simConnected = false;
+                global.sensorData.signal = "DISCONNECTED";
+                setTimeout(connectSIM7600, 10000);
+            });
+
+            simPort.on('close', () => {
+                console.log('🔌 SIM disconnected');
+                global.simConnected = false;
+                global.sensorData.signal = "DISCONNECTED";
+                setTimeout(connectSIM7600, 10000);
+            });
+
+            simParser.on('data', async (line) => {
+                const raw = line.trim();
+                try {
+                    const data = JSON.parse(raw);
+                    global.sensorData = { ...global.sensorData, ...data };
+                    if (data.obstacle) {
+                        await Notification.create({ type: 'alerte', message: '🚧 Obstacle détecté!', read: false });
+                        await History.create({ action: 'Obstacle détecté', userName: 'Robot' });
+                    }
+                } catch (e) {}
+            });
+
+        } catch (error) {
+            console.error('⚠️ SIM connect failed:', error.message);
             global.simConnected = false;
-            global.sensorData.signal = "DISCONNECTED";
-        });
-
-        simPort.on('close', () => {
-            console.log('🔌 SIM disconnected');
-            global.simConnected = false;
-            global.sensorData.signal = "DISCONNECTED";
-        });
-
-        parser.on('data', async (line) => {
-            const raw = line.trim();
-            console.log('📡 SIM RAW:', raw);
-
-            try {
-                const data = JSON.parse(raw);
-
-                // update sensors
-                global.sensorData = {
-                    ...global.sensorData,
-                    ...data
-                };
-
-                // OBSTACLE ALERT
-                if (data.obstacle) {
-
-                    console.log('🚨 OBSTACLE DETECTED');
-
-                    await Notification.create({
-                        type: 'alerte',
-                        message: '🚧 Obstacle détecté!'
-                    });
-
-                    await History.create({
-                        action: 'Obstacle détecté',
-                        userName: 'Robot'
-                    });
-
-                }
-
-            } catch (e) {
-                console.log('❌ bad data:', raw);
-            }
-        });
-
-    } catch (error) {
-        console.error('⚠️ SIM connect failed:', error.message);
-        global.simConnected = false;
+            setTimeout(connectSIM7600, 10000);
+        }
     }
+
+    let arduinoSerial = null;
+    let arduinoParser = null;
+
+    function connectArduino() {
+        try {
+            arduinoSerial = new SerialPort({ path: ARDUINO_PORT, baudRate: 9600 });
+            arduinoParser = arduinoSerial.pipe(new ReadlineParser({ delimiter: '\n' }));
+
+            arduinoSerial.on('open', () => {
+                console.log('✅ Arduino connected on', ARDUINO_PORT);
+            });
+
+            arduinoParser.on('data', (line) => {
+                try {
+                    const data = JSON.parse(line.trim());
+                    if (!isNaN(data.temp))           global.sensorData.temperature = data.temp;
+                    if (!isNaN(data.hum))            global.sensorData.humidity    = data.hum;
+                    if (data.lat !== undefined)      global.sensorData.lat         = data.lat;
+                    if (data.lng !== undefined)      global.sensorData.lng         = data.lng;
+                    if (data.distance !== undefined) global.sensorData.distance    = data.distance;
+                    if (data.obstacle !== undefined) global.sensorData.obstacle    = data.obstacle;
+                } catch(e) {}
+            });
+
+            arduinoSerial.on('error', (err) => {
+                console.error('❌ Arduino error:', err.message);
+                setTimeout(connectArduino, 10000);
+            });
+
+            arduinoSerial.on('close', () => {
+                console.log('🔌 Arduino disconnected, retrying...');
+                setTimeout(connectArduino, 10000);
+            });
+
+        } catch (error) {
+            console.error('⚠️ Arduino connect failed:', error.message);
+            setTimeout(connectArduino, 10000);
+        }
+    }
+
+    connectSIM7600();
+    connectArduino();
+
+} else {
+    console.log('ℹ️ Linux mode — serial ports gérés par camera_server.py sur RPI');
 }
-
-// ===== START SIM =====
-console.log('[SIM] Connecting to', SIM_PORT);
-connectSIM7600();
-// ===== ARDUINO SERIAL =====   ← zid min hna
-const ARDUINO_PORT = 'COM5'; // badel b port Arduino mte3ek
-const arduinoSerial = new SerialPort({ path: ARDUINO_PORT, baudRate: 9600 });
-const arduinoParser = arduinoSerial.pipe(new ReadlineParser({ delimiter: '\n' }));
-
-arduinoSerial.on('open', () => {
-    console.log('Arduino connected on', ARDUINO_PORT);
-});
-
-arduinoParser.on('data', (line) => {
-    try {
-        const data = JSON.parse(line.trim());
-        if (!isNaN(data.temp))  global.sensorData.temperature = data.temp;
-        if (!isNaN(data.hum))   global.sensorData.humidity    = data.hum;
-        if (data.lat !== undefined) global.sensorData.lat     = data.lat;
-        if (data.lng !== undefined) global.sensorData.lng     = data.lng;
-        console.log('Arduino data:', global.sensorData);
-    } catch(e) {}
-});
-
-arduinoSerial.on('error', (err) => {
-    console.error('Arduino error:', err.message);
-});
-
-// ===== EXPRESS CONFIG =====   ← w taw yibda el code mte3ek
-app.set('view engine', 'ejs');
-
 
 // ===== EXPRESS CONFIG =====
 app.set('view engine', 'ejs');
@@ -152,27 +152,171 @@ app.use((req, res, next) => {
 app.get('/api/sensors', (req, res) => {
     res.json({ data: global.sensorData });
 });
-// ===== CAMERA PROXY =====
-const { createProxyMiddleware } = require('http-proxy-middleware');
-app.use('/camera-stream', createProxyMiddleware({
-    target: 'http://192.168.0.155:5000',
-    changeOrigin: true,
-    pathRewrite: { '^/camera-stream': '/video' },
-    on: {
-        error: (err, req, res) => {
-            res.status(502).send('Camera offline');
-        }
-    }
-}));
-// ===== ARDUINO DATA FROM RPI =====
-app.post('/api/arduino-data', (req, res) => {
+
+// ===== CAMERA STREAM DIRECTE (sans proxy middleware) =====
+app.get('/camera-stream', (req, res) => {
+    const options = {
+        hostname: '100.90.80.29',
+        port: 5000,
+        path: '/video',
+        method: 'GET',
+        timeout: 60000
+    };
+
+    res.setHeader('Cache-Control', 'no-cache, no-store');
+    res.setHeader('Connection', 'keep-alive');
+
+    const proxyReq = http.request(options, (proxyRes) => {
+        const ct = proxyRes.headers['content-type'] || 'multipart/x-mixed-replace; boundary=frame';
+        res.setHeader('Content-Type', ct);
+        proxyRes.pipe(res, { end: true });
+        proxyRes.on('error', () => { try { res.end(); } catch(e){} });
+    });
+
+    proxyReq.on('error', (err) => {
+        console.error('Camera proxy error:', err.message);
+        if (!res.headersSent) res.status(502).end();
+    });
+
+    proxyReq.on('timeout', () => {
+        proxyReq.destroy();
+        if (!res.headersSent) res.status(504).end();
+    });
+
+    req.on('close', () => proxyReq.destroy());
+    proxyReq.end();
+});
+// Ba3d el /camera-stream route, zid haka:
+app.get('/camera-snapshot', (req, res) => {
+    const options = {
+        hostname: '100.90.80.29',
+        port: 5000,
+        path: '/snapshot',  // walla '/video' — depends on camera_server.py
+        method: 'GET',
+        timeout: 10000
+    };
+
+    const proxyReq = http.request(options, (proxyRes) => {
+        res.setHeader('Content-Type', 'image/jpeg');
+        res.setHeader('Cache-Control', 'no-cache');
+        proxyRes.pipe(res, { end: true });
+    });
+
+    proxyReq.on('error', (err) => {
+        if (!res.headersSent) res.status(502).json({ error: 'Camera offline' });
+    });
+
+    proxyReq.on('timeout', () => {
+        proxyReq.destroy();
+        if (!res.headersSent) res.status(504).json({ error: 'Timeout' });
+    });
+
+    proxyReq.end();
+});
+// ===== DATA FROM RPI (/api/arduino-data) =====
+app.post('/api/arduino-data', async (req, res) => {
     const data = req.body;
-    if (!isNaN(data.temp)) global.sensorData.temperature = data.temp;
-    if (!isNaN(data.hum))  global.sensorData.humidity    = data.hum;
-    if (data.lat !== undefined) global.sensorData.lat    = data.lat;
-    if (data.lng !== undefined) global.sensorData.lng    = data.lng;
-    console.log('✅ Data from RPi:', global.sensorData);
+    if (!isNaN(data.temp))           global.sensorData.temperature = data.temp;
+    if (!isNaN(data.hum))            global.sensorData.humidity    = data.hum;
+    if (data.lat !== undefined)      global.sensorData.lat         = data.lat;
+    if (data.lng !== undefined)      global.sensorData.lng         = data.lng;
+    if (data.distance !== undefined) global.sensorData.distance    = data.distance;
+    if (data.obstacle !== undefined) global.sensorData.obstacle    = data.obstacle;
+
+    if (data.obstacle === true) {
+        console.log('🚨 OBSTACLE from RPi (/arduino-data)');
+        try {
+            await Notification.create({ type: 'alerte', message: `🚧 Obstacle détecté à ${data.distance || '?'} cm`, read: false });
+            await History.create({ action: `Obstacle détecté à ${data.distance || '?'} cm`, userName: 'Robot YURA' });
+        } catch(e) { console.error('DB error:', e.message); }
+    }
+
+    console.log('✅ Data from RPi (arduino-data):', global.sensorData);
     res.json({ ok: true });
+});
+
+// ===== DATA FROM RPI (/api/sensors-data) =====
+app.post('/api/sensors-data', async (req, res) => {
+    const data = req.body;
+    if (!isNaN(data.temp))           global.sensorData.temperature = data.temp;
+    if (!isNaN(data.hum))            global.sensorData.humidity    = data.hum;
+    if (data.distance !== undefined) global.sensorData.distance    = data.distance;
+    if (data.obstacle !== undefined) global.sensorData.obstacle    = data.obstacle;
+    if (data.lat !== undefined)      global.sensorData.lat         = data.lat;
+    if (data.lng !== undefined)      global.sensorData.lng         = data.lng;
+
+    if (data.obstacle === true) {
+        console.log('🚨 OBSTACLE from RPi (/sensors-data)');
+        try {
+            await Notification.create({ type: 'alerte', message: `🚧 Obstacle détecté à ${data.distance || '?'} cm`, read: false });
+            await History.create({ action: `Obstacle détecté à ${data.distance || '?'} cm`, userName: 'Robot YURA' });
+        } catch(e) { console.error('DB error:', e.message); }
+    }
+
+    console.log('✅ Data from RPi (sensors-data):', global.sensorData);
+    res.json({ ok: true });
+});
+
+// ===== YOLO ALERT =====
+app.post('/api/yolo-alert', async (req, res) => {
+    const data = req.body;
+    if (data.detections)             global.sensorData.detections = data.detections;
+    if (data.obstacle !== undefined) global.sensorData.obstacle   = data.obstacle;
+    if (data.distance !== undefined) global.sensorData.distance   = data.distance;
+
+    if (data.obstacle === true) {
+        try {
+            await Notification.create({ type: 'alerte', message: `🚧 Obstacle détecté à ${data.distance || '?'} cm`, read: false });
+            await History.create({ action: `Obstacle détecté à ${data.distance || '?'} cm`, userName: 'Robot YURA' });
+        } catch(e) { console.error('DB error:', e.message); }
+    }
+
+    console.log('🎯 YOLO alert:', data);
+    res.json({ ok: true });
+});
+
+// ===== OBSTACLE ALERT =====
+app.post('/api/obstacle-alert', async (req, res) => {
+    const data = req.body;
+    if (data.distance !== undefined) global.sensorData.distance = data.distance;
+    global.sensorData.obstacle = true;
+
+    console.log('🚨 OBSTACLE ALERT from RPi:', data.distance, 'cm');
+    try {
+        await Notification.create({ type: 'alerte', message: `🚧 Obstacle détecté à ${data.distance || '?'} cm`, read: false });
+        await History.create({ action: `Obstacle détecté à ${data.distance || '?'} cm`, userName: 'Robot YURA' });
+    } catch(e) { console.error('DB error:', e.message); }
+
+    res.json({ ok: true });
+});
+
+// ===== NOTIFICATIONS API =====
+app.get('/api/notifications', async (req, res) => {
+    try {
+        const notifs = await Notification.findAll({ order: [['createdAt', 'DESC']], limit: 50 });
+        res.json({ notifications: notifs });
+    } catch(e) { res.json({ notifications: [] }); }
+});
+
+app.put('/api/notifications/:id/read', async (req, res) => {
+    try {
+        await Notification.update({ read: true }, { where: { id: req.params.id } });
+        res.json({ ok: true });
+    } catch(e) { res.json({ ok: false }); }
+});
+
+app.delete('/api/notifications/:id', async (req, res) => {
+    try {
+        await Notification.destroy({ where: { id: req.params.id } });
+        res.json({ ok: true });
+    } catch(e) { res.json({ ok: false }); }
+});
+
+app.delete('/api/notifications/all', async (req, res) => {
+    try {
+        await Notification.destroy({ where: {} });
+        res.json({ ok: true });
+    } catch(e) { res.json({ ok: false }); }
 });
 
 // ===== ROUTES =====
@@ -201,23 +345,17 @@ app.use((req, res) => {
 
 // ===== START SERVER =====
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log('='.repeat(50));
     console.log('🚀 Serveur YURA GUARDIAN démarré!');
     console.log(`📍 URL: http://localhost:${PORT}`);
-    console.log('📡 SIM status:', global.simConnected ? 'CONNECTED' : 'DISCONNECTED');
+    console.log(`📍 Tailscale: http://100.101.144.123:${PORT}`);
+    console.log(`📷 Camera RPI: http://100.90.80.29:5000`);
     console.log('='.repeat(50));
 });
 
 // ===== SHUTDOWN =====
 process.on('SIGINT', () => {
     console.log('\n🛑 Arrêt serveur...');
-    if (simPort && simPort.isOpen) {
-        simPort.close(() => {
-            console.log('🔌 SIM closed');
-            process.exit(0);
-        });
-    } else {
-        process.exit(0);
-    }
+    process.exit(0);
 });

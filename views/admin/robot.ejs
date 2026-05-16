@@ -57,7 +57,6 @@
         }
         body { font-family:'Segoe UI',sans-serif; background:var(--noir); color:#fff; display:flex; min-height:100vh; }
 
-        /* SIDEBAR */
         .sidebar { width:300px; min-height:100vh; background:#0d0d0d; border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:100; }
         .logo-section { padding:20px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
         .logo-name { font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:2px; }
@@ -80,7 +79,6 @@
         .user-name-s { font-size:0.82rem; font-weight:600; }
         .user-role-s { font-size:0.65rem; color:var(--rouge-light); font-weight:600; }
 
-        /* MAIN */
         .main-content { margin-left:300px; flex:1; display:flex; flex-direction:column; min-height:100vh; }
         .top-bar { height:52px; background:#0d0d0d; border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 24px; gap:12px; position:sticky; top:0; z-index:50; }
         .topbar-title { font-size:0.78rem; color:var(--gris); letter-spacing:1.5px; text-transform:uppercase; flex:1; }
@@ -91,7 +89,6 @@
         .user-dot { width:7px; height:7px; background:var(--rouge-light); border-radius:50%; }
         .admin-pill { background:rgba(192,57,43,0.25); border:1px solid rgba(192,57,43,0.5); padding:4px 10px; border-radius:4px; font-size:0.62rem; font-weight:800; color:var(--rouge-light); letter-spacing:1.5px; text-transform:uppercase; }
 
-        /* CONTENT */
         .content { padding:20px 24px; flex:1; }
         .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
         .page-header h1 { font-size:1.6rem; font-weight:800; }
@@ -99,43 +96,26 @@
         .status-online { display:flex; align-items:center; gap:7px; background:rgba(39,174,96,0.1); border:1px solid rgba(39,174,96,0.3); padding:6px 14px; border-radius:20px; font-size:0.75rem; font-weight:700; color:#27ae60; }
         .status-online-dot { width:7px; height:7px; background:#27ae60; border-radius:50%; animation:blink 1.5s infinite; }
 
-        /* LAYOUT */
         .grid-main { display:grid; grid-template-columns:1fr 380px; gap:14px; margin-bottom:14px; }
-        .grid-bottom { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 
-        /* CARD */
-        .card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:20px; }
+        .card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:20px; animation:fadeInUp 0.35s ease both; }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
         .card-title { font-size:0.7rem; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; }
         .card-badge { font-size:0.62rem; padding:3px 8px; border-radius:10px; background:rgba(192,57,43,0.15); color:var(--rouge-light); border:1px solid rgba(192,57,43,0.25); font-weight:700; }
 
-        /* DPAD */
         .dpad-wrap { display:flex; flex-direction:column; align-items:center; gap:6px; margin-bottom:20px; }
         .dpad-row { display:flex; gap:6px; align-items:center; }
         .dpad-btn { width:56px; height:56px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#888; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-size:1.2rem; user-select:none; }
         .dpad-btn:hover { background:rgba(192,57,43,0.18); border-color:rgba(192,57,43,0.45); color:#fff; transform:scale(1.05); }
         .dpad-btn:active { transform:scale(0.95); background:rgba(192,57,43,0.3); }
-        .dpad-btn.center { background:rgba(192,57,43,0.12); border-color:rgba(192,57,43,0.35); color:var(--rouge-light); width:56px; height:56px; border-radius:50%; }
-        .dpad-btn.center:hover { background:rgba(192,57,43,0.25); }
         .dpad-btn.stop-big { width:72px; height:72px; background:rgba(192,57,43,0.15); border:2px solid rgba(192,57,43,0.4); border-radius:50%; color:var(--rouge-light); font-size:0.75rem; font-weight:800; letter-spacing:0.5px; flex-direction:column; gap:3px; }
         .dpad-btn.stop-big:hover { background:rgba(192,57,43,0.3); transform:scale(1.05); }
 
-        /* SPEED */
         .speed-wrap { margin-bottom:16px; }
         .speed-label { font-size:0.68rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px; display:flex; justify-content:space-between; }
         .speed-val { color:var(--rouge-light); font-weight:700; }
-        .speed-track { width:100%; height:6px; background:rgba(255,255,255,0.07); border-radius:3px; position:relative; cursor:pointer; }
-        .speed-fill { height:100%; background:linear-gradient(90deg,var(--rouge),var(--rouge-light)); border-radius:3px; transition:width 0.2s; pointer-events:none; }
         input[type=range] { width:100%; accent-color:var(--rouge); cursor:pointer; }
 
-        /* QUICK CMDS */
-        .quick-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
-        .cmd-btn { padding:10px 6px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; color:#888; font-size:0.72rem; font-weight:600; cursor:pointer; transition:all 0.18s; display:flex; flex-direction:column; align-items:center; gap:5px; }
-        .cmd-btn:hover { background:rgba(192,57,43,0.12); border-color:rgba(192,57,43,0.35); color:#fff; }
-        .cmd-btn.active-cmd { background:rgba(39,174,96,0.12); border-color:rgba(39,174,96,0.35); color:#27ae60; }
-        .cmd-btn svg { opacity:0.7; }
-        .cmd-btn:hover svg { opacity:1; }
-
-        /* ZONE PLAN */
         .zone-plan { background:#0d0d0d; border-radius:10px; position:relative; height:260px; overflow:hidden; border:1px solid rgba(255,255,255,0.06); }
         .zone-plan-grid { position:absolute; inset:0; background-image:linear-gradient(rgba(192,57,43,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,0.05) 1px,transparent 1px); background-size:40px 40px; }
         .zone-box { position:absolute; border:1px solid; border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; transition:all 0.2s; }
@@ -147,11 +127,10 @@
         .zone-c { top:110px; left:10px; width:110px; height:80px; background:rgba(39,174,96,0.1); border-color:rgba(39,174,96,0.3); color:#27ae60; }
         .zone-d { top:110px; left:130px; width:100px; height:60px; background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.12); color:#555; }
         .zone-e { top:10px; right:10px; width:80px; height:180px; background:rgba(255,255,255,0.02); border-color:rgba(255,255,255,0.1); color:#444; }
-        .robot-marker { position:absolute; width:22px; height:22px; background:var(--rouge); border-radius:50%; border:2px solid var(--rouge-light); box-shadow:0 0 12px rgba(192,57,43,0.7); transition:all 0.6s ease; z-index:5; }
+        .robot-marker { position:absolute; width:22px; height:22px; background:var(--rouge); border-radius:50%; border:2px solid var(--rouge-light); box-shadow:0 0 12px rgba(192,57,43,0.7); transition:all 0.6s ease; z-index:5; left:55px; top:35px; }
         .robot-marker::after { content:''; position:absolute; inset:-5px; border-radius:50%; border:1px solid rgba(192,57,43,0.4); animation:ping 1.5s infinite; }
         @keyframes ping { 0%{transform:scale(1);opacity:0.8} 100%{transform:scale(2);opacity:0} }
 
-        /* LOGS */
         .logs-wrap { max-height:280px; overflow-y:auto; }
         .logs-wrap::-webkit-scrollbar { width:3px; }
         .logs-wrap::-webkit-scrollbar-thumb { background:rgba(192,57,43,0.3); border-radius:2px; }
@@ -163,26 +142,19 @@
         .log-time { font-size:0.65rem; color:var(--gris); flex-shrink:0; }
         .log-empty { text-align:center; color:var(--gris); font-size:0.8rem; padding:30px 0; }
 
-        /* FEEDBACK */
         .feedback-bar { position:fixed; bottom:20px; right:24px; background:#1a1a1a; border:1px solid var(--border); border-radius:10px; padding:10px 16px; font-size:0.8rem; color:#fff; display:none; align-items:center; gap:8px; z-index:999; box-shadow:0 4px 20px rgba(0,0,0,0.5); }
         .feedback-bar.show { display:flex; animation:slideUp 0.25s ease; }
         @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
         .feedback-dot { width:8px; height:8px; border-radius:50%; background:#27ae60; }
-
-        @keyframes fadeInUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-        .card { animation:fadeInUp 0.35s ease both; }
     </style>
 </head>
 <body>
 
-<!-- FEEDBACK -->
 <div class="feedback-bar" id="feedbackBar">
     <div class="feedback-dot"></div>
     <span id="feedbackMsg">Commande envoyée</span>
 </div>
 
-<!-- SIDEBAR -->
-<!-- SIDEBAR -->
 <aside class="sidebar">
     <div class="logo-section">
         <img src="/images/logo robot.png" alt="YURA" style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
@@ -203,7 +175,7 @@
             <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><circle cx="6" cy="5" r="3"/><path d="M0 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="13" cy="5" r="2.5"/><path d="M13 10c1.7 0 3 1.3 3 3"/></svg></span>
             <span class="nav-text">Utilisateurs</span>
         </a>
-        <a href="/admin/robot" class="nav-item">
+        <a href="/admin/robot" class="nav-item active">
             <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><rect x="4" y="2" width="8" height="6" rx="1"/><rect x="3" y="8" width="10" height="5" rx="1"/><circle cx="6" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><rect x="1" y="9" width="2" height="3" rx="1"/><rect x="13" y="9" width="2" height="3" rx="1"/></svg></span>
             <span class="nav-text">Contrôle Robot</span>
         </a>
@@ -217,7 +189,7 @@
             <span class="nav-text">Caméras</span>
         </a>
         <a href="/admin/map" class="nav-item">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
+            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2z"/></svg></span>
             <span class="nav-text">Navigation</span>
         </a>
         <a href="/admin/notifications" class="nav-item">
@@ -246,7 +218,6 @@
     </div>
 </aside>
 
-<!-- MAIN -->
 <div class="main-content">
     <div class="top-bar">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="#888"><rect y="3" width="18" height="2"/><rect y="8" width="18" height="2"/><rect y="13" width="18" height="2"/></svg>
@@ -262,7 +233,6 @@
     </div>
 
     <div class="content">
-        <!-- HEADER -->
         <div class="page-header">
             <div>
                 <h1>Contrôle Robot</h1>
@@ -274,17 +244,15 @@
             </div>
         </div>
 
-        <!-- ROW 1: Dpad + Zones -->
         <div class="grid-main">
 
-            <!-- DPAD + CMDS -->
+            <!-- DPAD -->
             <div class="card">
                 <div class="card-title">
                     Commandes Directionnelles
                     <span class="card-badge" id="lastCmdBadge">En attente</span>
                 </div>
 
-                <!-- DPAD -->
                 <div class="dpad-wrap">
                     <div class="dpad-row">
                         <div style="width:56px"></div>
@@ -314,7 +282,6 @@
                     </div>
                 </div>
 
-                <!-- SPEED -->
                 <div class="speed-wrap">
                     <div class="speed-label">
                         <span>Vitesse</span>
@@ -322,11 +289,43 @@
                     </div>
                     <input type="range" min="0" max="100" value="50" id="speedSlider" oninput="updateSpeed(this.value)">
                 </div>
+            </div>
 
-               
-           
+            <!-- ZONE PLAN -->
+            <div class="card">
+                <div class="card-title">
+                    Plan de Zone
+                    <span class="card-badge" id="robotZone">Zone A</span>
+                </div>
+                <div class="zone-plan">
+                    <div class="zone-plan-grid"></div>
+                    <div class="zone-box zone-a" onclick="sendToZone('Zone A')">
+                        <div class="zone-box-label">Zone A</div>
+                        <div class="zone-box-name">Entrée</div>
+                    </div>
+                    <div class="zone-box zone-b" onclick="sendToZone('Zone B')">
+                        <div class="zone-box-label">Zone B</div>
+                        <div class="zone-box-name">Couloir</div>
+                    </div>
+                    <div class="zone-box zone-c" onclick="sendToZone('Zone C')">
+                        <div class="zone-box-label">Zone C</div>
+                        <div class="zone-box-name">Salle</div>
+                    </div>
+                    <div class="zone-box zone-d" onclick="sendToZone('Zone D')">
+                        <div class="zone-box-label">Zone D</div>
+                        <div class="zone-box-name">Bureau</div>
+                    </div>
+                    <div class="zone-box zone-e" onclick="sendToZone('Zone E')">
+                        <div class="zone-box-label">Zone E</div>
+                        <div class="zone-box-name">Sortie</div>
+                    </div>
+                    <div class="robot-marker" id="robotMarker"></div>
+                </div>
+            </div>
 
-        <!-- ROW 2: Logs -->
+        </div>
+
+        <!-- LOGS -->
         <div class="card">
             <div class="card-title">
                 Journal des Commandes
@@ -347,35 +346,49 @@
 let logCount = 0;
 let speed = 50;
 
+const cmdMap = {
+    'avancer':  'forward',
+    'reculer':  'backward',
+    'gauche':   'left',
+    'droite':   'right',
+    'stop':     'stop'
+};
+
+const cmdColors = {
+    'avancer':'#27ae60', 'reculer':'#3b82f6',
+    'gauche':'#f59e0b', 'droite':'#f59e0b', 'stop':'#e74c3c'
+};
+
 function updateSpeed(val) {
-    speed = val;
+    speed = parseInt(val);
     document.getElementById('speedVal').textContent = val + '%';
 }
 
 function sendCmd(cmd) {
-    const badge = document.getElementById('lastCmdBadge');
-    badge.textContent = cmd.toUpperCase();
-    setTimeout(() => { badge.textContent = 'En attente'; }, 2000);
+    document.getElementById('lastCmdBadge').textContent = cmd.toUpperCase();
+    setTimeout(() => { document.getElementById('lastCmdBadge').textContent = 'En attente'; }, 2000);
 
     addLog(cmd, 'manual');
     showFeedback('Commande "' + cmd + '" envoyée');
 
-    if (cmd === 'avancer')      moveRobot(0, -20);
-    else if (cmd === 'reculer') moveRobot(0, 20);
-    else if (cmd === 'gauche')  moveRobot(-20, 0);
-    else if (cmd === 'droite')  moveRobot(20, 0);
+    const arduinoCmd = cmdMap[cmd] || cmd;
+    const pwm = Math.round(speed * 255 / 100);
 
     fetch('/admin/robot/command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: cmd, speed: speed })
-    }).catch(() => {});
+        body: JSON.stringify({ command: arduinoCmd, speed: pwm })
+    })
+    .then(r => r.json())
+    .then(res => console.log('🤖 Robot:', arduinoCmd, res))
+    .catch(e => console.log('❌ Robot error:', e));
 }
 
 function sendToZone(zone) {
     showFeedback('Robot → ' + zone);
     addLog('Aller à ' + zone, 'zone');
     document.getElementById('robotZone').textContent = zone;
+
     const positions = {
         'Zone A': { left:'55px',  top:'35px'  },
         'Zone B': { left:'185px', top:'45px'  },
@@ -383,45 +396,38 @@ function sendToZone(zone) {
         'Zone D': { left:'175px', top:'135px' },
         'Zone E': { left:'295px', top:'90px'  }
     };
-    if (positions[zone]) {
-        const m = document.getElementById('robotMarker');
+    const m = document.getElementById('robotMarker');
+    if (m && positions[zone]) {
         m.style.left = positions[zone].left;
         m.style.top  = positions[zone].top;
     }
+
     fetch('/admin/robot/command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: 'goto-' + zone })
+        body: JSON.stringify({ command: 'goto-' + zone, speed: Math.round(speed * 255 / 100) })
     }).catch(() => {});
-}
-
-function moveRobot(dx, dy) {
-    const m = document.getElementById('robotMarker');
-    const plan = m.parentElement;
-    let x = parseInt(m.style.left) + dx;
-    let y = parseInt(m.style.top)  + dy;
-    x = Math.max(5, Math.min(plan.offsetWidth  - 27, x));
-    y = Math.max(5, Math.min(plan.offsetHeight - 27, y));
-    m.style.left = x + 'px';
-    m.style.top  = y + 'px';
 }
 
 function addLog(cmd, type) {
     logCount++;
     document.getElementById('logCount').textContent = logCount + ' commande' + (logCount > 1 ? 's' : '');
-    document.getElementById('logEmpty').style.display = 'none';
+    const emptyEl = document.getElementById('logEmpty');
+    if (emptyEl) emptyEl.style.display = 'none';
+
     const colors = { manual:'#27ae60', zone:'#3b82f6', system:'#f59e0b' };
     const time = new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
     const item = document.createElement('div');
     item.className = 'log-item';
     item.innerHTML = `
         <div class="log-dot" style="background:${colors[type]||'#888'}"></div>
-        <span class="log-cmd">→ ${cmd}</span>
-        <span class="log-user" style="color:#555">Vitesse: ${speed}%</span>
+        <span class="log-cmd">→ ${cmd} → ${cmdMap[cmd] || cmd}</span>
+        <span class="log-user" style="color:#555">Vitesse: ${speed}% | PWM: ${Math.round(speed*255/100)}</span>
         <span class="log-time">${time}</span>
     `;
     const wrap = document.getElementById('logsWrap');
     wrap.insertBefore(item, wrap.firstChild);
+    while (wrap.children.length > 50) wrap.removeChild(wrap.lastChild);
 }
 
 function clearLogs() {

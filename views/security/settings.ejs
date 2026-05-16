@@ -58,7 +58,7 @@
         .page-header p  { font-size:0.82rem; color:var(--gris); margin-top:4px; }
 
         /* SETTINGS GRID */
-        .settings-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px; }
+        .settings-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin:0 auto 24px; max-width:850px; }
         .settings-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:18px; transition:border-color 0.2s; }
         .settings-card:hover { border-color:rgba(192,57,43,0.3); }
         .card-head { display:flex; align-items:center; gap:10px; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05); }
@@ -100,14 +100,14 @@
         .info-val.green { color:#27ae60; }
 
         /* BOTTOM ACTIONS */
-        .bottom-actions { display:flex; gap:10px; flex-wrap:wrap; }
-        .bottom-btn { flex:1; min-width:180px; padding:11px 18px; border-radius:9px; font-size:0.85rem; font-weight:700; cursor:pointer; transition:all 0.18s; display:flex; align-items:center; justify-content:center; gap:7px; }
-        .bottom-btn.primary { background:var(--rouge); border:none; color:#fff; }
-        .bottom-btn.primary:hover { background:var(--rouge-light); transform:translateY(-2px); }
-        .bottom-btn.secondary { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); color:#888; }
-        .bottom-btn.secondary:hover { background:rgba(255,255,255,0.08); color:#fff; }
+        .bottom-actions { display:flex; flex-direction: column; gap:14px; max-width:850px; margin: 20px auto 40px; }
+        .bottom-btn { width:100%; padding:16px 24px; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer; transition:all 0.22s; display:flex; align-items:center; justify-content:center; gap:10px; border:none; }
+        .bottom-btn.primary { background:var(--rouge); color:#fff; box-shadow: 0 4px 15px rgba(192,57,43,0.3); }
+        .bottom-btn.primary:hover { background:var(--rouge-light); transform:translateY(-3px); box-shadow: 0 6px 20px rgba(192,57,43,0.4); }
+        .bottom-btn.secondary { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#bbb; }
+        .bottom-btn.secondary:hover { background:rgba(255,255,255,0.1); color:#fff; transform:translateY(-2px); }
         .bottom-btn.danger { background:rgba(192,57,43,0.1); border:1px solid rgba(192,57,43,0.3); color:var(--rouge-light); }
-        .bottom-btn.danger:hover { background:rgba(192,57,43,0.2); border-color:var(--rouge); }
+        .bottom-btn.danger:hover { background:rgba(192,57,43,0.2); border-color:var(--rouge); transform:translateY(-2px); }
 
         /* STATUS MSG */
         .status-msg { padding:12px 18px; border-radius:9px; font-size:0.85rem; font-weight:600; text-align:center; display:none; margin-top:10px; }
@@ -226,114 +226,10 @@
         </div>
 
         <div class="settings-grid">
-            <!-- NOTIFICATIONS -->
-            <div class="settings-card">
-                <div class="card-head">
-                    <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="#c0392b"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg></div>
-                    <span class="card-head-title">Notifications</span>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Alertes sonores</span>
-                    <label class="toggle-wrap"><input type="checkbox" id="soundAlerts" checked><span class="toggle-slider"></span></label>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Notifications push</span>
-                    <label class="toggle-wrap"><input type="checkbox" id="pushNotif" checked><span class="toggle-slider"></span></label>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Critiques uniquement</span>
-                    <label class="toggle-wrap"><input type="checkbox" id="criticalOnly"><span class="toggle-slider"></span></label>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Vibration mobile</span>
-                    <label class="toggle-wrap"><input type="checkbox" id="vibration" checked><span class="toggle-slider"></span></label>
-                </div>
-            </div>
-
-            <!-- ROBOT -->
-            <div class="settings-card">
-                <div class="card-head">
-                    <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="#c0392b"><rect x="4" y="2" width="8" height="6" rx="1"/><rect x="3" y="8" width="10" height="5" rx="1"/><circle cx="6" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><rect x="1" y="9" width="2" height="3" rx="1"/><rect x="13" y="9" width="2" height="3" rx="1"/></svg></div>
-                    <span class="card-head-title">Robot</span>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Vitesse</span>
-                    <div class="range-wrap">
-                        <input type="range" class="range-input" id="robotSpeed" min="1" max="10" value="5">
-                        <span class="range-val" id="speedVal">5</span>
-                    </div>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Sensibilité détection</span>
-                    <select class="setting-select" id="motionSensitivity">
-                        <option value="low">Faible</option>
-                        <option value="medium" selected>Moyenne</option>
-                        <option value="high">Élevée</option>
-                    </select>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Patrouille auto</span>
-                    <label class="toggle-wrap"><input type="checkbox" id="autoMode" checked><span class="toggle-slider"></span></label>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Retour base auto</span>
-                    <label class="toggle-wrap"><input type="checkbox" id="autoReturn"><span class="toggle-slider"></span></label>
-                </div>
-            </div>
-
-            <!-- CAMÉRA -->
-            <div class="settings-card">
-                <div class="card-head">
-                    <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="#c0392b"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></div>
-                    <span class="card-head-title">Caméra</span>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Qualité vidéo</span>
-                    <select class="setting-select" id="videoQuality">
-                        <option value="720p">720p</option>
-                        <option value="1080p" selected>1080p</option>
-                        <option value="4k">4K</option>
-                    </select>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Vision nocturne</span>
-                    <label class="toggle-wrap"><input type="checkbox" id="nightVision" checked><span class="toggle-slider"></span></label>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Enregistrement auto</span>
-                    <label class="toggle-wrap"><input type="checkbox" id="autoRec" checked><span class="toggle-slider"></span></label>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Détection mouvement</span>
-                    <label class="toggle-wrap"><input type="checkbox" id="motionDetect" checked><span class="toggle-slider"></span></label>
-                </div>
-            </div>
-
-            <!-- SÉCURITÉ -->
-            <div class="settings-card">
-                <div class="card-head">
-                    <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="#c0392b"><path d="M8 1L2 4v5c0 4.5 3 7.5 6 8.5C11 16.5 14 13.5 14 9V4L8 1z"/></svg></div>
-                    <span class="card-head-title">Sécurité</span>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">Déconnexion auto</span>
-                    <select class="setting-select" id="autoLogout">
-                        <option value="15">15 min</option>
-                        <option value="30" selected>30 min</option>
-                        <option value="60">1 heure</option>
-                        <option value="0">Jamais</option>
-                    </select>
-                </div>
-                <button class="card-action-btn" onclick="changePassword()">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="8" height="6" rx="1"/><path d="M4 5V4a2 2 0 014 0v1"/></svg>
-                    Changer mot de passe
-                </button>
-            </div>
-
             <!-- APPARENCE -->
-            <div class="settings-card">
+            <div class="settings-card" style="box-shadow: 0 8px 24px rgba(0,0,0,0.12);">
                 <div class="card-head">
-                    <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#c0392b" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.5 3.5l1.5 1.5M11 11l1.5 1.5M3.5 12.5l1.5-1.5M11 5l1.5-1.5"/></svg></div>
+                    <div class="card-head-icon"><svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="var(--rouge)" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.5 3.5l1.5 1.5M11 11l1.5 1.5M3.5 12.5l1.5-1.5M11 5l1.5-1.5"/></svg></div>
                     <span class="card-head-title">Apparence</span>
                 </div>
                 <div class="setting-row">
@@ -345,7 +241,7 @@
                     <label class="toggle-wrap"><input type="checkbox" id="compactView"><span class="toggle-slider"></span></label>
                 </div>
                 <div class="setting-row">
-                    <span class="setting-label">Thème</span>
+                    <span class="setting-label">Thème Couleur</span>
                     <select class="setting-select" id="colorTheme">
                         <option value="red-black" selected>Rouge-Noir</option>
                         <option value="blue-black">Bleu-Noir</option>
@@ -354,19 +250,24 @@
                 </div>
             </div>
 
-            <!-- SYSTÈME -->
-            <div class="settings-card">
+            <!-- SÉCURITÉ -->
+            <div class="settings-card" style="box-shadow: 0 8px 24px rgba(0,0,0,0.12);">
                 <div class="card-head">
-                    <div class="card-head-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#c0392b" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1"/><line x1="5" y1="13" x2="5" y2="15"/><line x1="11" y1="13" x2="11" y2="15"/><line x1="3" y1="15" x2="13" y2="15"/></svg></div>
-                    <span class="card-head-title">Informations Système</span>
+                    <div class="card-head-icon"><svg width="18" height="18" viewBox="0 0 16 16" fill="var(--rouge)"><path d="M8 1L2 4v5c0 4.5 3 7.5 6 8.5C11 16.5 14 13.5 14 9V4L8 1z"/></svg></div>
+                    <span class="card-head-title">Sécurité de Session</span>
                 </div>
-                <div class="info-row"><span class="info-lbl">Version YURA</span><span class="info-val">v2.1.0</span></div>
-                <div class="info-row"><span class="info-lbl">Robot actif</span><span class="info-val green">YURA-001</span></div>
-                <div class="info-row"><span class="info-lbl">Espace disque</span><span class="info-val">45 GB / 100 GB</span></div>
-                <div class="info-row"><span class="info-lbl">Statut serveur</span><span class="info-val green">En ligne</span></div>
-                <button class="card-action-btn primary" onclick="checkUpdates()">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 6A4 4 0 112 6M2 3v3H5"/></svg>
-                    Vérifier mises à jour
+                <div class="setting-row">
+                    <span class="setting-label">Déconnexion automatique</span>
+                    <select class="setting-select" id="autoLogout">
+                        <option value="15">15 min</option>
+                        <option value="30" selected>30 min</option>
+                        <option value="60">1 heure</option>
+                        <option value="0">Jamais</option>
+                    </select>
+                </div>
+                <button class="card-action-btn primary" style="margin-top:20px; padding:10px;" onclick="changePassword()">
+                    <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="8" height="6" rx="1"/><path d="M4 5V4a2 2 0 014 0v1"/></svg>
+                    Changer le mot de passe
                 </button>
             </div>
         </div>
@@ -374,15 +275,15 @@
         <!-- BOTTOM ACTIONS -->
         <div class="bottom-actions">
             <button class="bottom-btn primary" onclick="saveAllSettings()">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 1h8l2 2v10H2V1z"/><rect x="4" y="8" width="6" height="5"/><rect x="3" y="1" width="5" height="3"/></svg>
+                <svg width="18" height="18" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 1h8l2 2v10H2V1z"/><rect x="4" y="8" width="6" height="5"/><rect x="3" y="1" width="5" height="3"/></svg>
                 Enregistrer tous les paramètres
             </button>
             <button class="bottom-btn secondary" onclick="resetSettings()">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 7A5 5 0 112 7M2 4v3H5"/></svg>
+                <svg width="18" height="18" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 7A5 5 0 112 7M2 4v3H5"/></svg>
                 Réinitialiser par défaut
             </button>
             <button class="bottom-btn danger" onclick="clearCache()">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,3 13,3"/><path d="M5 3V2h4v1M3 3l1 9h6l1-9"/></svg>
+                <svg width="18" height="18" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,3 13,3"/><path d="M5 3V2h4v1M3 3l1 9h6l1-9"/></svg>
                 Vider le cache
             </button>
         </div>
@@ -400,23 +301,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // ===== SAVE =====
 function saveAllSettings() {
     const settings = {
-        darkMode: document.getElementById('darkMode').checked,
-        compactView: document.getElementById('compactView').checked,
-        colorTheme: document.getElementById('colorTheme').value,
-        soundAlerts: document.getElementById('soundAlerts').checked,
-        pushNotif: document.getElementById('pushNotif').checked,
-        criticalOnly: document.getElementById('criticalOnly').checked,
-        vibration: document.getElementById('vibration').checked,
-        robotSpeed: document.getElementById('robotSpeed').value,
-        motionSensitivity: document.getElementById('motionSensitivity').value,
-        autoMode: document.getElementById('autoMode').checked,
-        autoReturn: document.getElementById('autoReturn').checked,
-        videoQuality: document.getElementById('videoQuality').value,
-        nightVision: document.getElementById('nightVision').checked,
-        autoRec: document.getElementById('autoRec').checked,
-        motionDetect: document.getElementById('motionDetect').checked,
-        autoLogout: document.getElementById('autoLogout').value,
-        secLogs: document.getElementById('secLogs').checked
+        darkMode: document.getElementById('darkMode') ? document.getElementById('darkMode').checked : false,
+        compactView: document.getElementById('compactView') ? document.getElementById('compactView').checked : false,
+        colorTheme: document.getElementById('colorTheme') ? document.getElementById('colorTheme').value : 'red-black',
+        autoLogout: document.getElementById('autoLogout') ? document.getElementById('autoLogout').value : '30'
     };
     localStorage.setItem('yuraSettings', JSON.stringify(settings));
     showStatus('✅ Paramètres enregistrés!', 'success');
@@ -439,12 +327,6 @@ function clearCache() {
         showStatus('🗑️ Cache vidé', 'success');
         setTimeout(() => location.reload(), 1000);
     }
-}
-
-// ===== CHECK UPDATES =====
-function checkUpdates() {
-    showStatus('🔍 Vérification...', 'success');
-    setTimeout(() => showStatus('✅ Système à jour (v2.1.0)', 'success'), 1500);
 }
 
 // ===== PASSWORD =====
@@ -490,112 +372,66 @@ function showStatus(message, type) {
 function loadSavedSettings() {
     try {
         const saved = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
-        if (saved.darkMode !== undefined) document.getElementById('darkMode').checked = saved.darkMode;
-        if (saved.compactView !== undefined) document.getElementById('compactView').checked = saved.compactView;
-        if (saved.colorTheme) document.getElementById('colorTheme').value = saved.colorTheme;
-        if (saved.soundAlerts !== undefined) document.getElementById('soundAlerts').checked = saved.soundAlerts;
-        if (saved.pushNotif !== undefined) document.getElementById('pushNotif').checked = saved.pushNotif;
-        if (saved.criticalOnly !== undefined) document.getElementById('criticalOnly').checked = saved.criticalOnly;
-        if (saved.vibration !== undefined) document.getElementById('vibration').checked = saved.vibration;
-        if (saved.robotSpeed) { document.getElementById('robotSpeed').value = saved.robotSpeed; document.getElementById('speedVal').textContent = saved.robotSpeed; }
-        if (saved.motionSensitivity) document.getElementById('motionSensitivity').value = saved.motionSensitivity;
-        if (saved.autoMode !== undefined) document.getElementById('autoMode').checked = saved.autoMode;
-        if (saved.autoReturn !== undefined) document.getElementById('autoReturn').checked = saved.autoReturn;
-        if (saved.videoQuality) document.getElementById('videoQuality').value = saved.videoQuality;
-        if (saved.nightVision !== undefined) document.getElementById('nightVision').checked = saved.nightVision;
-        if (saved.autoRec !== undefined) document.getElementById('autoRec').checked = saved.autoRec;
-        if (saved.motionDetect !== undefined) document.getElementById('motionDetect').checked = saved.motionDetect;
-        if (saved.autoLogout) document.getElementById('autoLogout').value = saved.autoLogout;
-        if (saved.secLogs !== undefined) document.getElementById('secLogs').checked = saved.secLogs;
+        if (saved.darkMode !== undefined && document.getElementById('darkMode')) document.getElementById('darkMode').checked = saved.darkMode;
+        if (saved.compactView !== undefined && document.getElementById('compactView')) document.getElementById('compactView').checked = saved.compactView;
+        if (saved.colorTheme && document.getElementById('colorTheme')) document.getElementById('colorTheme').value = saved.colorTheme;
+        if (saved.autoLogout && document.getElementById('autoLogout')) document.getElementById('autoLogout').value = saved.autoLogout;
     } catch(e) {}
 }
 
-// ===== LIVE CONTROLS — kol wahda tekhdm wahdoha =====
-// ===== LIVE CONTROLS — kol wahda tekhdm wahdoha =====
+// ===== LIVE CONTROLS =====
 function setupLiveControls() {
 
-    // MODE SOMBRE - SEULEMENT SAVE, PAS D'APPLICATION LOCALE
-    document.getElementById('darkMode').addEventListener('change', function() {
-        showStatus('🌙 Mode sombre ' + (this.checked ? 'activé' : 'désactivé'), 'success');
-        saveAllSettings();
-        // Recharger la page après 500ms pour appliquer via theme.js
-        setTimeout(() => location.reload(), 500);
-    });
+    // MODE SOMBRE
+    if (document.getElementById('darkMode')) {
+        document.getElementById('darkMode').addEventListener('change', function() {
+            showStatus('🌙 Mode sombre ' + (this.checked ? 'activé' : 'désactivé'), 'success');
+            saveAllSettings();
+            setTimeout(() => location.reload(), 500);
+        });
+    }
 
     // THÈME COULEUR
-    document.getElementById('colorTheme').addEventListener('change', function() {
-        const themes = {
-            'blue-black': { primary: '#2563eb', light: '#3b82f6', border: 'rgba(37,99,235,0.18)' },
-            'green-black': { primary: '#16a34a', light: '#22c55e', border: 'rgba(22,163,74,0.18)' },
-            'red-black': { primary: '#c0392b', light: '#e74c3c', border: 'rgba(192,57,43,0.18)' }
-        };
-        const theme = themes[this.value] || themes['red-black'];
-        document.documentElement.style.setProperty('--rouge', theme.primary);
-        document.documentElement.style.setProperty('--rouge-light', theme.light);
-        document.documentElement.style.setProperty('--border', theme.border);
-        showStatus('🎨 Thème changé!', 'success');
-        saveAllSettings();
-    });
-
-   
-    // VUE COMPACTE
-    document.getElementById('compactView').addEventListener('change', function() {
-        if (this.checked) {
-            document.querySelector('.settings-grid').style.gap = '8px';
-            document.querySelectorAll('.settings-card').forEach(c => c.style.padding = '12px');
-            document.querySelectorAll('.setting-row').forEach(r => r.style.padding = '5px 0');
-        } else {
-            document.querySelector('.settings-grid').style.gap = '';
-            document.querySelectorAll('.settings-card').forEach(c => c.style.padding = '');
-            document.querySelectorAll('.setting-row').forEach(r => r.style.padding = '');
-        }
-        showStatus('📐 Vue compacte ' + (this.checked ? 'activée' : 'désactivée'), 'success');
-        saveAllSettings();
-    });
-
-    // VITESSE ROBOT
-    document.getElementById('robotSpeed').addEventListener('input', function() {
-        document.getElementById('speedVal').textContent = this.value;
-        showStatus('🤖 Vitesse: ' + this.value + '/10', 'success');
-    });
-
-    // Other toggle listeners
-    const toggles = [
-        { id: 'soundAlerts', msg: '🔔 Alertes sonores' },
-        { id: 'pushNotif', msg: '📱 Notifications push' },
-        { id: 'criticalOnly', msg: '⚠️ Critiques uniquement' },
-        { id: 'vibration', msg: '📳 Vibration' },
-        { id: 'nightVision', msg: '🌙 Vision nocturne' },
-        { id: 'autoRec', msg: '⏺️ Enregistrement auto' },
-        { id: 'motionDetect', msg: '👁️ Détection mouvement' },
-        { id: 'autoMode', msg: '🤖 Patrouille auto' },
-        { id: 'autoReturn', msg: '🏠 Retour base auto' },
-        { id: 'secLogs', msg: '📋 Logs sécurité' }
-    ];
-
-    toggles.forEach(t => {
-        document.getElementById(t.id).addEventListener('change', function() {
-            showStatus(t.msg + ' ' + (this.checked ? 'activé' : 'désactivé'), 'success');
+    if (document.getElementById('colorTheme')) {
+        document.getElementById('colorTheme').addEventListener('change', function() {
+            const themes = {
+                'blue-black': { primary: '#2563eb', light: '#3b82f6', border: 'rgba(37,99,235,0.18)' },
+                'green-black': { primary: '#16a34a', light: '#22c55e', border: 'rgba(22,163,74,0.18)' },
+                'red-black': { primary: '#c0392b', light: '#e74c3c', border: 'rgba(192,57,43,0.18)' }
+            };
+            const theme = themes[this.value] || themes['red-black'];
+            document.documentElement.style.setProperty('--rouge', theme.primary);
+            document.documentElement.style.setProperty('--rouge-light', theme.light);
+            document.documentElement.style.setProperty('--border', theme.border);
+            showStatus('🎨 Thème changé!', 'success');
             saveAllSettings();
         });
-    });
+    }
 
-    // Selects
-    document.getElementById('videoQuality').addEventListener('change', function() {
-        showStatus('📹 Qualité vidéo: ' + this.value, 'success');
-        saveAllSettings();
-    });
+    // VUE COMPACTE
+    if (document.getElementById('compactView')) {
+        document.getElementById('compactView').addEventListener('change', function() {
+            if (this.checked) {
+                document.querySelector('.settings-grid').style.gap = '12px';
+                document.querySelectorAll('.settings-card').forEach(c => c.style.padding = '14px');
+                document.querySelectorAll('.setting-row').forEach(r => r.style.padding = '6px 0');
+            } else {
+                document.querySelector('.settings-grid').style.gap = '24px';
+                document.querySelectorAll('.settings-card').forEach(c => c.style.padding = '18px');
+                document.querySelectorAll('.setting-row').forEach(r => r.style.padding = '9px 0');
+            }
+            showStatus('📐 Vue compacte ' + (this.checked ? 'activée' : 'désactivée'), 'success');
+            saveAllSettings();
+        });
+    }
 
-    document.getElementById('motionSensitivity').addEventListener('change', function() {
-        const labels = { low: 'Faible', medium: 'Moyenne', high: 'Élevée' };
-        showStatus('🎯 Sensibilité: ' + (labels[this.value] || this.value), 'success');
-        saveAllSettings();
-    });
-
-    document.getElementById('autoLogout').addEventListener('change', function() {
-        showStatus('⏱️ Déconnexion auto: ' + this.options[this.selectedIndex].text, 'success');
-        saveAllSettings();
-    });
+    // DECONNEXION AUTO
+    if (document.getElementById('autoLogout')) {
+        document.getElementById('autoLogout').addEventListener('change', function() {
+            showStatus('⏱️ Déconnexion auto: ' + this.options[this.selectedIndex].text, 'success');
+            saveAllSettings();
+        });
+    }
 }
 </script>
 

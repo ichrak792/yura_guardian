@@ -1,4 +1,4 @@
-//<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -6,6 +6,234 @@
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/admin.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <style>
+        .position-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 20px;
+            height: calc(100vh - 140px);
+        }
+
+        /* ── Controls ── */
+        .robot-controls-section {
+            background: #1a1f2e;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 200px;
+            aspect-ratio: 1;
+            margin: 0 auto;
+        }
+
+        .control-direction {
+            background: #252b3b;
+            border: 1px solid #3a4155;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.4rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.12s;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .control-direction:active,
+        .control-direction.active {
+            background: #2563eb;
+            border-color: #3b82f6;
+            transform: scale(0.93);
+        }
+
+        .forward-btn  { grid-column: 2; grid-row: 1; }
+        .left-btn     { grid-column: 1; grid-row: 2; }
+        .stop-btn-center { grid-column: 2; grid-row: 2; background: #7f1d1d; border-color: #ef4444; font-size: 0.7rem; font-weight: 600; letter-spacing: 1px; }
+        .stop-btn-center:active { background: #ef4444; }
+        .right-btn    { grid-column: 3; grid-row: 2; }
+        .backward-btn { grid-column: 2; grid-row: 3; }
+
+        /* Speed */
+        .speed-section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .speed-row {
+            display: flex;
+            justify-content: space-between;
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .speed-slider {
+            width: 100%;
+            accent-color: #2563eb;
+        }
+
+        /* Sensors mini */
+        .sensors-mini {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .sensor-card {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 8px 6px;
+            text-align: center;
+        }
+
+        .sensor-val {
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .sensor-lbl {
+            color: #64748b;
+            font-size: 0.65rem;
+            margin-top: 2px;
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .status-text { color: #94a3b8; font-size: 0.8rem; }
+        .cmd-feedback { color: #22c55e; font-size: 0.8rem; min-height: 18px; text-align: center; }
+
+        .keyboard-hint {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .key-badge {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.68rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        /* ── Views ── */
+        .views-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* Camera */
+        .camera-mini {
+            flex: 1.3;
+            background: #0f172a;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            min-height: 0;
+        }
+
+        #camImg {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .cam-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .cam-icon { font-size: 3rem; opacity: 0.4; }
+
+        .cam-start-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 22px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .cam-start-btn:hover { background: #1d4ed8; }
+
+        .cam-label {
+            position: absolute;
+            top: 10px; left: 14px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rec-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #ef4444;
+            animation: blink 1s infinite;
+        }
+
+        /* Map */
+        .map-mini {
+            flex: 1;
+            border-radius: 16px;
+            overflow: hidden;
+            min-height: 150px;
+        }
+
+        /* Feedback popup */
+        @keyframes slideIn {
+            from { transform: translateX(120px); opacity: 0; }
+            to   { transform: translateX(0);     opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0);     opacity: 1; }
+            to   { transform: translateX(120px); opacity: 0; }
+        }
+    </style>
 </head>
 
 <body>
@@ -25,187 +253,243 @@
                     <button class="btn-logout-top" onclick="window.location.href='/logout'">Se déconnecter</button>
                 </div>
             </header>
+
             <div class="content-wrapper">
                 <div class="position-layout">
-                    <!-- Robot Controls -->
+
+                    <!-- ═══ LEFT: Robot Controls ═══ -->
                     <div class="robot-controls-section">
-                        <h3 style="color:white; margin-bottom:20px; text-align:center;">Robot Controls</h3>
-                                            <div class="controls-grid">
-                            <button class="control-direction forward-btn" onclick="sendCommand('forward')">
-                                <span class="arrow">↑</span>
-                            </button>
-                            
-                            <button class="control-direction left-btn" onclick="sendCommand('left')">
-                                <span class="arrow">←</span>
-                            </button>
-                            
-                            <button class="control-direction stop-btn-center" onclick="sendCommand('stop')">
-                                STOP
-                            </button>
-                            
-                            <button class="control-direction right-btn" onclick="sendCommand('right')">
-                                <span class="arrow">→</span>
-                            </button>
-                            
-                            <button class="control-direction backward-btn" onclick="sendCommand('backward')">
-                                <span class="arrow">↓</span>
-                            </button>
+                        <h3 style="color:white; margin:0; text-align:center; font-size:1rem;">Contrôle Robot</h3>
+
+                        <!-- D-pad -->
+                        <div class="controls-grid">
+                            <button class="control-direction forward-btn"
+                                onmousedown="hold('forward')" onmouseup="release()" onmouseleave="release()"
+                                ontouchstart="hold('forward')" ontouchend="release()">↑</button>
+
+                            <button class="control-direction left-btn"
+                                onmousedown="hold('left')" onmouseup="release()" onmouseleave="release()"
+                                ontouchstart="hold('left')" ontouchend="release()">←</button>
+
+                            <button class="control-direction stop-btn-center"
+                                onclick="sendCommand('stop')">STOP</button>
+
+                            <button class="control-direction right-btn"
+                                onmousedown="hold('right')" onmouseup="release()" onmouseleave="release()"
+                                ontouchstart="hold('right')" ontouchend="release()">→</button>
+
+                            <button class="control-direction backward-btn"
+                                onmousedown="hold('backward')" onmouseup="release()" onmouseleave="release()"
+                                ontouchstart="hold('backward')" ontouchend="release()">↓</button>
+                        </div>
+
+                        <!-- Speed -->
+                        <div class="speed-section">
+                            <div class="speed-row">
+                                <span>Vitesse</span>
+                                <span id="speedVal">70%</span>
+                            </div>
+                            <input type="range" class="speed-slider" id="speedRange"
+                                min="10" max="100" value="70"
+                                oninput="document.getElementById('speedVal').textContent=this.value+'%'">
+                        </div>
+
+                        <!-- Sensors -->
+                        <div class="sensors-mini">
+                            <div class="sensor-card">
+                                <div class="sensor-val" id="s-temp">--°</div>
+                                <div class="sensor-lbl">Temp</div>
+                            </div>
+                            <div class="sensor-card">
+                                <div class="sensor-val" id="s-dist">-- cm</div>
+                                <div class="sensor-lbl">Distance</div>
+                            </div>
+                            <div class="sensor-card">
+                                <div class="sensor-val" id="s-obs" style="color:#22c55e;">OK</div>
+                                <div class="sensor-lbl">Obstacle</div>
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="status-bar">
+                            <div class="status-dot" id="connDot"></div>
+                            <span class="status-text" id="connText">Connexion...</span>
+                        </div>
+
+                        <div class="cmd-feedback" id="cmdFeedback"></div>
+
+                        <!-- Keyboard hints -->
+                        <div class="keyboard-hint">
+                            <span class="key-badge">↑ Avant</span>
+                            <span class="key-badge">↓ Arrière</span>
+                            <span class="key-badge">← Gauche</span>
+                            <span class="key-badge">→ Droite</span>
+                            <span class="key-badge">Espace Stop</span>
                         </div>
                     </div>
 
-                    <!-- Camera + Map -->
+                    <!-- ═══ RIGHT: Camera + Map ═══ -->
                     <div class="views-section">
+
+                        <!-- Camera stream depuis RPI -->
                         <div class="camera-mini">
-                            <video id="miniVideo" autoplay playsinline style="display:none; width:100%; height:100%; object-fit:cover; border-radius:12px;"></video>
-                            <div id="miniPlaceholder" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-                                <span style="font-size:3rem;">📹</span>
-                                <button class="ctrl-btn start-btn" onclick="startMiniCam()" style="font-size:0.85rem; padding:8px 20px;">Caméra</button>
+                            <img id="camImg" alt="Camera stream">
+                            <div class="cam-overlay" id="camOverlay">
+                                <div class="cam-icon">📹</div>
+                                <button class="cam-start-btn" onclick="startCam()">Démarrer caméra</button>
+                            </div>
+                            <div class="cam-label" id="camLabel">
+                                <div class="rec-dot"></div>
+                                LIVE
                             </div>
                         </div>
+
+                        <!-- Map -->
                         <div class="map-mini">
-                            <div id="miniMap" style="width:100%; height:100%; border-radius:12px;"></div>
+                            <div id="miniMap" style="width:100%; height:100%;"></div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </main>
     </div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Mini map
+        // ── Map ─────────────────────────────────────
         const miniMap = L.map('miniMap').setView([36.8065, 10.1815], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '' }).addTo(miniMap);
-        const robotIcon = L.divIcon({ html: '<div style="font-size:1.5rem;">🤖</div>', iconSize: [30, 30], iconAnchor: [15, 30], className: '' });
-        L.marker([36.8065, 10.1815], {icon: robotIcon}).addTo(miniMap).bindPopup('Robot YURA');
+        const robotIcon = L.divIcon({
+            html: '<div style="font-size:1.5rem;">🤖</div>',
+            iconSize: [30, 30], iconAnchor: [15, 30], className: ''
+        });
+        L.marker([36.8065, 10.1815], { icon: robotIcon }).addTo(miniMap).bindPopup('Robot YURA');
 
-        let camStream = null;
-        async function startMiniCam() {
-            try {
-                camStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                const v = document.getElementById('miniVideo');
-                v.srcObject = camStream;
-                v.style.display = 'block';
-                document.getElementById('miniPlaceholder').style.display = 'none';
-            } catch(e) { alert('Caméra indisponible: ' + e.message); }
+        // ── Camera ──────────────────────────────────
+        // yetchattef men el proxy /camera-stream → RPI port 5050
+        function startCam() {
+            const img = document.getElementById('camImg');
+            const overlay = document.getElementById('camOverlay');
+            const label = document.getElementById('camLabel');
+
+            img.src = '/camera-stream/video_feed?t=' + Date.now();
+            img.style.display = 'block';
+            overlay.style.display = 'none';
+            label.style.display = 'flex';
+
+            img.onerror = function() {
+                img.style.display = 'none';
+                label.style.display = 'none';
+                overlay.innerHTML = `
+                    <div class="cam-icon">⚠️</div>
+                    <p style="color:#ef4444; font-size:0.8rem; text-align:center; margin:0;">
+                        Caméra non disponible<br>
+                        <small>Vérifier RPI sur port 5050</small>
+                    </p>
+                    <button class="cam-start-btn" onclick="startCam()">Réessayer</button>
+                `;
+                overlay.style.display = 'flex';
+            };
         }
 
-        function sendCmd(cmd) {
+        // ── Robot Commands ───────────────────────────
+        let holdTimer = null;
+        let currentCmd = null;
+
+        function sendCommand(command) {
+            const speed = parseInt(document.getElementById('speedRange').value);
+            if (navigator.vibrate) navigator.vibrate(40);
+            showFeedback(command);
+
             fetch('/admin/robot/command', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ command: cmd })
-            });
-            const status = document.getElementById('cmdStatus');
-            status.textContent = `✅ Commande envoyée: ${cmd}`;
-            setTimeout(() => status.textContent = '', 2000);
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: command, speed: speed })
+            })
+            .then(res => res.json())
+            .then(() => setConn(true))
+            .catch(() => setConn(false));
         }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp') sendCmd('Forward');
-            else if (e.key === 'ArrowDown') sendCmd('Backward');
-            else if (e.key === 'ArrowLeft') sendCmd('Left');
-            else if (e.key === 'ArrowRight') sendCmd('Right');
-            else if (e.key === ' ') sendCmd('STOP');
+        function hold(cmd) {
+            sendCommand(cmd);
+            // highlight btn
+            const map = { forward: '.forward-btn', left: '.left-btn', right: '.right-btn', backward: '.backward-btn' };
+            if (map[cmd]) document.querySelector(map[cmd]).classList.add('active');
+            currentCmd = cmd;
+            holdTimer = setInterval(() => sendCommand(cmd), 200);
+        }
+
+        function release() {
+            clearInterval(holdTimer);
+            holdTimer = null;
+            if (currentCmd) {
+                const map = { forward: '.forward-btn', left: '.left-btn', right: '.right-btn', backward: '.backward-btn' };
+                if (map[currentCmd]) document.querySelector(map[currentCmd]).classList.remove('active');
+                sendCommand('stop');
+                currentCmd = null;
+            }
+        }
+
+        // ── Keyboard ─────────────────────────────────
+        const keyMap = { ArrowUp: 'forward', ArrowDown: 'backward', ArrowLeft: 'left', ArrowRight: 'right', ' ': 'stop' };
+        const held = {};
+
+        document.addEventListener('keydown', e => {
+            if (!keyMap[e.key] || held[e.key]) return;
+            e.preventDefault();
+            held[e.key] = true;
+            if (e.key === ' ') { sendCommand('stop'); return; }
+            hold(keyMap[e.key]);
         });
+
+        document.addEventListener('keyup', e => {
+            if (!keyMap[e.key]) return;
+            held[e.key] = false;
+            if (e.key !== ' ') release();
+        });
+
+        // ── Feedback ─────────────────────────────────
+        const feedbackMsgs = {
+            forward: '⬆ Robot avance',
+            backward: '⬇ Robot recule',
+            left: '← Tourne gauche',
+            right: '→ Tourne droite',
+            stop: '⏹ Arrêté'
+        };
+
+        function showFeedback(cmd) {
+            const el = document.getElementById('cmdFeedback');
+            el.textContent = feedbackMsgs[cmd] || cmd;
+            clearTimeout(el._t);
+            el._t = setTimeout(() => { el.textContent = ''; }, 1500);
+        }
+
+        function setConn(ok) {
+            document.getElementById('connDot').style.background = ok ? '#22c55e' : '#ef4444';
+            document.getElementById('connText').textContent = ok ? 'Connecté' : 'Erreur connexion';
+        }
+
+        // ── Sensors polling ───────────────────────────
+        async function fetchSensors() {
+            try {
+                const r = await fetch('/api/sensors');
+                const d = await r.json();
+                if (!d) return;
+                document.getElementById('s-temp').textContent = (d.temp ?? '--') + '°';
+                document.getElementById('s-dist').textContent = (d.distance ?? '--') + ' cm';
+                const obsEl = document.getElementById('s-obs');
+                obsEl.textContent = d.obstacle ? '⚠ OBS' : 'OK';
+                obsEl.style.color = d.obstacle ? '#ef4444' : '#22c55e';
+                setConn(true);
+            } catch(e) {
+                setConn(false);
+            }
+        }
+
+        fetchSensors();
+        setInterval(fetchSensors, 2000);
     </script>
-    <script>
-function sendCommand(command) {
-    console.log('🎮 Commande envoyée:', command);
-    
-    // Vibration sur mobile
-    if (navigator.vibrate) {
-        navigator.vibrate(50);
-    }
-    
-    // Effet visuel global
-    document.body.style.animation = 'shake 0.3s ease';
-    setTimeout(() => {
-        document.body.style.animation = '';
-    }, 300);
-    
-    // Message de confirmation
-    showFeedback(command);
-    
-    // Envoi au serveur
-    fetch('/admin/robot/command', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: command })
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log('✅ Commande exécutée:', data);
-    })
-    .catch(err => {
-        console.error('❌ Erreur:', err);
-    });
-}
-
-function showFeedback(command) {
-    const messages = {
-        'forward': '⬆️ Robot avance',
-        'backward': '⬇️ Robot recule',
-        'left': '⬅️ Robot tourne à gauche',
-        'right': '➡️ Robot tourne à droite',
-        'stop': '🛑 Robot arrêté'
-    };
-    
-    // Créer popup de feedback
-    const feedback = document.createElement('div');
-    feedback.className = 'command-feedback';
-    feedback.textContent = messages[command];
-    feedback.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 30px;
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-        color: white;
-        padding: 15px 30px;
-        border-radius: 12px;
-        font-size: 1.2rem;
-        font-weight: bold;
-        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
-        z-index: 9999;
-        animation: slideIn 0.5s ease;
-    `;
-    
-    document.body.appendChild(feedback);
-    
-    setTimeout(() => {
-        feedback.style.animation = 'slideOut 0.5s ease';
-        setTimeout(() => feedback.remove(), 500);
-    }, 2000);
-}
-</script>
-
-<style>
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100px);
-        opacity: 0;
-    }
-}
-</style>
 </body>
-</html>*/
+</html>

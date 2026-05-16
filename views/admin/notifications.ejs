@@ -103,22 +103,23 @@
         .btn-secondary:hover { background:rgba(255,255,255,0.08); color:#fff; }
 
         /* STAT CARDS */
-        .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
-        .stat-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:11px; padding:16px 18px; position:relative; overflow:hidden; transition:all 0.2s; cursor:pointer; }
-        .stat-card:hover { transform:translateY(-2px); }
+        .stat-row { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px; }
+        .stat-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:12px 14px; position:relative; overflow:hidden; transition:all 0.2s; cursor:pointer; display:flex; align-items:center; gap:12px; }
+        .stat-card:hover { transform:translateY(-2px); border-color:rgba(255,255,255,0.1); }
         .stat-card.active-filter { border-color:rgba(192,57,43,0.45); }
-        .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+        .stat-card::before { content:''; position:absolute; top:0; left:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
         .stat-card.danger::before  { background:var(--rouge); }
         .stat-card.warning::before { background:#f59e0b; }
         .stat-card.info::before    { background:#3b82f6; }
         .stat-card.success::before { background:#27ae60; }
-        .stat-icon-wrap { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+        .stat-icon-wrap { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
         .stat-icon-wrap.danger  { background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.2); }
         .stat-icon-wrap.warning { background:rgba(245,158,11,0.1);  border:1px solid rgba(245,158,11,0.2); }
         .stat-icon-wrap.info    { background:rgba(59,130,246,0.1);  border:1px solid rgba(59,130,246,0.2); }
         .stat-icon-wrap.success { background:rgba(39,174,96,0.1);   border:1px solid rgba(39,174,96,0.2); }
-        .stat-num { font-size:1.9rem; font-weight:800; color:#fff; line-height:1; }
-        .stat-label { font-size:0.67rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; margin-top:5px; }
+        .stat-info { flex:1; }
+        .stat-num { font-size:1.4rem; font-weight:800; color:#fff; line-height:1; }
+        .stat-label { font-size:0.62rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; margin-top:3px; }
 
         /* FILTER BAR */
         .filter-bar { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:11px; padding:12px 16px; margin-bottom:14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
@@ -294,39 +295,47 @@
         <!-- STATS -->
         <%
         const notifs = notifications || [];
-        const crit   = notifs.filter(n => n.type === 'danger'  || n.type === 'critique').length;
-        const warns  = notifs.filter(n => n.type === 'warning' || n.type === 'connexion' || n.type === 'robot').length;
-        const infos  = notifs.filter(n => n.type === 'info'    || n.type === 'system').length;
+        const crit   = notifs.filter(n => n.type === 'danger'  || n.type === 'critique' || n.type === 'alerte').length;
+        const warns  = notifs.filter(n => n.type === 'warning').length;
+        const infos  = notifs.filter(n => n.type === 'info' || n.type === 'connexion' || n.type === 'system').length;
         const resol  = notifs.filter(n => n.read === true).length;
         %>
         <div class="stat-row">
             <div class="stat-card danger" onclick="filterByType('danger')">
                 <div class="stat-icon-wrap danger">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#e74c3c" stroke-width="1.5"><path d="M8 1L1 14h14L8 1zm0 5v4M8 11v1"/></svg>
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#e74c3c" stroke-width="1.5"><path d="M8 1L1 14h14L8 1zm0 5v4M8 11v1"/></svg>
                 </div>
-                <div class="stat-num" id="sc-danger"><%= crit %></div>
-                <div class="stat-label">Critiques</div>
+                <div class="stat-info">
+                    <div class="stat-num" id="sc-danger"><%= crit %></div>
+                    <div class="stat-label">Critiques</div>
+                </div>
             </div>
             <div class="stat-card warning" onclick="filterByType('warning')">
                 <div class="stat-icon-wrap warning">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#f59e0b" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3M8 10v1"/></svg>
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#f59e0b" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3M8 10v1"/></svg>
                 </div>
-                <div class="stat-num" id="sc-warning"><%= warns %></div>
-                <div class="stat-label">Avertissements</div>
+                <div class="stat-info">
+                    <div class="stat-num" id="sc-warning"><%= warns %></div>
+                    <div class="stat-label">Warnings</div>
+                </div>
             </div>
             <div class="stat-card info" onclick="filterByType('info')">
                 <div class="stat-icon-wrap info">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#3b82f6" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 7v5M8 5v1"/></svg>
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#3b82f6" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 7v5M8 5v1"/></svg>
                 </div>
-                <div class="stat-num" id="sc-info"><%= infos %></div>
-                <div class="stat-label">Informations</div>
+                <div class="stat-info">
+                    <div class="stat-num" id="sc-info"><%= infos %></div>
+                    <div class="stat-label">Connexions</div>
+                </div>
             </div>
             <div class="stat-card success" onclick="filterByType('resolved')">
                 <div class="stat-icon-wrap success">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#27ae60" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><polyline points="5,8 7,10 11,6"/></svg>
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#27ae60" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><polyline points="5,8 7,10 11,6"/></svg>
                 </div>
-                <div class="stat-num" id="sc-resolved"><%= resol %></div>
-                <div class="stat-label">Résolues</div>
+                <div class="stat-info">
+                    <div class="stat-num" id="sc-resolved"><%= resol %></div>
+                    <div class="stat-label">Résolues</div>
+                </div>
             </div>
         </div>
 
@@ -354,10 +363,11 @@
                 let type = 'info';
                 const t = (n.type || '').toLowerCase();
                 if (t === 'danger' || t === 'critique' || t === 'alerte') type = 'danger';
-                else if (t === 'warning' || t === 'robot' || t === 'connexion') type = 'warning';
+                else if (t === 'warning') type = 'warning';
                 else if (t === 'success') type = 'success';
+                // connexion, info, system → type info
 
-                const icons = { danger:'🚨', warning:'⚠️', info:'ℹ️', success:'✅' };
+                const icons = { danger:'🚨', warning:'⚠️', info:'🔵', success:'✅' };
                 const labels = { danger:'Critique', warning:'Warning', info:'Info', success:'Résolu' };
                 const date = new Date(n.createdAt || n.timestamp || Date.now());
                 const timeStr = date.toLocaleString('fr-FR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});

@@ -57,7 +57,23 @@ router.post('/signin', async (req, res) => {
             name: user.name
         };
         await History.create({ action: 'Connexion au système', userName: user.name, details: `Rôle: ${user.role}` });
-        await Notification.create({ type: 'connexion', message: `Connexion: ${user.name}`, userName: user.name });
+        
+        // On ne notifie que si l'utilisateur se connecte trop souvent (plus de 3 fois par jour)
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const dailyLogins = await History.countDocuments({
+            userName: user.name,
+            action: 'Connexion au système',
+            timestamp: { $gte: today }
+        });
+
+        if (dailyLogins > 3) {
+            await Notification.create({ 
+                type: 'warning', 
+                message: `⚠️ Activité suspecte: ${user.name} s'est connecté ${dailyLogins} fois aujourd'hui.`,
+                userName: user.name 
+            });
+        }
         if (user.role === 'admin') res.redirect('/admin/dashboard');
         else res.redirect('/dashboard/security');
     } catch (error) {
@@ -310,14 +326,14 @@ router.get('/admin/settings', requireAdmin, async (req, res) => {
     }
 });
 // Robot command
-const bt = require('./bluetooth'); // adapti le chemin
+//const bt = require('./bluetooth'); // adapti le chemin
 
 // Route déjà existante dans ton dashboard:
-router.post('/admin/robot/command', requireAdmin, (req, res) => {
+// Robot command → RPI via Tailscale
+router.post('/admin/robot/command', requireAuth, async (req, res) => {
     const { command, speed } = req.body;
     if (!command) return res.status(400).json({ error: 'No command' });
 
-    // Map commandes dashboard → Arduino
     const cmdMap = {
         'avancer':    'forward',
         'reculer':    'backward',
@@ -328,25 +344,36 @@ router.post('/admin/robot/command', requireAdmin, (req, res) => {
         'base':       'home',
         'scanner':    'scan',
         'charger':    'charge',
-        'urgence':    'stop'
+        'urgence':    'stop',
+        'Forward':    'forward',
+        'Backward':   'backward',
+        'Left':       'left',
+        'Right':      'right',
+        'STOP':       'stop'
     };
 
-    const arduinoCmd = cmdMap[command] || command;
+    const arduinoCmd = cmdMap[command] || command.toLowerCase();
+    const RPI_URL = 'http://100.90.80.29:5000';
 
-    // Envoyer via Bluetooth
-    if (global.bluetoothConnected && global.sendCommandToRobot) {
-        global.sendCommandToRobot(arduinoCmd)
-            .then(() => res.json({ success: true, command: arduinoCmd }))
-            .catch(err => res.json({ success: false, error: err.message }));
-    } else {
-        console.log('⚠️ Robot non connecté — commande ignorée:', arduinoCmd);
-        res.json({ success: false, error: 'Robot non connecté' });
+    try {
+        const response = await fetch(`${RPI_URL}/api/robot/command`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ command: arduinoCmd, speed: speed || 70 }),
+            signal: AbortSignal.timeout(3000)
+        });
+        const result = await response.json();
+        console.log('🤖 Robot cmd sent:', arduinoCmd, result);
+        await History.create({ action: `Commande robot: ${arduinoCmd}`, userName: req.session.user.name });
+        res.json({ success: true, command: arduinoCmd });
+    } catch (err) {
+        console.error('❌ Robot command error:', err.message);
+        res.json({ success: false, error: err.message });
     }
 });
 
-// Optionnel — status endpoint pour le dashboard
 router.get('/admin/robot/status', (req, res) => {
-  res.json(bt.getStatus());
+    res.json({ connected: true, url: 'http://100.90.80.29:5000' });
 });
 
 // ===== NOTIFICATIONS =====

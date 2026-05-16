@@ -515,41 +515,7 @@
 
         </div>
 
-        <!-- RIGHT: CAMERAS LIST -->
-        <div class="cams-panel">
-            <div class="cams-title">Caméras Disponibles</div>
 
-            <% const cameras = [
-                {id:'CAM-01', name:'CAM-01 Principale', res:'1080p', online:true},
-                {id:'CAM-03', name:'CAM-03 Arrière',    res:'1080p', online:true},
-            ]; %>
-
-            <% cameras.forEach(function(cam, i){ %>
-                <div class="cam-thumb <%= i===0 ? 'selected' : '' %>" onclick="selectCam('<%= cam.id %>', '<%= cam.name %>', this)">
-                    <div class="thumb-preview">
-                        <div class="thumb-dot <%= cam.online ? 'online' : 'offline' %>"></div>
-                        <svg width="50" height="50" viewBox="0 0 100 100" style="opacity:0.15;">
-                            <circle cx="50" cy="50" r="32" fill="none" stroke="#c0392b" stroke-width="2" stroke-dasharray="6,5"/>
-                            <circle cx="50" cy="50" r="16" fill="none" stroke="#c0392b" stroke-width="1.5"/>
-                            <line x1="50" y1="18" x2="50" y2="34" stroke="#c0392b" stroke-width="1.5"/>
-                            <line x1="50" y1="66" x2="50" y2="82" stroke="#c0392b" stroke-width="1.5"/>
-                            <line x1="18" y1="50" x2="34" y2="50" stroke="#c0392b" stroke-width="1.5"/>
-                            <line x1="66" y1="50" x2="82" y2="50" stroke="#c0392b" stroke-width="1.5"/>
-                            <circle cx="50" cy="50" r="3" fill="#c0392b"/>
-                        </svg>
-                    </div>
-                    <div class="thumb-info">
-                        <div class="thumb-name"><%= cam.name %></div>
-                        <div class="thumb-meta">
-                            <%= cam.res %> |
-                            <span class="<%= cam.online ? 'online-text' : 'offline-text' %>">
-                                <%= cam.online ? 'En ligne' : 'Hors ligne' %>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            <% }); %>
-        </div>
 
     </div>
 </div>

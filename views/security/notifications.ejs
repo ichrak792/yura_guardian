@@ -323,8 +323,6 @@
                 <button class="filter-btn active" onclick="filterAlerts('all', this)">Toutes</button>
                 <button class="filter-btn" onclick="filterAlerts('danger', this)">Critiques</button>
                 <button class="filter-btn" onclick="filterAlerts('warning', this)">Moyennes</button>
-                <button class="filter-btn" onclick="filterAlerts('info', this)">Infos</button>
-                <button class="filter-btn" onclick="filterAlerts('success', this)">Résolues</button>
             </div>
             <input type="text" class="search-input" placeholder="Rechercher une alerte..." oninput="searchAlerts(this.value)">
         </div>
@@ -346,13 +344,9 @@
                             <span class="alert-title">Température Critique</span>
                             <span class="alert-new-badge">Nouveau</span>
                         </div>
-                        <div class="alert-msg">Température détectée à 45°C dans la Zone A — au-dessus du seuil de sécurité</div>
+                        <div class="alert-msg">Température détectée à 45°C — au-dessus du seuil de sécurité</div>
                         <div class="alert-meta">
-                            <span>⏱ Il y a 2 min</span>
-                            <span class="meta-dot"></span>
-                            <span>📍 Zone A</span>
-                            <span class="meta-dot"></span>
-                            <span>45°C</span>
+                            <span>🌡️ 45°C</span>
                         </div>
                     </div>
                     <div class="alert-actions">
@@ -381,11 +375,7 @@
                         <div class="alert-top"><span class="alert-title">Humidité Anormale</span></div>
                         <div class="alert-msg">Taux d'humidité critique: 85% — vérification recommandée</div>
                         <div class="alert-meta">
-                            <span>⏱ Il y a 8 min</span>
-                            <span class="meta-dot"></span>
-                            <span>📍 Zone B</span>
-                            <span class="meta-dot"></span>
-                            <span>85%</span>
+                            <span>💧 85%</span>
                         </div>
                     </div>
                     <div class="alert-actions">
@@ -400,11 +390,7 @@
                         <div class="alert-top"><span class="alert-title">Batterie Faible</span></div>
                         <div class="alert-msg">Niveau de batterie critique: 15% — recharge recommandée</div>
                         <div class="alert-meta">
-                            <span>⏱ Il y a 12 min</span>
-                            <span class="meta-dot"></span>
-                            <span>📍 Robot</span>
-                            <span class="meta-dot"></span>
-                            <span>15%</span>
+                            <span>🔋 15%</span>
                         </div>
                     </div>
                     <div class="alert-actions">
@@ -413,166 +399,6 @@
                     </div>
                 </div>
 
-                <div class="alert-card warning" data-type="warning">
-                    <div class="alert-ico warning">🚨</div>
-                    <div class="alert-body">
-                        <div class="alert-top"><span class="alert-title">Détection de Mouvement</span></div>
-                        <div class="alert-msg">Mouvement détecté en dehors des heures d'ouverture</div>
-                        <div class="alert-meta">
-                            <span>⏱ Il y a 15 min</span>
-                            <span class="meta-dot"></span>
-                            <span>📍 Entrée principale</span>
-                            <span class="meta-dot"></span>
-                            <span>Zone A</span>
-                        </div>
-                    </div>
-                    <div class="alert-actions">
-                        <button class="act-btn resolve" onclick="resolveAlert(this)" title="Résoudre"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,6 4,9 11,2"/></svg></button>
-                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- INFOS -->
-            <div class="alerts-group" data-group="info">
-                <div class="alerts-group-title">
-                    <div class="group-dot" style="background:#3b82f6;box-shadow:0 0 5px rgba(59,130,246,0.5);"></div>
-                    Informations
-                </div>
-
-                <div class="alert-card info" data-type="info">
-                    <div class="alert-ico info">📹</div>
-                    <div class="alert-body">
-                        <div class="alert-top"><span class="alert-title">Mouvement Caméra</span></div>
-                        <div class="alert-msg">Personne détectée par caméra 3 à l'entrée</div>
-                        <div class="alert-meta">
-                            <span>⏱ Il y a 3 min</span>
-                            <span class="meta-dot"></span>
-                            <span>📍 Entrée</span>
-                            <span class="meta-dot"></span>
-                            <span>Caméra 3</span>
-                        </div>
-                    </div>
-                    <div class="alert-actions">
-                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
-                    </div>
-                </div>
-
-                <div class="alert-card info" data-type="info">
-                    <div class="alert-ico info">🚪</div>
-                    <div class="alert-body">
-                        <div class="alert-top"><span class="alert-title">Accès Autorisé</span></div>
-                        <div class="alert-msg">Badge scanné avec succès — Employé #245</div>
-                        <div class="alert-meta">
-                            <span>⏱ Il y a 10 min</span>
-                            <span class="meta-dot"></span>
-                            <span>📍 Porte A</span>
-                            <span class="meta-dot"></span>
-                            <span>Badge #245</span>
-                        </div>
-                    </div>
-                    <div class="alert-actions">
-                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
-                    </div>
-                </div>
-
-                <div class="alert-card info" data-type="info">
-                    <div class="alert-ico info">🤖</div>
-                    <div class="alert-body">
-                        <div class="alert-top"><span class="alert-title">Robot en Mouvement</span></div>
-                        <div class="alert-msg">Robot a démarré la ronde de surveillance Zone B</div>
-                        <div class="alert-meta">
-                            <span>⏱ Il y a 15 min</span>
-                            <span class="meta-dot"></span>
-                            <span>📍 Zone B</span>
-                            <span class="meta-dot"></span>
-                            <span>Ronde active</span>
-                        </div>
-                    </div>
-                    <div class="alert-actions">
-                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
-                    </div>
-                </div>
-
-                <div class="alert-card info" data-type="info">
-                    <div class="alert-ico info">🔄</div>
-                    <div class="alert-body">
-                        <div class="alert-top"><span class="alert-title">Synchronisation</span></div>
-                        <div class="alert-msg">Données synchronisées avec le serveur central</div>
-                        <div class="alert-meta">
-                            <span>⏱ Il y a 20 min</span>
-                            <span class="meta-dot"></span>
-                            <span>📍 Serveur</span>
-                            <span class="meta-dot"></span>
-                            <span>100%</span>
-                        </div>
-                    </div>
-                    <div class="alert-actions">
-                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RÉSOLUES -->
-            <div class="alerts-group" data-group="success">
-                <div class="alerts-group-title">
-                    <div class="group-dot" style="background:#27ae60;box-shadow:0 0 5px rgba(39,174,96,0.5);"></div>
-                    Alertes Résolues
-                </div>
-
-                <div class="alert-card success" data-type="success">
-                    <div class="alert-ico success">✅</div>
-                    <div class="alert-body">
-                        <div class="alert-top"><span class="alert-title">Ronde Terminée</span></div>
-                        <div class="alert-msg">Ronde de sécurité Zone A-B-C terminée sans incident</div>
-                        <div class="alert-meta">
-                            <span>⏱ Il y a 30 min</span>
-                            <span class="meta-dot"></span>
-                            <span>📍 Toutes zones</span>
-                            <span class="meta-dot"></span>
-                            <span>0 incident</span>
-                        </div>
-                    </div>
-                    <div class="alert-actions">
-                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
-                    </div>
-                </div>
-
-                <div class="alert-card success" data-type="success">
-                    <div class="alert-ico success">💚</div>
-                    <div class="alert-body">
-                        <div class="alert-top"><span class="alert-title">Batterie Rechargée</span></div>
-                        <div class="alert-msg">Robot rechargé à 100% — prêt pour la prochaine mission</div>
-                        <div class="alert-meta">
-                            <span>⏱ Il y a 45 min</span>
-                            <span class="meta-dot"></span>
-                            <span>📍 Station charge</span>
-                            <span class="meta-dot"></span>
-                            <span>100%</span>
-                        </div>
-                    </div>
-                    <div class="alert-actions">
-                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
-                    </div>
-                </div>
-
-                <div class="alert-card success" data-type="success">
-                    <div class="alert-ico success">🔐</div>
-                    <div class="alert-body">
-                        <div class="alert-top"><span class="alert-title">Sécurité Maintenue</span></div>
-                        <div class="alert-msg">Aucune intrusion détectée dans les 24h</div>
-                        <div class="alert-meta">
-                            <span>⏱ Il y a 1h</span>
-                            <span class="meta-dot"></span>
-                            <span>📍 Global</span>
-                            <span class="meta-dot"></span>
-                            <span>0 incident</span>
-                        </div>
-                    </div>
-                    <div class="alert-actions">
-                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg></button>
-                    </div>
-                </div>
             </div>
 
         </div>
@@ -580,61 +406,135 @@
 </div>
 
 <script>
-    function updateStats() {
-        const c = { danger:0, warning:0, info:0, success:0 };
-        document.querySelectorAll('.alert-card').forEach(card => {
-            const t = card.dataset.type;
-            if(c[t] !== undefined) c[t]++;
-        });
-        document.getElementById('criticalCount').textContent = c.danger;
-        document.getElementById('warningCount').textContent  = c.warning;
-        document.getElementById('infoCount').textContent     = c.info;
-        document.getElementById('successCount').textContent  = c.success;
-        const total = c.danger + c.warning;
-        document.getElementById('bellCount').textContent = total;
-        document.getElementById('navCount').textContent  = total;
-    }
+// جيب الـ notifications من DB
+function loadNotifications() {
+    fetch('/api/notifications')
+        .then(r => r.json())
+        .then(res => {
+            const notifs = res.notifications || [];
+            
+            const dangerList  = document.getElementById('dangerList');
+            const warningList = document.getElementById('warningList');
+            dangerList.innerHTML  = '';
+            warningList.innerHTML = '';
 
-    function filterAlerts(type, btn) {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.alerts-group').forEach(group => {
-            if(type === 'all') {
-                group.style.display = '';
-            } else {
-                group.style.display = group.dataset.group === type ? '' : 'none';
+            if (notifs.length === 0) {
+                dangerList.innerHTML = '<div style="padding:20px;text-align:center;color:#555;font-size:0.82rem;">Aucune alerte critique</div>';
+                warningList.innerHTML = '<div style="padding:20px;text-align:center;color:#555;font-size:0.82rem;">Aucune alerte moyenne</div>';
+                return;
             }
-        });
-    }
 
-    function searchAlerts(val) {
-        const v = val.toLowerCase();
-        document.querySelectorAll('.alert-card').forEach(card => {
-            card.style.display = card.textContent.toLowerCase().includes(v) ? '' : 'none';
-        });
-    }
+            notifs.forEach(n => {
+                const isObstacle = n.message && n.message.toLowerCase().includes('obstacle');
+                const isTemp     = n.message && n.message.toLowerCase().includes('temp');
+                const type       = isObstacle || isTemp ? 'danger' : 'warning';
+                const ico        = isObstacle ? '🚧' : isTemp ? '🌡️' : '⚠️';
+                const time       = new Date(n.createdAt).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+                const date       = new Date(n.createdAt).toLocaleDateString('fr-FR');
 
-    function resolveAlert(btn) {
-        const card = btn.closest('.alert-card');
-        card.style.animation = 'slideOut 0.3s ease forwards';
-        setTimeout(() => { card.remove(); updateStats(); }, 280);
-    }
+                const card = document.createElement('div');
+                card.className = `alert-card ${type}`;
+                card.dataset.type = type;
+                card.dataset.id = n.id;
+                card.innerHTML = `
+                    <div class="alert-ico ${type}">${ico}</div>
+                    <div class="alert-body">
+                        <div class="alert-top">
+                            <span class="alert-title">${n.type === 'alerte' ? 'Alerte Robot' : n.type}</span>
+                            ${!n.read ? '<span class="alert-new-badge">Nouveau</span>' : ''}
+                        </div>
+                        <div class="alert-msg">${n.message}</div>
+                        <div class="alert-meta">
+                            <span>🕐 ${time}</span>
+                            <span class="meta-dot"></span>
+                            <span>📅 ${date}</span>
+                        </div>
+                    </div>
+                    <div class="alert-actions">
+                        <button class="act-btn resolve" onclick="resolveAlert(this)" title="Résoudre">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,6 4,9 11,2"/></svg>
+                        </button>
+                        <button class="act-btn del" onclick="deleteAlert(this)" title="Supprimer">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/></svg>
+                        </button>
+                    </div>
+                `;
 
-    function deleteAlert(btn) {
-        const card = btn.closest('.alert-card');
-        card.style.animation = 'slideOut 0.3s ease forwards';
-        setTimeout(() => { card.remove(); updateStats(); }, 280);
-    }
+                if (type === 'danger') dangerList.appendChild(card);
+                else warningList.appendChild(card);
+            });
 
-    function deleteAllNotif() {
-        document.querySelectorAll('.alert-card').forEach(card => {
-            card.style.animation = 'slideOut 0.3s ease forwards';
-        });
-        setTimeout(() => {
-            document.querySelectorAll('.alert-card').forEach(c => c.remove());
             updateStats();
-        }, 300);
-    }
+        })
+        .catch(err => console.log('Notifications error:', err));
+}
+
+function updateStats() {
+    const danger  = document.querySelectorAll('.alert-card[data-type="danger"]').length;
+    const warning = document.querySelectorAll('.alert-card[data-type="warning"]').length;
+    const total   = danger + warning;
+
+    if(document.getElementById('criticalCount')) document.getElementById('criticalCount').textContent = danger;
+    if(document.getElementById('warningCount'))  document.getElementById('warningCount').textContent  = warning;
+
+    // بدّل الـ badge في الـ nav
+    document.querySelectorAll('.nav-count, .bell-badge').forEach(el => {
+        el.textContent = total;
+    });
+}
+
+function filterAlerts(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.alerts-group').forEach(group => {
+        group.style.display = (type === 'all' || group.dataset.group === type) ? '' : 'none';
+    });
+}
+
+function searchAlerts(val) {
+    const v = val.toLowerCase();
+    document.querySelectorAll('.alert-card').forEach(card => {
+        card.style.display = card.textContent.toLowerCase().includes(v) ? '' : 'none';
+    });
+}
+
+async function resolveAlert(btn) {
+    const card = btn.closest('.alert-card');
+    const id   = card.dataset.id;
+    // mark as read في DB
+    try {
+        await fetch(`/api/notifications/${id}/read`, { method: 'PUT' });
+    } catch(e) {}
+    card.style.animation = 'slideOut 0.3s ease forwards';
+    setTimeout(() => { card.remove(); updateStats(); }, 280);
+}
+
+async function deleteAlert(btn) {
+    const card = btn.closest('.alert-card');
+    const id   = card.dataset.id;
+    try {
+        await fetch(`/api/notifications/${id}`, { method: 'DELETE' });
+    } catch(e) {}
+    card.style.animation = 'slideOut 0.3s ease forwards';
+    setTimeout(() => { card.remove(); updateStats(); }, 280);
+}
+
+async function deleteAllNotif() {
+    try {
+        await fetch('/api/notifications/all', { method: 'DELETE' });
+    } catch(e) {}
+    document.querySelectorAll('.alert-card').forEach(card => {
+        card.style.animation = 'slideOut 0.3s ease forwards';
+    });
+    setTimeout(() => {
+        document.querySelectorAll('.alert-card').forEach(c => c.remove());
+        updateStats();
+    }, 300);
+}
+
+// Load عند فتح الصفحة + كل 10 ثواني
+loadNotifications();
+setInterval(loadNotifications, 10000);
 </script>
 </body>
 </html>

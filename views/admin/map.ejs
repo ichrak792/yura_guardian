@@ -210,7 +210,7 @@
             <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></span>
             <span class="nav-text">Caméras</span>
         </a>
-        <a href="/admin/map" class="nav-item">
+        <a href="/admin/map" class="nav-item active">
             <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
             <span class="nav-text">Navigation</span>
         </a>
@@ -296,17 +296,51 @@
                     </button>
                 </div>
                 <div id="map"></div>
+            <!-- RIGHT PANEL -->
+            <div class="right-col">
+
+                <!-- ACTIVITY LOG -->
+                <div class="info-card" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+                    <div class="card-title">JOURNAL D'ACTIVITÉS</div>
+                    <div class="log-list" id="navLog">
+                        <!-- Logs injected by JS -->
+                    </div>
+                </div>
             </div>
+        </div> <!-- end map-layout -->
+    </div> <!-- end content -->
+</div> <!-- end main-content -->
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 // MAP INIT
-const map = L.map('map', { zoomControl: false }).setView([36.8065, 10.1815], 17);
+const map = L.map('map', { zoomControl: false }).setView([35.5962, 10.0569], 17);
 L.control.zoom({ position: 'bottomright' }).addTo(map);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '©OpenStreetMap', maxZoom: 19
+    attribution: '©OpenStreetMap', maxZoom: 19}).addTo(map);
+
+// Yura Corporation 4 Rakkada
+const factoryIcon = L.divIcon({
+    html: '<div style="background:#2c3e50;border:2px solid #34495e;color:#fff;border-radius:4px;padding:4px 8px;font-size:0.75rem;font-weight:bold;white-space:nowrap;box-shadow:0 2px 5px rgba(0,0,0,0.5);text-align:center;">🏭 Yura Corporation 4<br><span style="font-size:0.6rem;color:#ccc;">Site Rakkada</span></div>',
+    className: '',
+    iconSize: [160, 40],
+    iconAnchor: [80, 20]
+});
+L.marker([35.5962, 10.0569], {icon: factoryIcon, interactive: false}).addTo(map);
+
+L.polygon([
+    [35.5970, 10.0555],
+    [35.5970, 10.0585],
+    [35.5955, 10.0585],
+    [35.5955, 10.0555]
+], {
+    color: '#c0392b',
+    fillColor: '#c0392b',
+    fillOpacity: 0.1,
+    weight: 1.5,
+    dashArray: '5, 5'
 }).addTo(map);
 
 // ROBOT MARKER
@@ -318,16 +352,16 @@ const robotIcon = L.divIcon({
     iconSize: [20, 20], iconAnchor: [10, 10]
 });
 
-let robotPos = [36.8065, 10.1815];
+let robotPos = [35.5962, 10.0569];
 const robotMarker = L.marker(robotPos, { icon: robotIcon }).addTo(map);
-robotMarker.bindPopup('<b style="color:#c0392b">YURA-001</b><br>Zone B — Bureau<br>Vitesse: 0.8 km/h');
+robotMarker.bindPopup('<b style="color:#c0392b">YURA-001</b><br>Zone Rakkada<br>Vitesse: 0.8 km/h');
 
 // TRAJECTORY
 let trajectoryPoints = [
-    [36.8060, 10.1810],
-    [36.8062, 10.1812],
-    [36.8064, 10.1814],
-    [36.8065, 10.1815]
+    [35.5958, 10.0560],
+    [35.5960, 10.0564],
+    [35.5961, 10.0567],
+    [35.5962, 10.0569]
 ];
 let trajectoryLine = null;
 let showTraj = false;
@@ -402,8 +436,8 @@ let dirIdx = 1;
 setInterval(function() {
     angle += 0.001;
     robotPos = [
-        36.8065 + Math.sin(angle) * 0.0003,
-        10.1815 + Math.cos(angle) * 0.0003
+        35.5962 + Math.sin(angle) * 0.0003,
+        10.0569 + Math.cos(angle) * 0.0003
     ];
     robotMarker.setLatLng(robotPos);
     trajectoryPoints.push([...robotPos]);
@@ -417,13 +451,7 @@ setInterval(function() {
     const m = Math.floor((duration%3600)/60).toString().padStart(2,'0');
     const s = (duration%60).toString().padStart(2,'0');
 
-    document.getElementById('statLat').textContent    = robotPos[0].toFixed(4) + '°';
-    document.getElementById('statLng').textContent    = robotPos[1].toFixed(4) + '°';
-    document.getElementById('statSpeed').textContent  = speed + ' km/h';
-    document.getElementById('statDuration').textContent = h + ':' + m + ':' + s;
-    document.getElementById('distVal').textContent    = dist + ' km';
-    dirIdx = (dirIdx + (Math.random() > 0.95 ? 1 : 0)) % dirs.length;
-    document.getElementById('dirVal').textContent     = dirs[dirIdx];
+    // UI updates for stats removed as per user request
 }, 3000);
 </script>
 </body>

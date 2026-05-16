@@ -23,6 +23,7 @@
                 .main-content, .content { background: #f0f2f5 !important; }
                 
                 /* Cards */
+                .card, .chart-card, .activity-card,
                 .settings-card, .stat-card, .filter-bar, .table-wrap,
                 .alert-card, .cam-card, .adv-panel, .map-card,
                 .map-right, .cams-panel, .cam-thumbnail,
@@ -35,12 +36,12 @@
                 /* Text */
                 .card-head, .alerts-group-title { border-color: rgba(0,0,0,0.06) !important; }
                 .card-head-title, .setting-label, .alert-title,
-                .date-day, .user-name-s, .logo-name,
-                .info-val, h1, h2, h3, .stat-value { color: #111 !important; }
+                .date-day, .user-name-s, .logo-name, .card-title,
+                .info-val, h1, h2, h3, .stat-value, .stat-num, .zone-name, .alert-mini-text, .activity-text { color: #111 !important; }
                 
                 .logo-sub, .user-role-s, .topbar-title, .info-lbl,
-                .alert-msg, .details-cell, .date-time,
-                .stat-label { color: #666 !important; }
+                .alert-msg, .details-cell, .date-time, .activity-time,
+                .stat-label, .gris { color: #666 !important; }
                 
                 /* Nav */
                 .nav-item { color: #555 !important; }
@@ -61,12 +62,15 @@
                 .toggle-slider { background: #ddd !important; border-color: #ccc !important; }
                 
                 /* Rows */
-                .info-row, .setting-row, .history-row { border-color: rgba(0,0,0,0.05) !important; }
+                .info-row, .setting-row, .history-row, .zone-row, .activity-item { border-color: rgba(0,0,0,0.05) !important; }
                 .history-row:hover { background: #f5f5f5 !important; }
+                
+                .mini-stat { background: #f5f5f5 !important; border-color: rgba(0,0,0,0.06) !important; }
                 
                 /* Table */
                 .table-header { background: rgba(0,0,0,0.03) !important; }
                 .table-header span { color: #666 !important; }
+                .users-mini-table td, .users-mini-table th { border-color: rgba(0,0,0,0.05) !important; color: #333 !important; }
                 
                 /* Buttons */
                 .act-btn, .del-btn, .card-action-btn, .pag-btn,
@@ -115,3 +119,10 @@
         console.error('❌ Erreur thème:', e);
     }
 })();
+
+// Recharger la page si les paramètres sont modifiés dans un autre onglet
+window.addEventListener('storage', function(e) {
+    if (e.key === 'yuraSettings') {
+        location.reload();
+    }
+});

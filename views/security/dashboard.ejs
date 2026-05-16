@@ -20,7 +20,6 @@
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--noir); color: #fff; display: flex; min-height: 100vh; }
 
-        /* SIDEBAR */
         .sidebar {
             width: 300px; min-height: 100vh;
             background: #0d0d0d;
@@ -33,16 +32,6 @@
             border-bottom: 1px solid var(--border);
             display: flex; align-items: center; gap: 14px;
         }
-        .logo-icon {
-            width: 48px; height: 48px;
-            background: var(--rouge);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem;
-            box-shadow: 0 0 15px rgba(192,57,43,0.4);
-            flex-shrink: 0;
-        }
-        .logo-texts { display: flex; flex-direction: column; }
         .logo-name { font-size: 1.1rem; font-weight: 800; color: #fff; letter-spacing: 2px; }
         .logo-sub  { font-size: 0.65rem; color: var(--gris); letter-spacing: 2px; text-transform: uppercase; }
 
@@ -82,35 +71,18 @@
             color: #fff; background: rgba(192,57,43,0.13);
             border-left-color: var(--rouge); font-weight: 600;
         }
-        .nav-icon-wrap {
-            width: 22px; height: 22px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; flex-shrink: 0;
-        }
+        .nav-icon-wrap { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
         .nav-text { flex: 1; }
-        .nav-count {
-            background: var(--rouge); color: #fff;
-            font-size: 0.65rem; font-weight: 700;
-            padding: 3px 8px; border-radius: 12px;
-            min-width: 22px; text-align: center;
-        }
+        .nav-count { background: var(--rouge); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 12px; min-width: 22px; text-align: center; }
 
         .sidebar-footer { border-top: 1px solid var(--border); padding: 10px 0; }
         .user-row { display: flex; align-items: center; gap: 11px; padding: 12px 18px; }
-        .user-av {
-            width: 36px; height: 36px;
-            background: linear-gradient(135deg, var(--rouge), #7b241c);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.9rem; font-weight: 700; flex-shrink: 0;
-        }
-        .user-name-s { font-size: 0.85rem; font-weight: 600; }
+        .user-av { width: 36px; height: 36px; background: linear-gradient(135deg, var(--rouge), #7b241c); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; flex-shrink: 0; }
+        .user-name-s { font-size: 0.85rem; font-weight: 600; color: #fff; }
         .user-role-s { font-size: 0.68rem; color: var(--gris); }
 
-        /* MAIN */
         .main-content { margin-left: 300px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* TOP BAR */
         .top-bar {
             height: 52px; background: #0d0d0d;
             border-bottom: 1px solid var(--border);
@@ -118,145 +90,57 @@
             padding: 0 24px; gap: 14px;
             position: sticky; top:0; z-index:50;
         }
-        .topbar-menu-icon { color: var(--gris); font-size: 1.1rem; margin-right: 4px; }
         .topbar-title { font-size: 0.8rem; color: var(--gris); letter-spacing: 1.5px; text-transform: uppercase; flex:1; }
         .topbar-right { display: flex; align-items: center; gap: 14px; }
-        .topbar-bell { font-size: 1.1rem; color: var(--gris); position: relative; cursor: pointer; }
-        .bell-badge {
-            position: absolute; top:-4px; right:-4px;
-            width:16px; height:16px;
-            background: var(--rouge); border-radius: 50%;
-            font-size: 0.6rem; color:#fff; font-weight:700;
-            display: flex; align-items:center; justify-content:center;
-        }
-        .topbar-user {
-            display: flex; align-items: center; gap: 7px;
-            background: rgba(192,57,43,0.12);
-            border: 1px solid rgba(192,57,43,0.35);
-            padding: 5px 14px; border-radius: 20px;
-            font-size: 0.78rem; font-weight: 600; color: var(--rouge-light);
-        }
+        .topbar-bell { font-size: 1.1rem; color: var(--gris); position: relative; cursor: pointer; text-decoration: none; display: flex; align-items: center; }
+        .bell-badge { position: absolute; top:-4px; right:-4px; width:16px; height:16px; background: var(--rouge); border-radius: 50%; font-size: 0.6rem; color:#fff; font-weight:700; display: flex; align-items:center; justify-content:center; }
+        .topbar-user { display: flex; align-items: center; gap: 7px; background: rgba(192,57,43,0.12); border: 1px solid rgba(192,57,43,0.35); padding: 5px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; color: var(--rouge-light); text-decoration: none; }
         .user-dot { width:7px; height:7px; background:var(--rouge-light); border-radius:50%; }
 
-        /* CONTENT */
         .content { padding: 24px; flex:1; }
 
-        /* PAGE HEADER */
-        .page-header {
-            display: flex; align-items: flex-start; justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .page-header h1 { font-size: 1.9rem; font-weight: 800; color: #fff; letter-spacing: 0.5px; }
+        .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+        .page-header h1 { font-size: 1.9rem; font-weight: 800; color: #fff; }
         .page-header p  { font-size: 0.82rem; color: var(--gris); margin-top: 5px; }
-        .live-badge {
-            display: flex; align-items: center; gap: 8px;
-            background: rgba(192,57,43,0.12);
-            border: 1px solid rgba(192,57,43,0.4);
-            padding: 9px 18px; border-radius: 6px;
-            font-size: 0.75rem; font-weight: 700;
-            color: var(--rouge-light); letter-spacing: 1px;
-        }
+        .live-badge { display: flex; align-items: center; gap: 8px; background: rgba(192,57,43,0.12); border: 1px solid rgba(192,57,43,0.4); padding: 9px 18px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; color: var(--rouge-light); letter-spacing: 1px; }
         .live-dot2 { width:8px; height:8px; background:var(--rouge-light); border-radius:50%; animation:blink 1.2s infinite; box-shadow:0 0 6px rgba(231,76,60,0.8); }
 
-        /* STAT CARDS */
-        .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 18px; }
-        .stat-card {
-            background: var(--card);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 10px; padding: 18px 18px 14px;
-            transition: border-color 0.2s;
-        }
-        .stat-card:hover { border-color: rgba(192,57,43,0.35); }
-        .stat-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .stat-label-top { font-size: 0.65rem; font-weight: 700; color: var(--gris); letter-spacing: 1.5px; text-transform: uppercase; }
-        .stat-val { font-size: 1.65rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
-        .stat-bar { height: 3px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; }
-        .stat-bar-fill { height: 100%; background: var(--rouge); border-radius: 3px; box-shadow: 0 0 6px rgba(192,57,43,0.5); transition: width 0.5s; }
-
-        /* MAIN GRID */
         .main-grid { display: grid; grid-template-columns: 1fr 320px; gap: 14px; }
 
-        /* CAMERA */
         .cam-card { background: var(--card); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; }
-        .cam-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
+        .cam-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .cam-title { display: flex; align-items: center; gap: 9px; font-size: 0.85rem; font-weight: 700; color: var(--gris2); text-transform: uppercase; letter-spacing: 0.8px; }
-        .cam-eye { color: var(--rouge); font-size: 1rem; }
         .rec-badge { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; color: var(--rouge-light); letter-spacing: 1px; }
         .rec-dot2 { width:8px; height:8px; background:var(--rouge-light); border-radius:50%; animation:blink 0.9s infinite; }
 
         .cam-view { position: relative; background: #000; height: 340px; overflow: hidden; }
+        .cam-view img { width:100%; height:100%; object-fit:cover; }
         .cam-view video { width:100%; height:100%; object-fit:cover; display:none; }
-
         .cam-corners { position:absolute; inset:0; pointer-events:none; z-index:2; }
         .corner { position:absolute; width:26px; height:26px; border-color:rgba(231,76,60,0.8); border-style:solid; }
         .corner-tl { top:14px; left:14px; border-width:2px 0 0 2px; }
         .corner-tr { top:14px; right:14px; border-width:2px 2px 0 0; }
         .corner-bl { bottom:40px; left:14px; border-width:0 0 2px 2px; }
         .corner-br { bottom:40px; right:14px; border-width:0 2px 2px 0; }
-
-        .cam-crosshair { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:2; }
-        .cam-timestamp { position:absolute; top:14px; right:52px; font-size:0.8rem; font-family:monospace; color:var(--rouge-light); z-index:3; }
+        .cam-timestamp { position:absolute; top:14px; right:14px; font-size:0.8rem; font-family:monospace; color:var(--rouge-light); z-index:3; }
         .cam-no-signal { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; z-index:1; }
         .cam-no-signal p { font-size:0.82rem; color:rgba(255,255,255,0.2); }
         .cam-info-bar { position:absolute; bottom:0; left:0; right:0; padding:8px 14px; background:linear-gradient(transparent,rgba(0,0,0,0.75)); z-index:3; }
         .cam-info-text { font-size:0.72rem; color:rgba(192,57,43,0.9); font-family:monospace; }
-
         .cam-footer { padding: 10px 14px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 8px; }
-        .cam-btn {
-            flex:1; padding:9px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 7px; color: #888;
-            font-size:0.78rem; font-weight:600;
-            cursor:pointer; transition:all 0.18s;
-        }
+        .cam-btn { flex:1; padding:9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; color: #888; font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.18s; }
         .cam-btn:hover { background:rgba(192,57,43,0.15); border-color:rgba(192,57,43,0.4); color:#fff; }
         .cam-btn.primary { background:rgba(192,57,43,0.2); border-color:rgba(192,57,43,0.5); color:var(--rouge-light); }
 
-        /* ACTIVITY */
-        .activity-card { background: var(--card); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; overflow:hidden; display:flex; flex-direction:column; }
-        .activity-header {
-            display:flex; align-items:center; gap:9px;
-            padding:13px 16px; border-bottom:1px solid rgba(255,255,255,0.05);
-            font-size:0.85rem; font-weight:700; color:var(--gris2); text-transform:uppercase; letter-spacing:0.8px;
-            flex-shrink:0;
-        }
-        .activity-icon { color:var(--rouge); }
-        .activity-list { padding: 4px 0; flex:1; overflow-y:auto; }
-        .activity-item {
-            display:flex; align-items:center; gap:12px;
-            padding: 11px 16px; border-bottom:1px solid rgba(255,255,255,0.03);
-            transition:background 0.15s;
-        }
-        .activity-item:hover { background:rgba(255,255,255,0.02); }
-        .activity-time { font-size:0.72rem; color:var(--gris); font-family:monospace; white-space:nowrap; width:36px; flex-shrink:0; }
-        .activity-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-        .dot-danger  { background:#e74c3c; box-shadow:0 0 5px rgba(231,76,60,0.6); }
-        .dot-success { background:#27ae60; box-shadow:0 0 5px rgba(39,174,96,0.5); }
-        .dot-neutral { background:#444; }
-        .activity-text { font-size:0.82rem; color:var(--gris2); line-height:1.3; }
-
-        /* BOTTOM GRID */
         .bottom-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-top:14px; }
 
-        /* CONTROLS */
         .ctrl-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:10px; overflow:hidden; }
         .ctrl-header { display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-bottom:1px solid rgba(255,255,255,0.05); }
         .ctrl-title { font-size:0.85rem; font-weight:700; color:var(--gris2); text-transform:uppercase; letter-spacing:0.5px; }
         .ctrl-hint  { font-size:0.7rem; color:var(--gris); }
         .ctrl-body  { padding:16px; display:flex; flex-direction:column; align-items:center; }
-
         .dpad { display:grid; grid-template-columns:repeat(3,44px); grid-template-rows:repeat(3,44px); gap:6px; }
-        .dpad-btn {
-            width:44px; height:44px;
-            background:var(--card2); border:1px solid rgba(255,255,255,0.08);
-            border-radius:8px; color:#fff; font-size:1.1rem; font-weight:700;
-            cursor:pointer; transition:all 0.15s;
-            display:flex; align-items:center; justify-content:center;
-        }
+        .dpad-btn { width:44px; height:44px; background:var(--card2); border:1px solid rgba(255,255,255,0.08); border-radius:8px; color:#fff; font-size:1.1rem; font-weight:700; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; }
         .dpad-btn:hover { background:rgba(192,57,43,0.25); border-color:var(--rouge); }
         .dpad-btn:active { transform:scale(0.91); }
         .dpad-stop { background:rgba(192,57,43,0.2); border-color:rgba(192,57,43,0.6); color:var(--rouge-light); font-size:0.62rem; letter-spacing:0.5px; font-weight:800; }
@@ -264,19 +148,23 @@
         .dpad-empty { width:44px; height:44px; }
         .cmd-status { text-align:center; font-size:0.78rem; color:#4ade80; height:18px; margin-top:10px; }
 
-        /* ENV */
+        /* ENV CARD */
         .env-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:10px; overflow:hidden; }
         .env-header { padding:13px 16px; border-bottom:1px solid rgba(255,255,255,0.05); font-size:0.85rem; font-weight:700; color:var(--gris2); text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:8px; }
-        .env-body { padding:12px 16px; }
-        .env-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
-        .env-row:last-child { border-bottom:none; }
-        .env-ico { font-size:1.2rem; width:24px; text-align:center; flex-shrink:0; }
-        .env-label2 { font-size:0.65rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.5px; }
-        .env-val { font-size:1rem; font-weight:700; color:#fff; }
-        .env-bar2 { height:3px; background:rgba(255,255,255,0.07); border-radius:3px; overflow:hidden; margin-top:4px; }
-        .env-fill { height:100%; background:var(--rouge); border-radius:3px; transition:width 0.5s; }
+        .env-body { padding:12px 16px; display:flex; flex-direction:column; gap:10px; }
+        .mini-stat { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:10px 12px; }
+        .mini-stat-label { font-size:0.65rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px; }
+        .mini-stat-val { font-size:1.1rem; font-weight:800; color:#fff; }
+        .mini-stat-val.rouge { color:var(--rouge-light); }
+        .mini-stat-val.green { color:#27ae60; }
+        .mini-stat-val.orange { color:#f59e0b; }
+        .progress-bar { height:4px; background:rgba(255,255,255,0.08); border-radius:2px; margin-top:6px; overflow:hidden; }
+        .progress-fill { height:100%; border-radius:2px; transition:width 0.5s; }
+        .progress-fill.rouge { background:var(--rouge); }
+        .progress-fill.blue  { background:#3b82f6; }
+        .progress-fill.green { background:#27ae60; }
+        .progress-fill.orange{ background:#f59e0b; }
 
-        /* HISTORY */
         .hist-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:10px; overflow:hidden; }
         .hist-header { display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-bottom:1px solid rgba(255,255,255,0.05); }
         .hist-title { font-size:0.85rem; font-weight:700; color:var(--gris2); text-transform:uppercase; letter-spacing:0.5px; }
@@ -289,177 +177,73 @@
         .hist-action{ font-size:0.8rem; color:var(--gris2); }
         .hist-empty { font-size:0.82rem; color:var(--gris); text-align:center; padding:20px 0; }
 
-        /* STATUS CARDS */
-        .status-row { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
-        .status-card {
-            background:var(--card); border:1px solid rgba(255,255,255,0.06);
-            border-radius:10px; padding:18px;
-            display:flex; align-items:center; gap:14px;
-            transition:border-color 0.2s;
+        /* OBSTACLE TOAST */
+        #obstacleAlert {
+            display:none; position:fixed;
+            top:60px; right:20px; z-index:9999;
+            background:rgba(192,57,43,0.95);
+            color:#fff; padding:12px 20px;
+            border-radius:10px; font-weight:700; font-size:0.85rem;
+            border:1px solid rgba(255,100,100,0.5);
         }
-        .status-card:hover { border-color:rgba(192,57,43,0.35); }
-        .status-icon {
-            width:46px; height:46px;
-            background:var(--rouge);
-            border-radius:10px;
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.3rem; flex-shrink:0;
-            box-shadow:0 4px 12px rgba(192,57,43,0.35);
-        }
-        .status-label { font-size:0.62rem; color:var(--gris); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:5px; }
-        .status-val   { font-size:1rem; font-weight:700; color:#fff; }
     </style>
+
     <script>
-(function(){
-    try {
-        const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
-        if (s.darkMode === false) {
-            const st = document.createElement('style');
-            st.id = '__yuraLight';
-            st.textContent = `
-                body { background: #f0f2f5 !important; color: #111 !important; }
-                .sidebar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
-                .top-bar { background: #0d0d0d !important; }
-                .main-content, .content { background: #f0f2f5 !important; }
-                .settings-card, .stat-card, .filter-bar, .table-wrap,
-                .alert-card, .cam-card, .adv-panel, .map-card,
-                .map-right, .cams-panel, .cam-thumbnail,
-                .ctrl-card, .env-card, .hist-card, .status-row,
-                .notifications-container, .alerts-group { background: #fff !important; border-color: rgba(0,0,0,0.08) !important; }
-                .card-head, .alerts-group-title { border-color: rgba(0,0,0,0.06) !important; }
-                .card-head-title, .setting-label, .alert-title,
-                .date-day, .user-name-s, .logo-name,
-                .info-val, h1, h2, h3 { color: #111 !important; }
-                .logo-sub, .user-role-s, .topbar-title, .info-lbl,
-                .alert-msg, .details-cell, .date-time,
-                .stat-label, .gris { color: #666 !important; }
-                .nav-item { color: #555 !important; }
-                .nav-item:hover { background: rgba(0,0,0,0.04) !important; color: #111 !important; }
-                .nav-item.active { color: var(--rouge) !important; background: rgba(192,57,43,0.07) !important; }
-                .setting-select, .search-input, .filter-btn {
-                    background: #f0f0f0 !important;
-                    border-color: rgba(0,0,0,0.12) !important;
-                    color: #111 !important;
-                }
-                .filter-btn { color: #555 !important; }
-                .filter-btn.active { background: rgba(192,57,43,0.12) !important; color: var(--rouge) !important; }
-                .toggle-slider { background: #ddd !important; border-color: #ccc !important; }
-                .info-row, .setting-row, .history-row { border-color: rgba(0,0,0,0.05) !important; }
-                .history-row:hover { background: #f5f5f5 !important; }
-                .table-header { background: rgba(0,0,0,0.03) !important; }
-                .table-header span { color: #666 !important; }
-                .act-btn, .del-btn, .card-action-btn, .pag-btn,
-                .bottom-btn.secondary, .cam-ctrl-btn, .dpad-btn {
-                    background: rgba(0,0,0,0.05) !important;
-                    border-color: rgba(0,0,0,0.1) !important;
-                    color: #555 !important;
-                }
-                .topbar-user { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.2) !important; }
-                .robot-badge { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.25) !important; }
-                .pag-info { color: #666 !important; }
-            `;
-            document.head.appendChild(st);
-        }
-        if (s.colorTheme === 'blue-black') {
-            document.documentElement.style.setProperty('--rouge', '#2563eb');
-            document.documentElement.style.setProperty('--rouge-light', '#3b82f6');
-            document.documentElement.style.setProperty('--border', 'rgba(37,99,235,0.18)');
-        } else if (s.colorTheme === 'green-black') {
-            document.documentElement.style.setProperty('--rouge', '#16a34a');
-            document.documentElement.style.setProperty('--rouge-light', '#22c55e');
-            document.documentElement.style.setProperty('--border', 'rgba(22,163,74,0.18)');
-        }
-        if (!s.animations) {
-            const na = document.createElement('style');
-            na.id = '__noAnim';
-            na.textContent = '* { animation: none !important; transition: none !important; }';
-            document.head.appendChild(na);
-        }
-    } catch(e) {}
-})(); 
-</script>
- <script>
-(function(){
-    try {
-        const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
-        if (s.darkMode === false) {
-            const st = document.createElement('style');
-            st.id = '__yuraLight';
-            st.textContent = `
-                body { background: #f0f2f5 !important; color: #111 !important; }
-                .sidebar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
-                .top-bar { background: #0d0d0d !important; }
-                .main-content, .content { background: #f0f2f5 !important; }
-                .card, .settings-card, .stat-card, .chart-card,
-                .cam-card, .ctrl-card, .env-card, .hist-card,
-                .activity-card, .map-card, .map-right,
-                .filter-bar, .table-wrap, .alert-card { 
-                    background: #fff !important; 
-                    border-color: rgba(0,0,0,0.08) !important; 
-                }
-                .nav-item { color: #555 !important; }
-                .nav-item:hover { background: rgba(0,0,0,0.04) !important; color: #111 !important; }
-                .nav-item.active { color: var(--rouge) !important; background: rgba(192,57,43,0.07) !important; }
-                h1, h2, h3, .stat-num, .card-title, .user-name-s,
-                .page-header h1, .card-head-title { color: #111 !important; }
-                .stat-label, .logo-sub, .user-role-s, .topbar-title,
-                .activity-time, .page-header p, .info-lbl,
-                .setting-label, .gris { color: #666 !important; }
-                .topbar-user { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.2) !important; }
-                .robot-badge { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.25) !important; }
-                .mini-stat { background: #f5f5f5 !important; border-color: rgba(0,0,0,0.06) !important; }
-                .zone-row, .setting-row, .info-row, .history-row,
-                .activity-item { border-color: rgba(0,0,0,0.05) !important; }
-                .zone-name, .alert-mini-text, .activity-text { color: #333 !important; }
-                .setting-select, .search-input {
-                    background: #f0f0f0 !important;
-                    color: #111 !important;
-                    border-color: rgba(0,0,0,0.12) !important;
-                }
-                .toggle-slider { background: #ddd !important; }
-                .dpad-btn, .cam-btn, .cmd-btn, .card-action-btn,
-                .bottom-btn.secondary, .pag-btn, .filter-btn {
-                    background: rgba(0,0,0,0.05) !important;
-                    border-color: rgba(0,0,0,0.1) !important;
-                    color: #555 !important;
-                }
-                .users-mini-table td, .users-mini-table th { 
-                    border-color: rgba(0,0,0,0.05) !important; 
-                    color: #333 !important;
-                }
-                .logo-name { color: #111 !important; }
-            `;
-            document.head.appendChild(st);
-        }
-        if (s.colorTheme === 'blue-black') {
-            document.documentElement.style.setProperty('--rouge', '#2563eb');
-            document.documentElement.style.setProperty('--rouge-light', '#3b82f6');
-            document.documentElement.style.setProperty('--border', 'rgba(37,99,235,0.18)');
-        } else if (s.colorTheme === 'green-black') {
-            document.documentElement.style.setProperty('--rouge', '#16a34a');
-            document.documentElement.style.setProperty('--rouge-light', '#22c55e');
-            document.documentElement.style.setProperty('--border', 'rgba(22,163,74,0.18)');
-        }
-        if (s.animations === false) {
-            const na = document.createElement('style');
-            na.id = '__noAnim';
-            na.textContent = '* { animation: none !important; transition: none !important; }';
-            document.head.appendChild(na);
-        }
-    } catch(e) {}
-})();
-</script>   
+    (function(){
+        try {
+            const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
+            if (s.darkMode === false) {
+                const st = document.createElement('style');
+                st.id = '__yuraLight';
+                st.textContent = `
+                    body { background: #f0f2f5 !important; color: #111 !important; }
+                    .sidebar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
+                    .top-bar { background: #0d0d0d !important; }
+                    .main-content, .content { background: #f0f2f5 !important; }
+                    .cam-card, .ctrl-card, .env-card, .hist-card { background: #fff !important; border-color: rgba(0,0,0,0.08) !important; }
+                    .mini-stat { background: #f5f5f5 !important; border-color: rgba(0,0,0,0.06) !important; }
+                    .nav-item { color: #555 !important; }
+                    .nav-item:hover { background: rgba(0,0,0,0.04) !important; color: #111 !important; }
+                    .nav-item.active { color: var(--rouge) !important; background: rgba(192,57,43,0.07) !important; }
+                    h1, .user-name-s, .logo-name { color: #111 !important; }
+                    .logo-sub, .user-role-s, .topbar-title { color: #666 !important; }
+                    .dpad-btn { background: #f0f0f0 !important; border-color: rgba(0,0,0,0.1) !important; color: #333 !important; }
+                    .topbar-user { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.2) !important; }
+                    .robot-badge { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.25) !important; }
+                `;
+                document.head.appendChild(st);
+            }
+            if (s.colorTheme === 'blue-black') {
+                document.documentElement.style.setProperty('--rouge', '#2563eb');
+                document.documentElement.style.setProperty('--rouge-light', '#3b82f6');
+                document.documentElement.style.setProperty('--border', 'rgba(37,99,235,0.18)');
+            } else if (s.colorTheme === 'green-black') {
+                document.documentElement.style.setProperty('--rouge', '#16a34a');
+                document.documentElement.style.setProperty('--rouge-light', '#22c55e');
+                document.documentElement.style.setProperty('--border', 'rgba(22,163,74,0.18)');
+            }
+            if (s.animations === false) {
+                const na = document.createElement('style');
+                na.id = '__noAnim';
+                na.textContent = '* { animation: none !important; transition: none !important; }';
+                document.head.appendChild(na);
+            }
+        } catch(e) {}
+    })();
+    </script>
 </head>
 <body>
+
+<div id="obstacleAlert"></div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
     <div class="logo-section">
-    <img src="/images/logo robot.png" alt="YURA" style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
-    <div>
-        <div class="logo-name">YURA</div>
-        <div class="logo-sub">Guardian System</div>
-    </div>
+        <img src="/images/logo robot.png" alt="YURA" style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
+        <div>
+            <div class="logo-name">YURA</div>
+            <div class="logo-sub">Guardian System</div>
+        </div>
     </div>
 
     <div class="robot-badge">
@@ -470,27 +254,19 @@
     <div class="nav-section">
         <div class="nav-label">Contrôle</div>
         <a href="/dashboard/security" class="nav-item active">
-            <span class="nav-icon-wrap">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
-            </span>
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></span>
             <span class="nav-text">Dashboard</span>
         </a>
         <a href="/dashboard/camera" class="nav-item">
-            <span class="nav-icon-wrap">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg>
-            </span>
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></span>
             <span class="nav-text">Surveillance caméra</span>
         </a>
         <a href="/dashboard/map" class="nav-item">
-            <span class="nav-icon-wrap">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg>
-            </span>
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
             <span class="nav-text">Navigation</span>
         </a>
         <a href="/notifications" class="nav-item">
-            <span class="nav-icon-wrap">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg>
-            </span>
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg></span>
             <span class="nav-text">Alertes</span>
             <span class="nav-count">3</span>
         </a>
@@ -499,9 +275,7 @@
             <span class="nav-text">Historique</span>
         </a>
         <a href="/dashboard/settings" class="nav-item">
-            <span class="nav-icon-wrap">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M7.5 1l-.8 2.4a5 5 0 00-1.4.8L3 3.5l-1.5 2.6 1.9 1.5a5 5 0 000 1.8L1.5 11l1.5 2.6 2.3-.8a5 5 0 001.4.8L7.5 16h1l.8-2.4a5 5 0 001.4-.8l2.3.8L14.5 11l-1.9-1.5a5 5 0 000-1.8l1.9-1.5L13 3.5l-2.3.7a5 5 0 00-1.4-.8L8.5 1h-1zM8 6a2 2 0 110 4A2 2 0 018 6z"/></svg>
-            </span>
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M7.5 1l-.8 2.4a5 5 0 00-1.4.8L3 3.5l-1.5 2.6 1.9 1.5a5 5 0 000 1.8L1.5 11l1.5 2.6 2.3-.8a5 5 0 001.4.8L7.5 16h1l.8-2.4a5 5 0 001.4-.8l2.3.8L14.5 11l-1.9-1.5a5 5 0 000-1.8l1.9-1.5L13 3.5l-2.3.7a5 5 0 00-1.4-.8L8.5 1h-1zM8 6a2 2 0 110 4A2 2 0 018 6z"/></svg></span>
             <span class="nav-text">Paramètres</span>
         </a>
     </div>
@@ -515,9 +289,7 @@
             </div>
         </div>
         <a href="/logout" class="nav-item" style="color:#555;">
-            <span class="nav-icon-wrap">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3v-1.5H3.5v-9H6V2zm4.5 3.5L13 8l-2.5 2.5-1-1L11 8H6V6.5h5l-1.5-1.5 1-1z"/></svg>
-            </span>
+            <span class="nav-icon-wrap"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3v-1.5H3.5v-9H6V2zm4.5 3.5L13 8l-2.5 2.5-1-1L11 8H6V6.5h5l-1.5-1.5 1-1z"/></svg></span>
             <span class="nav-text">Déconnexion</span>
         </a>
     </div>
@@ -526,23 +298,20 @@
 <!-- MAIN -->
 <div class="main-content">
     <div class="top-bar">
-        <span class="topbar-menu-icon">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="#888"><rect y="3" width="18" height="2"/><rect y="8" width="18" height="2"/><rect y="13" width="18" height="2"/></svg>
-        </span>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="#888" style="flex-shrink:0"><rect y="3" width="18" height="2"/><rect y="8" width="18" height="2"/><rect y="13" width="18" height="2"/></svg>
         <span class="topbar-title">Système de Surveillance</span>
         <div class="topbar-right">
-            <a href="/notifications" class="topbar-bell" style="text-decoration:none;">
+            <a href="/notifications" class="topbar-bell">
                 <svg width="18" height="18" viewBox="0 0 16 16" fill="#888"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg>
                 <div class="bell-badge">3</div>
             </a>
-           <a href="/dashboard/settings" class="topbar-user" style="text-decoration:none;">
-                <div class="user-dot"></div>Opérateur
+            <a href="/dashboard/settings" class="topbar-user">
+                <div class="user-dot"></div><%= user.name %>
             </a>
         </div>
     </div>
 
     <div class="content">
-        <!-- PAGE HEADER -->
         <div class="page-header">
             <div>
                 <h1>Dashboard Agent de sécurité</h1>
@@ -554,17 +323,13 @@
             </div>
         </div>
 
-    
-
-        <!-- MAIN GRID -->
+        <!-- MAIN GRID: Camera + right panel -->
         <div class="main-grid">
             <!-- CAMERA -->
             <div class="cam-card">
                 <div class="cam-header">
                     <div class="cam-title">
-                        <span class="cam-eye">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="#c0392b"><path d="M8 3C4 3 1 8 1 8s3 5 7 5 7-5 7-5-3-5-7-5zm0 8a3 3 0 110-6 3 3 0 010 6zm0-5a2 2 0 100 4 2 2 0 000-4z"/></svg>
-                        </span>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="#c0392b"><path d="M8 3C4 3 1 8 1 8s3 5 7 5 7-5 7-5-3-5-7-5zm0 8a3 3 0 110-6 3 3 0 010 6zm0-5a2 2 0 100 4 2 2 0 000-4z"/></svg>
                         Caméra Principale
                     </div>
                     <div class="rec-badge">
@@ -572,23 +337,13 @@
                         REC
                     </div>
                 </div>
+                
                 <div class="cam-view" id="camView">
                     <div class="cam-corners">
                         <div class="corner corner-tl"></div>
                         <div class="corner corner-tr"></div>
                         <div class="corner corner-bl"></div>
                         <div class="corner corner-br"></div>
-                    </div>
-                    <div class="cam-crosshair">
-                        <svg width="90" height="90" viewBox="0 0 90 90" style="opacity:0.45;">
-                            <circle cx="45" cy="45" r="32" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="6,4"/>
-                            <circle cx="45" cy="45" r="16" fill="none" stroke="#c0392b" stroke-width="1"/>
-                            <line x1="45" y1="0" x2="45" y2="29" stroke="#c0392b" stroke-width="1.3"/>
-                            <line x1="45" y1="61" x2="45" y2="90" stroke="#c0392b" stroke-width="1.3"/>
-                            <line x1="0" y1="45" x2="29" y2="45" stroke="#c0392b" stroke-width="1.3"/>
-                            <line x1="61" y1="45" x2="90" y2="45" stroke="#c0392b" stroke-width="1.3"/>
-                            <circle cx="45" cy="45" r="3" fill="#c0392b"/>
-                        </svg>
                     </div>
                     <div class="cam-timestamp" id="camTime">--:--:--</div>
                     <div class="cam-no-signal" id="camNoSignal">
@@ -597,7 +352,7 @@
                     </div>
                     <video id="camVideo" autoplay playsinline muted></video>
                     <div class="cam-info-bar">
-                        <span class="cam-info-text">CAM-01 | 1080p | 30fps</span>
+                        <span class="cam-info-text">CAM-01 | YURA-001 | LIVE</span>
                     </div>
                 </div>
                 <div class="cam-footer">
@@ -608,12 +363,24 @@
                 </div>
             </div>
 
-            <!-- ACTIVITY -->
-            
-                    
-                  
-              
-                
+            <!-- RIGHT: Historique -->
+            <div class="hist-card">
+                <div class="hist-header">
+                    <span class="hist-title">Historique</span>
+                    <a href="/dashboard/history" class="hist-link">Voir tout →</a>
+                </div>
+                <div class="hist-body">
+                    <% if(histories && histories.length > 0){ %>
+                        <% histories.slice(0,10).forEach(function(h){ %>
+                            <div class="hist-item">
+                                <div class="hist-time"><%= new Date(h.timestamp).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) %></div>
+                                <div class="hist-action"><%= h.action %></div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="hist-empty">Aucun historique</div>
+                    <% } %>
+                </div>
             </div>
         </div>
 
@@ -622,14 +389,8 @@
             <!-- CONTROLS -->
             <div class="ctrl-card">
                 <div class="ctrl-header">
-                    <span class="ctrl-title">
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="#bbb" style="margin-right:6px;vertical-align:middle;"><rect x="5" y="1" width="4" height="4" rx="0.5"/><rect x="1" y="5" width="4" height="4" rx="0.5"/><rect x="9" y="5" width="4" height="4" rx="0.5"/><rect x="5" y="9" width="4" height="4" rx="0.5"/></svg>
-                        Contrôle Robot
-                    </span>
-                    <span class="ctrl-hint">
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="#888" style="vertical-align:middle;margin-right:4px;"><rect x="1" y="1" width="10" height="8" rx="1" fill="none" stroke="#888" stroke-width="1"/><path d="M4 12h4M6 9v3" stroke="#888" stroke-width="1"/></svg>
-                        Flèches clavier
-                    </span>
+                    <span class="ctrl-title">Contrôle Robot</span>
+                    <span class="ctrl-hint">Flèches clavier</span>
                 </div>
                 <div class="ctrl-body">
                     <div class="dpad">
@@ -647,53 +408,62 @@
                 </div>
             </div>
 
-            <!-- ENV -->
+            <!-- ENV — Température + Humidité + Obstacle -->
             <div class="env-card">
                 <div class="env-header">
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="#e74c3c"><path d="M7 0a2 2 0 00-2 2v6.17A3 3 0 107 13.9V2a2 2 0 00-2-2z" opacity="0.4"/><rect x="6" y="2" width="2" height="5" rx="1"/><circle cx="7" cy="11" r="2"/></svg>
                     Environnement
                 </div>
-                 <div class="mini-stat">
-    <div class="mini-stat-label">Humidité</div>
-    <div class="mini-stat-val green" id="hum">--</div>
-    <div class="progress-bar">
-        <div class="progress-fill blue" id="humBar" style="width:0%"></div>
-    </div>
-</div>
-
-<div class="mini-stat">
-    <div class="mini-stat-label">Température</div>
-    <div class="mini-stat-val" id="temp">--</div>
-    <div class="progress-bar">
-        <div class="progress-fill rouge" id="tempBar" style="width:0%"></div>
-    </div>
-</div>
+                <div class="env-body">
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Température</div>
+                        <div class="mini-stat-val rouge" id="temp">--°C</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill rouge" id="tempBar" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Humidité</div>
+                        <div class="mini-stat-val green" id="hum">--%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill blue" id="humBar" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Obstacle</div>
+                        <div class="mini-stat-val green" id="obstacleVal">Aucun</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Distance</div>
+                        <div class="mini-stat-val" style="color:#3b82f6;" id="distVal">-- cm</div>
+                    </div>
+                </div>
             </div>
 
-            <!-- HISTORY -->
+            <!-- HISTORIQUE bottom -->
             <div class="hist-card">
                 <div class="hist-header">
-                    <span class="hist-title">
-                        <svg width="13" height="13" viewBox="0 0 13 13" fill="#bbb" style="margin-right:6px;vertical-align:middle;"><rect x="1" y="1" width="11" height="2" rx="0.5"/><rect x="1" y="5" width="8" height="2" rx="0.5"/><rect x="1" y="9" width="9" height="2" rx="0.5"/></svg>
-                        Historique
-                    </span>
-                    <a href="/dashboard/history" class="hist-link">Voir tout →</a>
+                    <span class="hist-title">Dernières alertes</span>
+                    <a href="/notifications" class="hist-link">Voir tout →</a>
                 </div>
                 <div class="hist-body">
                     <% if(histories && histories.length > 0){ %>
-                        <% histories.slice(0,5).forEach(function(h){ %>
+                        <% histories.filter(h => h.action && h.action.toLowerCase().includes('obstacle')).slice(0,5).forEach(function(h){ %>
                             <div class="hist-item">
                                 <div class="hist-time"><%= new Date(h.timestamp).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) %></div>
-                                <div class="hist-action"><%= h.action %></div>
+                                <div class="hist-action" style="color:#e74c3c;"><%= h.action %></div>
                             </div>
                         <% }); %>
+                        <% if(histories.filter(h => h.action && h.action.toLowerCase().includes('obstacle')).length === 0){ %>
+                            <div class="hist-empty">Aucune alerte</div>
+                        <% } %>
                     <% } else { %>
-                        <div class="hist-empty">Aucun historique</div>
+                        <div class="hist-empty">Aucune alerte</div>
                     <% } %>
                 </div>
             </div>
         </div>
- </div>
+    </div>
 </div>
 
 <script>
@@ -701,88 +471,115 @@
     function tick() { document.getElementById('camTime').textContent = new Date().toLocaleTimeString('fr-FR'); }
     tick(); setInterval(tick, 1000);
 
-    // CAMERA
-    let camStream = null;
-    async function startCam() {
-        try {
-            camStream = await navigator.mediaDevices.getUserMedia({video:true,audio:false});
-            const v = document.getElementById('camVideo');
-            v.srcObject = camStream; v.style.display = 'block';
-            document.getElementById('camNoSignal').style.display = 'none';
-        } catch(e) { alert('Caméra indisponible: '+e.message); }
+    // CAMERA — stream min RPi direct
+    function startCam() {
+        const img = document.getElementById('camImg');
+        const noSig = document.getElementById('camNoSignal');
+        if (img) { img.src = 'http://192.168.0.155:5000/video?' + Date.now(); img.style.display = 'block'; }
+        if (noSig) noSig.style.display = 'none';
     }
     function stopCam() {
-        if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; }
-        document.getElementById('camVideo').style.display='none';
-        document.getElementById('camNoSignal').style.display='flex';
+        const img = document.getElementById('camImg');
+        const noSig = document.getElementById('camNoSignal');
+        if (img) { img.src = ''; img.style.display = 'none'; }
+        if (noSig) noSig.style.display = 'flex';
     }
     function takeSnap() {
-        const v = document.getElementById('camVideo');
-        if(!camStream) return;
-        const c = document.createElement('canvas');
-        c.width=v.videoWidth; c.height=v.videoHeight;
-        c.getContext('2d').drawImage(v,0,0);
+        const img = document.getElementById('camImg');
+        if (!img || !img.src) return;
         const a = document.createElement('a');
-        a.download='yura-snap-'+Date.now()+'.png';
-        a.href=c.toDataURL(); a.click();
+        a.download = 'yura-snap-' + Date.now() + '.png';
+        a.href = img.src; a.click();
     }
     function goFull() {
-        const v = document.getElementById('camVideo');
-        if(v.requestFullscreen) v.requestFullscreen();
-        else if(v.webkitRequestFullscreen) v.webkitRequestFullscreen();
+        const el = document.getElementById('camView');
+        if (el.requestFullscreen) el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     }
 
-    // ROBOT
+    window.onload = () => startCam();
+
+    // ROBOT COMMANDS — agent yab3ath nafs route ta3 admin
+    const cmdMap = {
+        'Forward':  'forward',
+        'Backward': 'backward',
+        'Left':     'left',
+        'Right':    'right',
+        'STOP':     'stop'
+    };
+
     function sendCmd(cmd) {
+        const arduinoCmd = cmdMap[cmd] || cmd.toLowerCase();
+
         fetch('/admin/robot/command', {
-            method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({command:cmd})
-        });
-        const msgs = {Forward:'⬆ Avancer',Backward:'⬇ Reculer',Left:'⬅ Gauche',Right:'➡ Droite',STOP:'🛑 Arrêt'};
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ command: arduinoCmd, speed: 128 })
+        })
+        .then(r => r.json())
+        .then(res => console.log('🤖 Agent cmd:', arduinoCmd, res))
+        .catch(e => console.log('❌ Robot error:', e));
+
+        const msgs = {
+            Forward:'⬆ Avancer', Backward:'⬇ Reculer',
+            Left:'⬅ Gauche', Right:'➡ Droite', STOP:'🛑 Arrêt'
+        };
         const s = document.getElementById('cmdStatus');
-        s.textContent = msgs[cmd]||cmd;
-        setTimeout(()=>s.textContent='', 2000);
+        if (s) { s.textContent = msgs[cmd] || cmd; setTimeout(() => s.textContent = '', 2000); }
     }
-    document.addEventListener('keydown', e=>{
-        if(e.key==='ArrowUp')    {e.preventDefault();sendCmd('Forward');}
-        if(e.key==='ArrowDown')  {e.preventDefault();sendCmd('Backward');}
-        if(e.key==='ArrowLeft')  {e.preventDefault();sendCmd('Left');}
-        if(e.key==='ArrowRight') {e.preventDefault();sendCmd('Right');}
-        if(e.key===' ')          {e.preventDefault();sendCmd('STOP');}
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowUp')    { e.preventDefault(); sendCmd('Forward'); }
+        if (e.key === 'ArrowDown')  { e.preventDefault(); sendCmd('Backward'); }
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); sendCmd('Left'); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); sendCmd('Right'); }
+        if (e.key === ' ')          { e.preventDefault(); sendCmd('STOP'); }
     });
 
     // SENSORS
-   setInterval(() => {
-    fetch("http://192.168.0.155:5000/data")
-    .then(r => r.json())
-    .then(d => {
+    function updateSensors() {
+        fetch('/api/sensors')
+            .then(r => r.json())
+            .then(res => {
+                const d = res.data;
 
-        document.getElementById("hum").textContent = d.humidity + "%";
-        document.getElementById("temp").textContent = d.temperature + "°C";
+                const t = parseFloat(d.temperature !== undefined ? d.temperature : d.temp);
+                if (!isNaN(t)) {
+                    document.getElementById('temp').textContent = t.toFixed(1) + '°C';
+                    document.getElementById('tempBar').style.width = Math.min(t * 2, 100) + '%';
+                }
 
-        document.getElementById("humBar").style.width = d.humidity + "%";
-        document.getElementById("tempBar").style.width = (d.temperature / 50 * 100) + "%";
+                const h = parseFloat(d.humidity !== undefined ? d.humidity : d.hum);
+                if (!isNaN(h)) {
+                    document.getElementById('hum').textContent = h.toFixed(1) + '%';
+                    document.getElementById('humBar').style.width = Math.min(h, 100) + '%';
+                }
 
-    })
-    .catch(err => console.log("API error:", err));
-}, 2000);
-    // BATTERY
-    let bat=87;
-    setInterval(()=>{ bat=Math.max(0,bat-0.05); document.getElementById('batVal').textContent=bat.toFixed(0)+'%'; document.getElementById('batBar').style.width=bat+'%'; }, 8000);
+                const dist = parseFloat(d.distance);
+                if (!isNaN(dist)) {
+                    document.getElementById('distVal').textContent = dist.toFixed(0) + ' cm';
+                }
 
-    // CPU
-    setInterval(()=>{ const cpu=20+Math.random()*30; document.getElementById('cpuVal').textContent=cpu.toFixed(0)+'%'; document.getElementById('cpuBar').style.width=cpu+'%'; }, 3000);
+                const obsEl = document.getElementById('obstacleVal');
+                if (d.obstacle === true) {
+                    obsEl.textContent = '🚨 Détecté';
+                    obsEl.className = 'mini-stat-val rouge';
+                    let alertEl = document.getElementById('obstacleAlert');
+                    alertEl.textContent = '🚨 OBSTACLE — ' + (isNaN(dist) ? '?' : dist.toFixed(0)) + ' cm';
+                    alertEl.style.display = 'block';
+                    clearTimeout(window._obsTimer);
+                    window._obsTimer = setTimeout(() => { alertEl.style.display = 'none'; }, 3000);
+                } else {
+                    obsEl.textContent = 'Aucun';
+                    obsEl.className = 'mini-stat-val green';
+                    document.getElementById('obstacleAlert').style.display = 'none';
+                }
+            })
+            .catch(err => console.log('Sensor error:', err));
+    }
 
-    // TEMP STAT
-    setInterval(()=>{ const t=40+Math.random()*5; document.getElementById('tempVal').textContent=t.toFixed(0)+'°C'; document.getElementById('tempBar').style.width=(t/80*100)+'%'; }, 5000);
-
-    // UPTIME
-    let uptimeSecs=0;
-    setInterval(()=>{
-        uptimeSecs++;
-        const h=Math.floor(uptimeSecs/3600), m=Math.floor((uptimeSecs%3600)/60), s=uptimeSecs%60;
-        document.getElementById('uptime').textContent = h+'h '+m+'m '+s+'s';
-    }, 1000);
+    setInterval(updateSensors, 2000);
+    updateSensors();
 </script>
 </body>
 </html>

@@ -282,48 +282,8 @@
                     </div>
                 </div>
 
-                <div class="speed-wrap">
-                    <div class="speed-label">
-                        <span>Vitesse</span>
-                        <span class="speed-val" id="speedVal">50%</span>
-                    </div>
-                    <input type="range" min="0" max="100" value="50" id="speedSlider" oninput="updateSpeed(this.value)">
-                </div>
-            </div>
 
-            <!-- ZONE PLAN -->
-            <div class="card">
-                <div class="card-title">
-                    Plan de Zone
-                    <span class="card-badge" id="robotZone">Zone A</span>
-                </div>
-                <div class="zone-plan">
-                    <div class="zone-plan-grid"></div>
-                    <div class="zone-box zone-a" onclick="sendToZone('Zone A')">
-                        <div class="zone-box-label">Zone A</div>
-                        <div class="zone-box-name">Entrée</div>
-                    </div>
-                    <div class="zone-box zone-b" onclick="sendToZone('Zone B')">
-                        <div class="zone-box-label">Zone B</div>
-                        <div class="zone-box-name">Couloir</div>
-                    </div>
-                    <div class="zone-box zone-c" onclick="sendToZone('Zone C')">
-                        <div class="zone-box-label">Zone C</div>
-                        <div class="zone-box-name">Salle</div>
-                    </div>
-                    <div class="zone-box zone-d" onclick="sendToZone('Zone D')">
-                        <div class="zone-box-label">Zone D</div>
-                        <div class="zone-box-name">Bureau</div>
-                    </div>
-                    <div class="zone-box zone-e" onclick="sendToZone('Zone E')">
-                        <div class="zone-box-label">Zone E</div>
-                        <div class="zone-box-name">Sortie</div>
-                    </div>
-                    <div class="robot-marker" id="robotMarker"></div>
-                </div>
-            </div>
-
-        </div>
+    
 
         <!-- LOGS -->
         <div class="card">

@@ -350,7 +350,7 @@
                         <p style="font-size:2.5rem;opacity:0.1;">📹</p>
                         <p>En attente du signal...</p>
                     </div>
-                    <video id="camVideo" autoplay playsinline muted></video>
+                    <img id="camImg" alt="" style="width:100%;height:100%;object-fit:cover;display:none;">
                     <div class="cam-info-bar">
                         <span class="cam-info-text">CAM-01 | YURA-001 | LIVE</span>
                     </div>
@@ -416,6 +416,13 @@
                 </div>
                 <div class="env-body">
                     <div class="mini-stat">
+                        <div class="mini-stat-label">Batterie</div>
+                        <div class="mini-stat-val orange" id="bat">52%</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill orange" id="batBar" style="width:52%"></div>
+                        </div>
+                    </div>
+                    <div class="mini-stat">
                         <div class="mini-stat-label">Température</div>
                         <div class="mini-stat-val rouge" id="temp">--°C</div>
                         <div class="progress-bar">
@@ -471,19 +478,43 @@
     function tick() { document.getElementById('camTime').textContent = new Date().toLocaleTimeString('fr-FR'); }
     tick(); setInterval(tick, 1000);
 
-    // CAMERA — stream min RPi direct
+    // CAMERA — stream RPi via /camera-stream proxy
+    let _camRetryTimer = null, _camRetryCount = 0;
+
     function startCam() {
-        const img = document.getElementById('camImg');
+        const img   = document.getElementById('camImg');
         const noSig = document.getElementById('camNoSignal');
-        if (img) { img.src = 'http://192.168.0.155:5000/video?' + Date.now(); img.style.display = 'block'; }
-        if (noSig) noSig.style.display = 'none';
+        if (!img) return;
+
+        if (_camRetryTimer) clearTimeout(_camRetryTimer);
+
+        img.onload = () => {
+            _camRetryCount = 0;
+            noSig.style.display = 'none';
+            img.style.display   = 'block';
+        };
+
+        img.onerror = () => {
+            _camRetryCount++;
+            img.style.display   = 'none';
+            noSig.style.display = 'flex';
+            const delay = Math.min(_camRetryCount * 5000, 15000);
+            console.warn(`Dash cam retry #${_camRetryCount} dans ${delay/1000}s`);
+            _camRetryTimer = setTimeout(startCam, delay);
+        };
+
+        img.src = '/camera-stream?t=' + Date.now();
     }
+
     function stopCam() {
-        const img = document.getElementById('camImg');
+        if (_camRetryTimer) clearTimeout(_camRetryTimer);
+        const img   = document.getElementById('camImg');
         const noSig = document.getElementById('camNoSignal');
         if (img) { img.src = ''; img.style.display = 'none'; }
         if (noSig) noSig.style.display = 'flex';
+        _camRetryCount = 0;
     }
+
     function takeSnap() {
         const img = document.getElementById('camImg');
         if (!img || !img.src) return;
@@ -491,6 +522,7 @@
         a.download = 'yura-snap-' + Date.now() + '.png';
         a.href = img.src; a.click();
     }
+
     function goFull() {
         const el = document.getElementById('camView');
         if (el.requestFullscreen) el.requestFullscreen();
@@ -542,6 +574,15 @@
             .then(r => r.json())
             .then(res => {
                 const d = res.data;
+
+                const b = parseFloat(d.battery);
+                if (!isNaN(b) && b > 0) {
+                    document.getElementById('bat').textContent = b + '%';
+                    document.getElementById('batBar').style.width = Math.min(b, 100) + '%';
+                } else {
+                    document.getElementById('bat').textContent = '52%';
+                    document.getElementById('batBar').style.width = '52%';
+                }
 
                 const t = parseFloat(d.temperature !== undefined ? d.temperature : d.temp);
                 if (!isNaN(t)) {

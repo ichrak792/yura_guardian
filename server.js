@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const http = require('http');
 require('dotenv').config();
-const { User, History, Notification } = require('./db');
+const { User, History, Notification, SensorData } = require('./db');
 const app = express();
 
 // ===== SENSOR DATA GLOBAL =====
@@ -18,6 +18,20 @@ global.sensorData = {
     lat: 0,
     lng: 0
 };
+
+// Kol minute:
+setInterval(async () => {
+    try {
+        await SensorData.create({
+            temperature: global.sensorData.temperature,
+            humidity: global.sensorData.humidity,
+            distance: global.sensorData.distance,
+            obstacle: global.sensorData.obstacle,
+            lat: global.sensorData.lat,
+            lng: global.sensorData.lng
+        });
+    } catch(e) {}
+}, 60000);
 global.simConnected = false;
 
 const IS_WINDOWS = process.platform === 'win32';
@@ -44,7 +58,7 @@ if (IS_WINDOWS) {
             });
 
             simPort.on('error', (err) => {
-                console.error('❌ SIM Error:', err.message);
+                console.error('SIM connected:', err.message);
                 global.simConnected = false;
                 global.sensorData.signal = "DISCONNECTED";
                 setTimeout(connectSIM7600, 10000);
@@ -101,7 +115,7 @@ if (IS_WINDOWS) {
             });
 
             arduinoSerial.on('error', (err) => {
-                console.error('❌ Arduino error:', err.message);
+                console.error('Arduino connecté:', err.message);
                 setTimeout(connectArduino, 10000);
             });
 
@@ -163,54 +177,31 @@ app.get('/camera-stream', (req, res) => {
         timeout: 60000
     };
 
-    res.setHeader('Cache-Control', 'no-cache, no-store');
+    res.setHeader('Content-Type', 'multipart/x-mixed-replace; boundary=frame');
+    res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Transfer-Encoding', 'chunked');
 
     const proxyReq = http.request(options, (proxyRes) => {
-        const ct = proxyRes.headers['content-type'] || 'multipart/x-mixed-replace; boundary=frame';
-        res.setHeader('Content-Type', ct);
-        proxyRes.pipe(res, { end: true });
-        proxyRes.on('error', () => { try { res.end(); } catch(e){} });
+        proxyRes.on('data', (chunk) => {
+            if (!res.writableEnded) res.write(chunk);
+        });
+        proxyRes.on('end', () => { if (!res.writableEnded) res.end(); });
+        proxyRes.on('error', () => { if (!res.writableEnded) res.end(); });
     });
 
     proxyReq.on('error', (err) => {
         console.error('Camera proxy error:', err.message);
-        if (!res.headersSent) res.status(502).end();
+        if (!res.writableEnded) res.end();
     });
 
     proxyReq.on('timeout', () => {
         proxyReq.destroy();
-        if (!res.headersSent) res.status(504).end();
+        if (!res.writableEnded) res.end();
     });
 
     req.on('close', () => proxyReq.destroy());
-    proxyReq.end();
-});
-// Ba3d el /camera-stream route, zid haka:
-app.get('/camera-snapshot', (req, res) => {
-    const options = {
-        hostname: '100.90.80.29',
-        port: 5000,
-        path: '/snapshot',  // walla '/video' — depends on camera_server.py
-        method: 'GET',
-        timeout: 10000
-    };
-
-    const proxyReq = http.request(options, (proxyRes) => {
-        res.setHeader('Content-Type', 'image/jpeg');
-        res.setHeader('Cache-Control', 'no-cache');
-        proxyRes.pipe(res, { end: true });
-    });
-
-    proxyReq.on('error', (err) => {
-        if (!res.headersSent) res.status(502).json({ error: 'Camera offline' });
-    });
-
-    proxyReq.on('timeout', () => {
-        proxyReq.destroy();
-        if (!res.headersSent) res.status(504).json({ error: 'Timeout' });
-    });
-
+    proxyReq.setTimeout(60000);
     proxyReq.end();
 });
 // ===== DATA FROM RPI (/api/arduino-data) =====
@@ -325,22 +316,7 @@ app.use('/', indexRouter);
 
 // ===== 404 =====
 app.use((req, res) => {
-    res.status(404).send(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>404 - YURA GUARDIAN</title>
-            <style>
-                body { font-family:'Segoe UI',sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; background:linear-gradient(135deg,#5c1f1f,#3d1414); color:#fff; text-align:center; }
-                h1 { font-size:5rem; margin:0; }
-                a { color:#fff; background:#2563eb; padding:12px 30px; text-decoration:none; border-radius:25px; display:inline-block; margin-top:20px; }
-            </style>
-        </head>
-        <body>
-            <div><h1>404</h1><h2>Page non trouvée</h2><a href="/">Retour</a></div>
-        </body>
-        </html>
-    `);
+    res.status(404).render('404');
 });
 
 // ===== START SERVER =====

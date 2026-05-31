@@ -88,6 +88,39 @@ router.get('/logout', (req, res) => {
     res.redirect('/signin');
 });
 
+// Forgot Password GET
+router.get('/forgot-password', (req, res) => {
+    if (req.session.user) {
+        return res.redirect(req.session.user.role === 'admin' ? '/admin/dashboard' : '/dashboard/security');
+    }
+    res.render('forgot-password', { title: 'Mot de passe oublié - YURA GUARDIAN', error: null, success: null });
+});
+
+// Forgot Password POST
+router.post('/forgot-password', async (req, res) => {
+    const { email } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (user) {
+            await Notification.create({ 
+                type: 'warning', 
+                message: `Demande de réinitialisation de mot de passe pour l'utilisateur: ${user.name} (${user.email})`,
+                userName: 'Système' 
+            });
+            await History.create({ action: 'Demande de réinitialisation MDP', userName: user.name, details: `Email: ${email}` });
+        }
+        res.render('signin', { 
+            title: 'Connexion - YURA GUARDIAN', 
+            page: 'signin', 
+            error: null,
+            success: 'Si cet email existe, un administrateur vous contactera pour réinitialiser votre mot de passe.' 
+        });
+    } catch (error) {
+        console.error('Erreur forgot password:', error);
+        res.render('forgot-password', { title: 'Mot de passe oublié - YURA GUARDIAN', error: 'Erreur serveur. Réessayez.', success: null });
+    }
+});
+
 // ===== ROUTES ADMIN =====
 router.get('/admin/dashboard', requireAdmin, async (req, res) => {
     try {
@@ -286,6 +319,27 @@ router.get('/admin/settings', requireAdmin, async (req, res) => {
             total: 0,
             user: req.session.user
         });
+    }
+});
+
+router.post('/admin/settings/change-password', requireAdmin, async (req, res) => {
+    try {
+        const { currentPassword, newPassword, confirmPassword } = req.body;
+        const user = await User.findById(req.session.user.id);
+        if (!user) return res.json({ success: false, message: 'Utilisateur introuvable' });
+        if (user.password !== currentPassword) return res.json({ success: false, message: 'Mot de passe actuel incorrect' });
+        if (newPassword.length < 6) return res.json({ success: false, message: 'Mot de passe trop court (min 6 caractères)' });
+        if (newPassword !== confirmPassword) return res.json({ success: false, message: 'Les mots de passe ne correspondent pas' });
+        user.password = newPassword;
+        await user.save();
+        await History.create({
+            action: 'Mot de passe modifié',
+            userName: req.session.user.name,
+            details: 'Changement de mot de passe réussi (admin)'
+        });
+        res.json({ success: true, message: 'Mot de passe changé avec succès!' });
+    } catch (error) {
+        res.json({ success: false, message: 'Erreur serveur' });
     }
 });
 router.get('/admin/position', requireAdmin, (req, res) => res.render('admin/position', {

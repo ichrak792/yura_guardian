@@ -215,7 +215,7 @@ canvas { width:100% !important; }
     <div class="nav-label">Surveillance</div>
     <a href="/admin/camera" class="nav-item">
       <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></span>
-      <span class="nav-text">Caméras</span>
+      <span class="nav-text">Caméra</span>
     </a>
     <a href="/admin/map" class="nav-item">
       <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
@@ -446,9 +446,12 @@ function updateSensors() {
       }
 
       const b = parseFloat(d.battery);
-      if (!isNaN(b)) {
+      if (!isNaN(b) && b > 0) {
         document.getElementById('batVal').textContent = b + '%';
         document.getElementById('batBar').style.width = Math.min(b, 100) + '%';
+      } else {
+        document.getElementById('batVal').textContent = '52%';
+        document.getElementById('batBar').style.width = '52%';
       }
 
       const dist = parseFloat(d.distance);

@@ -138,6 +138,7 @@
             flex:1; min-height: 420px; overflow: hidden;
         }
         .cam-view video { width:100%; height:100%; object-fit:cover; display:none; position:absolute; inset:0; }
+        .cam-view img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; display:none; }
 
         .cam-corners { position:absolute; inset:0; pointer-events:none; z-index:2; }
         .corner { position:absolute; width:28px; height:28px; border-color:rgba(231,76,60,0.7); border-style:solid; }
@@ -444,6 +445,7 @@
                         <div class="cam-no-signal-icon">📹</div>
                         <p>En attente du signal...</p>
                     </div>
+                    <img id="camStream" alt="" style="display:none;">
                     <video id="camVideo" autoplay playsinline muted></video>
                     <canvas id="snapCanvas" style="display:none;"></canvas>
                     <div class="cam-overlay-bottom">
@@ -455,13 +457,13 @@
                 <div class="cam-footer">
                     <button class="cam-btn active" id="btnStart" onclick="startCam()">
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><polygon points="2,1 11,6 2,11"/></svg>
-                        Commencer
+                        Activer
                     </button>
-                    <button class="cam-btn" id="btnStop" onclick="stopCam()" disabled>
+                    <button class="cam-btn" id="btnStop" onclick="stopCam()">
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="2" width="8" height="8" rx="1"/></svg>
-                        Arrêter
+                        Stop
                     </button>
-                    <button class="cam-btn" id="btnSnap" onclick="takeSnap()" disabled>
+                    <button class="cam-btn" id="btnSnap" onclick="takeSnap()">
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="10" height="8" rx="1"/><circle cx="6" cy="7" r="2"/><path d="M4 3l1-2h2l1 2"/></svg>
                         Capture
                     </button>
@@ -469,7 +471,7 @@
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M10 7a5 5 0 01-5-5 5 5 0 00-1 9.9A5 5 0 0010 7z"/></svg>
                         Nuit
                     </button>
-                    <button class="cam-btn" id="btnRecord" onclick="toggleRecord()" disabled>
+                    <button class="cam-btn" id="btnRecord" onclick="toggleRecord()">
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="4"/></svg>
                         Enregistrer
                     </button>
@@ -521,74 +523,96 @@
 </div>
 
 <script>
-    let camStream = null, durSecs = 0, durInterval = null;
-    let snapCount = 0, isRecording = false, recInterval = null, recSecs = 0;
+    let isStreamOn = false, retryTimer = null, retryCount = 0;
+    let isRecording = false, durSecs = 0, durInterval = null;
+    let snapCount = 0;
     let nightMode = false, gridMode = false;
+    let zoom = 1;
     const filters = {brightness:100, contrast:100};
 
-    // DATE/TIME
+    // DATE/TIME OVERLAY
     function updateOverlay() {
         const now = new Date();
         const date = now.toLocaleDateString('fr-FR').replace(/\//g, '/');
         const time = now.toLocaleTimeString('fr-FR');
         document.getElementById('camDate').textContent = date + ' | ' + time;
-        if(camStream) document.getElementById('camRes').textContent = 'RES: 1080p | FPS: 30';
+        if(isStreamOn) document.getElementById('camRes').textContent = 'RES: 1080p | FPS: 30';
     }
     updateOverlay(); setInterval(updateOverlay, 1000);
 
-    // CAMERA
-    async function startCam() {
-        try {
-            camStream = await navigator.mediaDevices.getUserMedia({video:true,audio:false});
-            const v = document.getElementById('camVideo');
-            v.srcObject = camStream; v.style.display = 'block';
-            document.getElementById('camNoSignal').style.display = 'none';
-            document.getElementById('btnStart').disabled = true;
+    // START STREAM — RPi via /camera-stream proxy
+    function startCam() {
+        const img    = document.getElementById('camStream');
+        const noSig  = document.getElementById('camNoSignal');
+
+        if (retryTimer) clearTimeout(retryTimer);
+
+        const newSrc = '/camera-stream?t=' + Date.now();
+
+        img.onload = () => {
+            isStreamOn  = true;
+            retryCount  = 0;
+            noSig.style.display  = 'none';
+            img.style.display    = 'block';
             document.getElementById('btnStart').classList.remove('active');
-            document.getElementById('btnStop').disabled  = false;
-            document.getElementById('btnSnap').disabled  = false;
-            document.getElementById('btnRecord').disabled = false;
             document.getElementById('statFps').textContent = '30';
             durSecs = 0;
-            durInterval = setInterval(()=>{
+            clearInterval(durInterval);
+            durInterval = setInterval(() => {
                 durSecs++;
-                const m=Math.floor(durSecs/60), s=durSecs%60;
-                document.getElementById('statDur').textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+                const m = Math.floor(durSecs / 60), s = durSecs % 60;
+                document.getElementById('statDur').textContent =
+                    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
             }, 1000);
-        } catch(e) { alert('Caméra indisponible: '+e.message); }
+        };
+
+        img.onerror = () => {
+            isStreamOn = false;
+            retryCount++;
+            img.style.display   = 'none';
+            noSig.style.display = 'flex';
+            document.getElementById('btnStart').classList.add('active');
+            document.getElementById('statFps').textContent = '0';
+            const delay = Math.min(retryCount * 5000, 15000);
+            console.warn(`Camera retry #${retryCount} dans ${delay/1000}s`);
+            retryTimer = setTimeout(startCam, delay);
+        };
+
+        img.src = newSrc;
     }
 
     function stopCam() {
-        if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; }
-        clearInterval(durInterval); clearInterval(recInterval);
-        document.getElementById('camVideo').style.display = 'none';
-        document.getElementById('camNoSignal').style.display = 'flex';
-        document.getElementById('btnStart').disabled = false;
+        if (retryTimer) clearTimeout(retryTimer);
+        clearInterval(durInterval);
+        const img   = document.getElementById('camStream');
+        const noSig = document.getElementById('camNoSignal');
+        img.src = '';
+        img.style.display   = 'none';
+        noSig.style.display = 'flex';
+        isStreamOn = false;
+        retryCount = 0;
         document.getElementById('btnStart').classList.add('active');
-        document.getElementById('btnStop').disabled   = true;
-        document.getElementById('btnSnap').disabled   = true;
-        document.getElementById('btnRecord').disabled = true;
         document.getElementById('statFps').textContent = '0';
         document.getElementById('statDur').textContent = '00:00';
-        if(isRecording) { isRecording=false; document.getElementById('btnRecord').classList.remove('active'); }
+        if (isRecording) {
+            isRecording = false;
+            document.getElementById('btnRecord').classList.remove('active');
+        }
     }
 
     function takeSnap() {
-        const v = document.getElementById('camVideo');
-        if(!camStream) return;
-        const c = document.getElementById('snapCanvas');
-        c.width=v.videoWidth; c.height=v.videoHeight;
-        c.getContext('2d').drawImage(v,0,0);
+        const img = document.getElementById('camStream');
+        if (!isStreamOn || !img.src) return;
         const a = document.createElement('a');
-        a.download='yura-snap-'+Date.now()+'.png';
-        a.href=c.toDataURL(); a.click();
+        a.download = 'yura-snap-' + Date.now() + '.png';
+        a.href = img.src; a.click();
         snapCount++;
         document.getElementById('statSnap').textContent = snapCount;
     }
 
     function toggleRecord() {
         const btn = document.getElementById('btnRecord');
-        if(!isRecording) {
+        if (!isRecording) {
             isRecording = true;
             btn.classList.add('active');
             btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="2" width="8" height="8" rx="1"/></svg> Stop REC';
@@ -600,38 +624,41 @@
     }
 
     function goFull() {
-        const v = document.getElementById('camVideo');
-        if(v.requestFullscreen) v.requestFullscreen();
-        else if(v.webkitRequestFullscreen) v.webkitRequestFullscreen();
+        const el = document.getElementById('camView');
+        if (el.requestFullscreen) el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     }
 
-    function zoomIn()  { const v=document.getElementById('camVideo'); const cur=parseFloat(v.style.transform?.match(/scale\((.+)\)/)?.[1]||1); v.style.transform=`scale(${Math.min(cur+0.2,3)})`; }
-    function zoomOut() { const v=document.getElementById('camVideo'); const cur=parseFloat(v.style.transform?.match(/scale\((.+)\)/)?.[1]||1); v.style.transform=`scale(${Math.max(cur-0.2,0.5)})`; }
-
-    function toggleAudio() {
-        const btn = document.getElementById('audioBtn');
-        btn.classList.toggle('active');
+    function zoomIn()  {
+        if (zoom < 3) { zoom = +(zoom + 0.2).toFixed(1); applyZoom(); }
+    }
+    function zoomOut() {
+        if (zoom > 1) { zoom = +(zoom - 0.2).toFixed(1); applyZoom(); }
+    }
+    function applyZoom() {
+        document.getElementById('camStream').style.transform = `scale(${zoom})`;
     }
 
     function updateFilters() {
         filters.brightness = document.getElementById('brightness').value;
         filters.contrast   = document.getElementById('contrast').value;
-        document.getElementById('brightnessVal').textContent = filters.brightness+'%';
-        document.getElementById('contrastVal').textContent   = filters.contrast+'%';
+        document.getElementById('brightnessVal').textContent = filters.brightness + '%';
+        document.getElementById('contrastVal').textContent   = filters.contrast + '%';
         applyFilters();
     }
 
     function applyFilters() {
-        const v = document.getElementById('camVideo');
+        const img = document.getElementById('camStream');
         let f = `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`;
-        if(nightMode) f += ' grayscale(80%) hue-rotate(90deg) brightness(150%)';
-        v.style.filter = f;
+        if (nightMode) f += ' brightness(0.4) sepia(1) hue-rotate(90deg) saturate(2)';
+        img.style.filter = f;
     }
 
     function toggleNight() {
         const toggle = document.getElementById('nightToggle');
         toggle.classList.toggle('on');
         nightMode = toggle.classList.contains('on');
+        document.getElementById('btnNight').classList.toggle('active', nightMode);
         applyFilters();
     }
 
@@ -653,11 +680,25 @@
 
     // SELECT CAMERA
     function selectCam(id, name, el) {
-        document.querySelectorAll('.cam-thumb').forEach(t=>t.classList.remove('selected'));
+        document.querySelectorAll('.cam-thumb').forEach(t => t.classList.remove('selected'));
         el.classList.add('selected');
         document.getElementById('camNameDisplay').textContent = name;
-        if(camStream) stopCam();
+        if (id === 1) {
+            startCam();
+        } else {
+            stopCam();
+        }
     }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+        if (e.key === 'f' || e.key === 'F') goFull();
+        if (e.key === 's' || e.key === 'S') takeSnap();
+        if (e.key === 'n' || e.key === 'N') toggleNight();
+    });
+
+    // Auto-start on load
+    startCam();
 </script>
 
 </body>

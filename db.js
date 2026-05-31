@@ -38,5 +38,17 @@ const notificationSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 const Notification = mongoose.model('Notification', notificationSchema);
+//sensors data
+const sensorSchema = new mongoose.Schema({
+    temperature: Number,
+    humidity: Number,
+    distance: Number,
+    obstacle: Boolean,
+    lat: Number,
+    lng: Number,
+    timestamp: { type: Date, default: Date.now }
+});
+const SensorData = mongoose.model('SensorData', sensorSchema);
 
-module.exports = { User, History, Notification };
+module.exports = { User, History, Notification, SensorData };
+

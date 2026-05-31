@@ -370,13 +370,6 @@
                         </div>
                         <div class="toggle-row">
                             <div class="toggle-info">
-                                <div class="toggle-label">🔊 Notification sonore</div>
-                                <div class="toggle-desc">Jouer un son d'alerte sur le dashboard en temps réel</div>
-                            </div>
-                            <label class="toggle"><input type="checkbox" id="soundNotif" onchange="toggleSoundNotif(this)"><span class="toggle-slider"></span></label>
-                        </div>
-                        <div class="toggle-row">
-                            <div class="toggle-info">
                                 <div class="toggle-label">Logs système</div>
                                 <div class="toggle-desc">Enregistrer toutes les actions dans l'historique</div>
                             </div>
@@ -463,18 +456,6 @@
 
             <!-- RIGHT COL -->
             <div>
-                <div class="settings-card">
-                    <div class="section-title">Statut système</div>
-
-                    <div class="info-box">
-                        <div class="info-box-title">Robot YURA-001</div>
-                        <div class="info-row"><span class="info-key">Statut</span><span class="info-val green">Actif ✓</span></div>
-                        <div class="info-row"><span class="info-key">Batterie</span><span class="info-val">87%</span></div>
-                        <div class="info-row"><span class="info-key">Signal</span><span class="info-val green">Fort</span></div>
-                        <div class="info-row"><span class="info-key">Mode</span><span class="info-val">Patrouille</span></div>
-                    </div>
-
-                </div>
 
                 <div class="settings-card" style="margin-top:12px;">
                     <div class="section-title">Actions rapides</div>
@@ -585,7 +566,7 @@ function changePassword() {
     if (!cur || !nw || !conf) return showToast('⚠️ Remplir tous les champs', 'error');
     if (nw.length < 6)        return showToast('⚠️ Mot de passe trop court (min 6)', 'error');
     if (nw !== conf)           return showToast('⚠️ Mots de passe différents', 'error');
-    fetch('/dashboard/settings/change-password', {
+    fetch('/admin/settings/change-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentPassword: cur, newPassword: nw, confirmPassword: conf })

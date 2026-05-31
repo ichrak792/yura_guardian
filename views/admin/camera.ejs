@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><%= title %></title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<script>
-(function(){
-    try {
-        const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
-        if (s.darkMode === false) {
-            const st = document.createElement('style');
-            st.id = '__yuraLight';
-            st.textContent = `
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <script>
+        (function () {
+            try {
+                const s = JSON.parse(localStorage.getItem('yuraSettings') || '{}');
+                if (s.darkMode === false) {
+                    const st = document.createElement('style');
+                    st.id = '__yuraLight';
+                    st.textContent = `
                 body { background: #f0f2f5 !important; color: #111 !important; }
                 .sidebar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
                 .topbar { background: #fff !important; border-color: rgba(0,0,0,0.1) !important; }
@@ -27,586 +32,1136 @@
                 .robot-badge { background: rgba(192,57,43,0.07) !important; border-color: rgba(192,57,43,0.25) !important; }
                 .ctrl-btn { background: rgba(0,0,0,0.05) !important; border-color: rgba(0,0,0,0.1) !important; color: #555 !important; }
             `;
-            document.head.appendChild(st);
+                    document.head.appendChild(st);
+                }
+                if (s.colorTheme === 'blue-black') {
+                    document.documentElement.style.setProperty('--rouge', '#2563eb');
+                    document.documentElement.style.setProperty('--rouge-light', '#3b82f6');
+                    document.documentElement.style.setProperty('--border', 'rgba(37,99,235,0.18)');
+                } else if (s.colorTheme === 'green-black') {
+                    document.documentElement.style.setProperty('--rouge', '#16a34a');
+                    document.documentElement.style.setProperty('--rouge-light', '#22c55e');
+                    document.documentElement.style.setProperty('--border', 'rgba(22,163,74,0.18)');
+                }
+                if (!s.animations) {
+                    const na = document.createElement('style');
+                    na.id = '__noAnim';
+                    na.textContent = '* { animation: none !important; transition: none !important; }';
+                    document.head.appendChild(na);
+                }
+            } catch (e) { }
+        })();
+    </script>
+    <style>
+        :root {
+            --rouge: #c0392b;
+            --rouge-light: #e74c3c;
+            --noir: #0a0a0a;
+            --card: #111111;
+            --card2: #161616;
+            --border: rgba(192, 57, 43, 0.18);
+            --gris: #888;
+            --gris2: #bbb;
         }
-        if (s.colorTheme === 'blue-black') {
-            document.documentElement.style.setProperty('--rouge', '#2563eb');
-            document.documentElement.style.setProperty('--rouge-light', '#3b82f6');
-            document.documentElement.style.setProperty('--border', 'rgba(37,99,235,0.18)');
-        } else if (s.colorTheme === 'green-black') {
-            document.documentElement.style.setProperty('--rouge', '#16a34a');
-            document.documentElement.style.setProperty('--rouge-light', '#22c55e');
-            document.documentElement.style.setProperty('--border', 'rgba(22,163,74,0.18)');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        if (!s.animations) {
-            const na = document.createElement('style');
-            na.id = '__noAnim';
-            na.textContent = '* { animation: none !important; transition: none !important; }';
-            document.head.appendChild(na);
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--noir);
+            color: #fff;
+            display: flex;
+            min-height: 100vh;
         }
-    } catch(e) {}
-})();
-</script>
-<style>
-:root {
-    --rouge:#c0392b;
-    --rouge-light:#e74c3c;
-    --noir:#0a0a0a;
-    --card:#111111;
-    --card2:#161616;
-    --border:rgba(192,57,43,0.18);
-    --gris:#888;
-    --gris2:#bbb;
-}
 
-* { margin:0; padding:0; box-sizing:border-box; }
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 300px;
+            min-height: 100vh;
+            background: #0d0d0d;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+        }
 
-body {
-    font-family:'Segoe UI', sans-serif;
-    background:var(--noir);
-    color:#fff;
-    display:flex;
-    min-height:100vh;
-}
+        .logo-section {
+            padding: 20px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
 
-/* ── SIDEBAR ── */
-.sidebar {
-    width:300px;
-    min-height:100vh;
-    background:#0d0d0d;
-    border-right:1px solid var(--border);
-    display:flex;
-    flex-direction:column;
-    position:fixed;
-    top:0; left:0; bottom:0;
-    z-index:100;
-}
+        .logo-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 2px;
+        }
 
-.logo-section { padding:20px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; }
-.logo-name { font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:2px; }
-.logo-sub { font-size:0.65rem; color:var(--gris); letter-spacing:2px; text-transform:uppercase; }
-.admin-badge-side { margin:12px 16px 4px; padding:8px 14px; background:rgba(192,57,43,0.2); border:1px solid rgba(192,57,43,0.5); border-radius:6px; font-size:0.7rem; font-weight:800; color:var(--rouge-light); letter-spacing:2px; text-transform:uppercase; text-align:center; }
-.robot-badge { margin:8px 16px 6px; padding:10px 16px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.4); border-radius:8px; display:flex; align-items:center; gap:10px; font-size:0.75rem; font-weight:700; color:var(--rouge-light); }
-.badge-dot { width:8px; height:8px; background:var(--rouge-light); border-radius:50%; animation:blink 1.2s infinite; flex-shrink:0; }
-.nav-section { padding:8px 0; flex:1; overflow-y:auto; }
-.nav-label { font-size:0.6rem; font-weight:700; color:var(--gris); letter-spacing:2px; padding:12px 18px 5px; text-transform:uppercase; }
-.nav-item { display:flex; align-items:center; gap:13px; padding:11px 18px; color:#666; text-decoration:none; font-size:0.87rem; font-weight:500; border-left:2px solid transparent; transition:all 0.18s; }
-.nav-item:hover { color:#fff; background:rgba(192,57,43,0.07); }
-.nav-item.active { color:#fff; background:rgba(192,57,43,0.13); border-left-color:var(--rouge); font-weight:600; }
-.nav-icon-wrap { width:20px; height:20px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.nav-text { flex:1; }
-.nav-count { background:var(--rouge); color:#fff; font-size:0.6rem; font-weight:700; padding:2px 7px; border-radius:10px; }
-.sidebar-footer { border-top:1px solid var(--border); padding:8px 0; }
-.user-row { display:flex; align-items:center; gap:10px; padding:11px 18px; }
-.user-av { width:34px; height:34px; background:linear-gradient(135deg,var(--rouge),#7b241c); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0; }
-.user-name-s { font-size:0.82rem; font-weight:600; color:#fff; }
-.user-role-s { font-size:0.65rem; color:var(--rouge-light); font-weight:600; }
+        .logo-sub {
+            font-size: 0.65rem;
+            color: var(--gris);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
-/* ── MAIN ── */
-.main {
-    flex:1;
-    margin-left:300px;
-    display:flex;
-    flex-direction:column;
-    min-height:100vh;
-}
+        .admin-badge-side {
+            margin: 12px 16px 4px;
+            padding: 8px 14px;
+            background: rgba(192, 57, 43, 0.2);
+            border: 1px solid rgba(192, 57, 43, 0.5);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--rouge-light);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+        }
 
-/* ── TOPBAR ── */
-.topbar {
-    height:52px;
-    background:#0d0d0d;
-    border-bottom:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    padding:0 24px;
-    gap:12px;
-    position:sticky;
-    top:0;
-    z-index:50;
-}
-.topbar-right { display:flex; align-items:center; gap:10px; }
-.topbar-bell { position:relative; cursor:pointer; text-decoration:none; display:flex; align-items:center; }
-.bell-badge { position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:var(--rouge); border-radius:50%; font-size:0.6rem; color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center; }
-.topbar-user { display:flex; align-items:center; gap:7px; background:rgba(192,57,43,0.12); border:1px solid rgba(192,57,43,0.35); padding:5px 14px; border-radius:20px; font-size:0.75rem; font-weight:700; color:var(--rouge-light); text-decoration:none; letter-spacing:0.5px; }
-.user-dot { width:7px; height:7px; background:var(--rouge-light); border-radius:50%; }
-.admin-pill { background:rgba(192,57,43,0.25); border:1px solid rgba(192,57,43,0.5); padding:4px 10px; border-radius:4px; font-size:0.62rem; font-weight:800; color:var(--rouge-light); letter-spacing:1.5px; text-transform:uppercase; }
-.topbar-title { font-size:0.78rem; color:var(--gris); letter-spacing:1.5px; text-transform:uppercase; flex:1; }
-.live-pill { display:flex; align-items:center; gap:6px; background:rgba(192,57,43,0.15); border:1px solid rgba(192,57,43,0.4); padding:4px 12px; border-radius:20px; font-size:0.7rem; font-weight:700; color:var(--rouge-light); letter-spacing:1px; }
-.live-dot { width:6px; height:6px; background:var(--rouge-light); border-radius:50%; animation:blink 1s infinite; }
+        .robot-badge {
+            margin: 8px 16px 6px;
+            padding: 10px 16px;
+            background: rgba(192, 57, 43, 0.12);
+            border: 1px solid rgba(192, 57, 43, 0.4);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--rouge-light);
+        }
 
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--rouge-light);
+            border-radius: 50%;
+            animation: blink 1.2s infinite;
+            flex-shrink: 0;
+        }
 
-/* ── CONTENT ── */
-.content {
-    padding:20px 24px;
-    display:grid;
-    grid-template-columns:1fr 300px;
-    grid-template-rows:auto auto;
-    gap:16px;
-    flex:1;
-}
+        .nav-section {
+            padding: 8px 0;
+            flex: 1;
+            overflow-y: auto;
+        }
 
-/* ── CAMERA MAIN ── */
-.cam-main {
-    grid-column:1;
-    grid-row:1;
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:12px;
-    overflow:hidden;
-}
+        .nav-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--gris);
+            letter-spacing: 2px;
+            padding: 12px 18px 5px;
+            text-transform: uppercase;
+        }
 
-.cam-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.05); }
-.cam-title { font-family:'Rajdhani', sans-serif; font-size:0.85rem; font-weight:600; letter-spacing:1.5px; color:var(--gris2); text-transform:uppercase; }
-.cam-id { font-size:0.68rem; color:var(--rouge-light); background:rgba(192,57,43,0.1); border:1px solid rgba(192,57,43,0.25); padding:3px 8px; border-radius:4px; font-weight:600; letter-spacing:1px; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 11px 18px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.87rem;
+            font-weight: 500;
+            border-left: 2px solid transparent;
+            transition: all 0.18s;
+        }
 
-.cam-feed {
-    position:relative;
-    width:100%;
-    aspect-ratio:16/9;
-    background:#000;
-    overflow:hidden;
-}
+        .nav-item:hover {
+            color: #fff;
+            background: rgba(192, 57, 43, 0.07);
+        }
 
-.cam-feed img {
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-    transition:filter 0.3s;
-}
+        .nav-item.active {
+            color: #fff;
+            background: rgba(192, 57, 43, 0.13);
+            border-left-color: var(--rouge);
+            font-weight: 600;
+        }
 
-.cam-overlay-tl { position:absolute; top:12px; left:12px; display:flex; flex-direction:column; gap:6px; }
-.cam-overlay-tr { position:absolute; top:12px; right:12px; display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
-.cam-overlay-bl { position:absolute; bottom:12px; left:12px; }
-.cam-overlay-br { position:absolute; bottom:12px; right:12px; }
+        .nav-icon-wrap {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
 
-.overlay-tag { display:flex; align-items:center; gap:5px; background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.1); padding:4px 10px; border-radius:4px; font-size:0.65rem; font-weight:700; letter-spacing:1px; backdrop-filter:blur(4px); }
-.overlay-tag.red { border-color:rgba(192,57,43,0.5); color:var(--rouge-light); }
-.overlay-tag.green { border-color:rgba(39,174,96,0.5); color:#27ae60; }
-.overlay-tag.blue { border-color:rgba(59,130,246,0.5); color:#3b82f6; }
+        .nav-text {
+            flex: 1;
+        }
 
-.corner { position:absolute; width:20px; height:20px; border-color:var(--rouge); border-style:solid; opacity:0.6; }
-.corner-tl { top:8px; left:8px; border-width:2px 0 0 2px; }
-.corner-tr { top:8px; right:8px; border-width:2px 2px 0 0; }
-.corner-bl { bottom:8px; left:8px; border-width:0 0 2px 2px; }
-.corner-br { bottom:8px; right:8px; border-width:0 2px 2px 0; }
+        .nav-count {
+            background: var(--rouge);
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+        }
 
-/* ── CONTROLS ── */
-.cam-controls { display:flex; align-items:center; gap:8px; padding:12px 16px; border-top:1px solid rgba(255,255,255,0.04); flex-wrap:wrap; }
-.ctrl-btn { display:flex; align-items:center; gap:5px; padding:6px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:6px; color:var(--gris2); font-size:0.72rem; font-weight:500; cursor:pointer; transition:all 0.15s; font-family:'Inter', sans-serif; }
-.ctrl-btn:hover { background:rgba(192,57,43,0.12); border-color:rgba(192,57,43,0.35); color:#fff; }
-.ctrl-btn.active { background:rgba(192,57,43,0.2); border-color:rgba(192,57,43,0.5); color:var(--rouge-light); }
-.ctrl-btn.danger { border-color:rgba(192,57,43,0.3); color:var(--rouge-light); }
-.ctrl-sep { width:1px; height:20px; background:rgba(255,255,255,0.06); margin:0 2px; }
+        .sidebar-footer {
+            border-top: 1px solid var(--border);
+            padding: 8px 0;
+        }
 
-/* ── CAMERA GRID (thumbnails) ── */
-.cam-grid {
-    grid-column:1;
-    grid-row:2;
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:10px;
-}
+        .user-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 18px;
+        }
 
-.thumb { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:8px; overflow:hidden; cursor:pointer; transition:all 0.15s; }
-.thumb:hover { border-color:rgba(192,57,43,0.3); }
-.thumb.active { border-color:var(--rouge); }
-.thumb-feed { width:100%; aspect-ratio:16/9; background:#000; position:relative; overflow:hidden; }
-.thumb-feed img { width:100%; height:100%; object-fit:cover; opacity:0.7; }
-.thumb.active .thumb-feed img { opacity:1; }
-.thumb-info { padding:6px 8px; display:flex; align-items:center; justify-content:space-between; }
-.thumb-name { font-size:0.68rem; font-weight:600; color:var(--gris2); font-family:'Rajdhani', sans-serif; letter-spacing:1px; }
-.thumb-status { width:6px; height:6px; border-radius:50%; background:#27ae60; }
-.thumb-status.off { background:#333; }
+        .user-av {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--rouge), #7b241c);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
 
-/* ── RIGHT PANEL ── */
-.right-panel { grid-column:2; grid-row:1 / 3; display:flex; flex-direction:column; gap:12px; }
-.info-card { background:var(--card); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:16px; }
-.card-label { font-size:0.62rem; font-weight:700; color:var(--gris); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; font-family:'Rajdhani', sans-serif; }
+        .user-name-s {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #fff;
+        }
 
-.stat-row-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
-.stat-item { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:8px; padding:10px; }
-.stat-lbl { font-size:0.6rem; color:var(--gris); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px; }
-.stat-val { font-size:1rem; font-weight:700; color:#fff; font-family:'Rajdhani', sans-serif; }
-.stat-val.green { color:#27ae60; }
-.stat-val.rouge { color:var(--rouge-light); }
-.stat-val.blue  { color:#3b82f6; }
-.stat-val.orange{ color:#f59e0b; }
+        .user-role-s {
+            font-size: 0.65rem;
+            color: var(--rouge-light);
+            font-weight: 600;
+        }
 
-.alert-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:7px; margin-bottom:6px; font-size:0.75rem; border:1px solid transparent; }
-.alert-item:last-child { margin-bottom:0; }
-.alert-item.warn { background:rgba(245,158,11,0.07); border-color:rgba(245,158,11,0.2); color:#f59e0b; }
-.alert-item.info { background:rgba(59,130,246,0.07); border-color:rgba(59,130,246,0.2); color:#3b82f6; }
-.alert-item.ok   { background:rgba(39,174,96,0.07); border-color:rgba(39,174,96,0.2); color:#27ae60; }
-.alert-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; background:currentColor; }
+        /* ── MAIN ── */
+        .main {
+            flex: 1;
+            margin-left: 300px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-/* offline overlay */
-.cam-offline-overlay {
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,0.75);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    font-size:0.85rem;
-    color:#666;
-    font-weight:600;
-    letter-spacing:1px;
-    display:none;
-}
-.cam-offline-overlay svg { opacity:0.3; }
-</style>
+        /* ── TOPBAR ── */
+        .topbar {
+            height: 52px;
+            background: #0d0d0d;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar-bell {
+            position: relative;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .bell-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: var(--rouge);
+            border-radius: 50%;
+            font-size: 0.6rem;
+            color: #fff;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(192, 57, 43, 0.12);
+            border: 1px solid rgba(192, 57, 43, 0.35);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--rouge-light);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+
+        .user-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--rouge-light);
+            border-radius: 50%;
+        }
+
+        .admin-pill {
+            background: rgba(192, 57, 43, 0.25);
+            border: 1px solid rgba(192, 57, 43, 0.5);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: var(--rouge-light);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .topbar-title {
+            font-size: 0.78rem;
+            color: var(--gris);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            flex: 1;
+        }
+
+        .live-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(192, 57, 43, 0.15);
+            border: 1px solid rgba(192, 57, 43, 0.4);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--rouge-light);
+            letter-spacing: 1px;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--rouge-light);
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.2
+            }
+        }
+
+        /* ── CONTENT ── */
+        .content {
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            grid-template-rows: auto auto;
+            gap: 16px;
+            flex: 1;
+        }
+
+        /* ── CAMERA MAIN ── */
+        .cam-main {
+            grid-column: 1;
+            grid-row: 1;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .cam-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cam-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: var(--gris2);
+            text-transform: uppercase;
+        }
+
+        .cam-id {
+            font-size: 0.68rem;
+            color: var(--rouge-light);
+            background: rgba(192, 57, 43, 0.1);
+            border: 1px solid rgba(192, 57, 43, 0.25);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .cam-feed {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .cam-feed img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: filter 0.3s;
+        }
+
+        .cam-overlay-tl {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .cam-overlay-tr {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .cam-overlay-bl {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+        }
+
+        .cam-overlay-br {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+        }
+
+        .overlay-tag {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            backdrop-filter: blur(4px);
+        }
+
+        .overlay-tag.red {
+            border-color: rgba(192, 57, 43, 0.5);
+            color: var(--rouge-light);
+        }
+
+        .overlay-tag.green {
+            border-color: rgba(39, 174, 96, 0.5);
+            color: #27ae60;
+        }
+
+        .overlay-tag.blue {
+            border-color: rgba(59, 130, 246, 0.5);
+            color: #3b82f6;
+        }
+
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: var(--rouge);
+            border-style: solid;
+            opacity: 0.6;
+        }
+
+        .corner-tl {
+            top: 8px;
+            left: 8px;
+            border-width: 2px 0 0 2px;
+        }
+
+        .corner-tr {
+            top: 8px;
+            right: 8px;
+            border-width: 2px 2px 0 0;
+        }
+
+        .corner-bl {
+            bottom: 8px;
+            left: 8px;
+            border-width: 0 0 2px 2px;
+        }
+
+        .corner-br {
+            bottom: 8px;
+            right: 8px;
+            border-width: 0 2px 2px 0;
+        }
+
+        /* ── CONTROLS ── */
+        .cam-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            flex-wrap: wrap;
+        }
+
+        .ctrl-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            color: var(--gris2);
+            font-size: 0.72rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .ctrl-btn:hover {
+            background: rgba(192, 57, 43, 0.12);
+            border-color: rgba(192, 57, 43, 0.35);
+            color: #fff;
+        }
+
+        .ctrl-btn.active {
+            background: rgba(192, 57, 43, 0.2);
+            border-color: rgba(192, 57, 43, 0.5);
+            color: var(--rouge-light);
+        }
+
+        .ctrl-btn.danger {
+            border-color: rgba(192, 57, 43, 0.3);
+            color: var(--rouge-light);
+        }
+
+        .ctrl-sep {
+            width: 1px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 0 2px;
+        }
+
+        /* ── CAMERA GRID (thumbnails) ── */
+        .cam-grid {
+            grid-column: 1;
+            grid-row: 2;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .thumb {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .thumb:hover {
+            border-color: rgba(192, 57, 43, 0.3);
+        }
+
+        .thumb.active {
+            border-color: var(--rouge);
+        }
+
+        .thumb-feed {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thumb-feed img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+
+        .thumb.active .thumb-feed img {
+            opacity: 1;
+        }
+
+        .thumb-info {
+            padding: 6px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .thumb-name {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--gris2);
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .thumb-status {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #27ae60;
+        }
+
+        .thumb-status.off {
+            background: #333;
+        }
+
+        /* ── RIGHT PANEL ── */
+        .right-panel {
+            grid-column: 2;
+            grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .card-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--gris);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .stat-row-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .stat-lbl {
+            font-size: 0.6rem;
+            color: var(--gris);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 4px;
+        }
+
+        .stat-val {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .stat-val.green {
+            color: #27ae60;
+        }
+
+        .stat-val.rouge {
+            color: var(--rouge-light);
+        }
+
+        .stat-val.blue {
+            color: #3b82f6;
+        }
+
+        .stat-val.orange {
+            color: #f59e0b;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 7px;
+            margin-bottom: 6px;
+            font-size: 0.75rem;
+            border: 1px solid transparent;
+        }
+
+        .alert-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .alert-item.warn {
+            background: rgba(245, 158, 11, 0.07);
+            border-color: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .alert-item.info {
+            background: rgba(59, 130, 246, 0.07);
+            border-color: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        .alert-item.ok {
+            background: rgba(39, 174, 96, 0.07);
+            border-color: rgba(39, 174, 96, 0.2);
+            color: #27ae60;
+        }
+
+        .alert-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: currentColor;
+        }
+
+        /* offline overlay */
+        .cam-offline-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
+            letter-spacing: 1px;
+            display: none;
+        }
+
+        .cam-offline-overlay svg {
+            opacity: 0.3;
+        }
+    </style>
 </head>
+
 <body>
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-    <div class="logo-section">
-        <img src="/images/logo robot.png" alt="YURA" style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
-        <div>
-            <div class="logo-name">YURA</div>
-            <div class="logo-sub">Guardian System</div>
-        </div>
-    </div>
-    <div class="admin-badge-side">⚡ ADMIN PANEL</div>
-    <div class="robot-badge"><div class="badge-dot"></div><span>ROBOT EN LIGNE</span></div>
-    <div class="nav-section">
-        <div class="nav-label">Administration</div>
-        <a href="/admin/dashboard" class="nav-item">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></span>
-            <span class="nav-text">Dashboard</span>
-        </a>
-        <a href="/admin/users" class="nav-item">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><circle cx="6" cy="5" r="3"/><path d="M0 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="13" cy="5" r="2.5"/><path d="M13 10c1.7 0 3 1.3 3 3"/></svg></span>
-            <span class="nav-text">Utilisateurs</span>
-        </a>
-        <a href="/admin/robot" class="nav-item">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><rect x="4" y="2" width="8" height="6" rx="1"/><rect x="3" y="8" width="10" height="5" rx="1"/><circle cx="6" cy="4" r="1"/><circle cx="10" cy="4" r="1"/><rect x="1" y="9" width="2" height="3" rx="1"/><rect x="13" y="9" width="2" height="3" rx="1"/></svg></span>
-            <span class="nav-text">Contrôle Robot</span>
-        </a>
-        <a href="/admin/history" class="nav-item">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2v5l3 3-1 1-3.5-3.5V3H8z"/></svg></span>
-            <span class="nav-text">Historique</span>
-        </a>
-        <div class="nav-label">Surveillance</div>
-        <a href="/admin/camera" class="nav-item active">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/></svg></span>
-            <span class="nav-text">Caméra</span>
-        </a>
-        <a href="/admin/map" class="nav-item">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z"/></svg></span>
-            <span class="nav-text">Navigation</span>
-        </a>
-        <a href="/admin/notifications" class="nav-item">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg></span>
-            <span class="nav-text">Alertes</span>
-            <span class="nav-count">3</span>
-        </a>
-        <div class="nav-label"></div>
-        <a href="/admin/settings" class="nav-item">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M7.5 1l-.8 2.4a5 5 0 00-1.4.8L3 3.5l-1.5 2.6 1.9 1.5a5 5 0 000 1.8L1.5 11l1.5 2.6 2.3-.8a5 5 0 001.4.8L7.5 16h1l.8-2.4a5 5 0 001.4-.8l2.3.8L14.5 11l-1.9-1.5a5 5 0 000-1.8l1.9-1.5L13 3.5l-2.3.7a5 5 0 00-1.4-.8L8.5 1h-1zM8 6a2 2 0 110 4A2 2 0 018 6z"/></svg></span>
-            <span class="nav-text">Paramètres</span>
-        </a>
-    </div>
-    <div class="sidebar-footer">
-        <div class="user-row">
-            <div class="user-av"><%= user.name.charAt(0).toUpperCase() %></div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo-section">
+            <img src="/images/logo robot.png" alt="YURA"
+                style="width:42px;height:42px;object-fit:contain;border-radius:8px;flex-shrink:0;">
             <div>
-                <div class="user-name-s"><%= user.name %></div>
-                <div class="user-role-s">Administrateur</div>
+                <div class="logo-name">YURA</div>
+                <div class="logo-sub">Guardian System</div>
             </div>
         </div>
-        <a href="/logout" class="nav-item" style="color:#555;">
-            <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3v-1.5H3.5v-9H6V2zm4.5 3.5L13 8l-2.5 2.5-1-1L11 8H6V6.5h5l-1.5-1.5 1-1z"/></svg></span>
-            <span class="nav-text">Déconnexion</span>
-        </a>
-    </div>
-</aside>
-
-<!-- MAIN -->
-<div class="main">
-    <div class="topbar">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="#888" style="flex-shrink:0"><rect y="3" width="18" height="2"/><rect y="8" width="18" height="2"/><rect y="13" width="18" height="2"/></svg>
-        <span class="topbar-title">Surveillance Caméras</span>
-        <div class="topbar-right">
-            <span class="admin-pill">ADMIN</span>
-            <div class="live-pill"><div class="live-dot"></div>LIVE</div>
-            <a href="/admin/notifications" class="topbar-bell">
-                <svg width="18" height="18" viewBox="0 0 16 16" fill="#888"><path d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z"/></svg>
-                <div class="bell-badge">3</div>
+        <div class="admin-badge-side">⚡ ADMIN PANEL</div>
+        <div class="robot-badge">
+            <div class="badge-dot"></div><span>ROBOT EN LIGNE</span>
+        </div>
+        <div class="nav-section">
+            <div class="nav-label">Administration</div>
+            <a href="/admin/dashboard" class="nav-item">
+                <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                        <rect x="1" y="1" width="6" height="6" rx="1" />
+                        <rect x="9" y="1" width="6" height="6" rx="1" />
+                        <rect x="1" y="9" width="6" height="6" rx="1" />
+                        <rect x="9" y="9" width="6" height="6" rx="1" />
+                    </svg></span>
+                <span class="nav-text">Dashboard</span>
             </a>
-            <a href="/admin/settings" class="topbar-user"><div class="user-dot"></div><%= user.name %></a>
+            <a href="/admin/users" class="nav-item">
+                <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                        <circle cx="6" cy="5" r="3" />
+                        <path d="M0 14c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+                        <circle cx="13" cy="5" r="2.5" />
+                        <path d="M13 10c1.7 0 3 1.3 3 3" />
+                    </svg></span>
+                <span class="nav-text">Utilisateurs</span>
+            </a>
+            <a href="/admin/robot" class="nav-item">
+                <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                        <rect x="4" y="2" width="8" height="6" rx="1" />
+                        <rect x="3" y="8" width="10" height="5" rx="1" />
+                        <circle cx="6" cy="4" r="1" />
+                        <circle cx="10" cy="4" r="1" />
+                        <rect x="1" y="9" width="2" height="3" rx="1" />
+                        <rect x="13" y="9" width="2" height="3" rx="1" />
+                    </svg></span>
+                <span class="nav-text">Contrôle Robot</span>
+            </a>
+            <a href="/admin/history" class="nav-item">
+                <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 2v5l3 3-1 1-3.5-3.5V3H8z" />
+                    </svg></span>
+                <span class="nav-text">Historique</span>
+            </a>
+            <div class="nav-label">Surveillance</div>
+            <a href="/admin/camera" class="nav-item active">
+                <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z" />
+                    </svg></span>
+                <span class="nav-text">Caméra</span>
+            </a>
+            <a href="/admin/map" class="nav-item">
+                <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M6 1l4 2 4-2v11l-4 2-4-2-4 2V3l4-2zm0 1.5L2 4.5v9l4-2 4 2 4-2v-9l-4 2-4-2z" />
+                    </svg></span>
+                <span class="nav-text">Navigation</span>
+            </a>
+            <a href="/admin/notifications" class="nav-item">
+                <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                        <path
+                            d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z" />
+                    </svg></span>
+                <span class="nav-text">Alertes</span>
+                <span class="nav-count">3</span>
+            </a>
+            <div class="nav-label"></div>
+            <a href="/admin/settings" class="nav-item">
+                <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                        <path
+                            d="M7.5 1l-.8 2.4a5 5 0 00-1.4.8L3 3.5l-1.5 2.6 1.9 1.5a5 5 0 000 1.8L1.5 11l1.5 2.6 2.3-.8a5 5 0 001.4.8L7.5 16h1l.8-2.4a5 5 0 001.4-.8l2.3.8L14.5 11l-1.9-1.5a5 5 0 000-1.8l1.9-1.5L13 3.5l-2.3.7a5 5 0 00-1.4-.8L8.5 1h-1zM8 6a2 2 0 110 4A2 2 0 018 6z" />
+                    </svg></span>
+                <span class="nav-text">Paramètres</span>
+            </a>
         </div>
-    </div>
-
-    <div class="content">
-
-        <!-- CAMERA MAIN -->
-        <div class="cam-main">
-            <div class="cam-header">
-                <span class="cam-title">Flux Principal</span>
-                <span class="cam-id" id="camLabel">CAM-01 — Entrée</span>
-            </div>
-            <div class="cam-feed" id="mainFeed">
-                <img id="camStream" src="" style="width:100%;height:100%;object-fit:cover;display:block;">
-                <div class="cam-offline-overlay" id="offlineOverlay">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/><line x1="2" y1="2" x2="22" y2="22" stroke="#e74c3c" stroke-width="2"/></svg>
-                    CAMÉRA HORS LIGNE
-                    <span style="font-size:0.7rem;color:#555;font-weight:400;">Reconnexion en cours...</span>
+        <div class="sidebar-footer">
+            <div class="user-row">
+                <div class="user-av">
+                    <%= user.name.charAt(0).toUpperCase() %>
                 </div>
-                <div class="corner corner-tl"></div>
-                <div class="corner corner-tr"></div>
-                <div class="corner corner-bl"></div>
-                <div class="corner corner-br"></div>
-                <div class="cam-overlay-tl">
-                    <div class="overlay-tag red"><div class="live-dot"></div> REC LIVE</div>
-                    <div class="overlay-tag blue" id="resTag">640×480</div>
-                </div>
-                <div class="cam-overlay-tr">
-                    <div class="overlay-tag" id="timeTag">--:--:--</div>
-                </div>
-                
-                <div class="cam-overlay-br">
-                    <div class="overlay-tag" id="zoomTag">ZOOM 1.0×</div>
-                </div>
-            </div>
-            <div class="cam-controls">
-                <button class="ctrl-btn" onclick="zoomIn()">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="4"/><line x1="8" y1="8" x2="11" y2="11"/><line x1="5" y1="3" x2="5" y2="7"/><line x1="3" y1="5" x2="7" y2="5"/></svg>
-                    Zoom +
-                </button>
-                <button class="ctrl-btn" onclick="zoomOut()">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="4"/><line x1="8" y1="8" x2="11" y2="11"/><line x1="3" y1="5" x2="7" y2="5"/></svg>
-                    Zoom −
-                </button>
-                <div class="ctrl-sep"></div>
-                <button class="ctrl-btn" onclick="takeSnapshot()">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="10" height="8" rx="1"/><circle cx="6" cy="7" r="2"/><path d="M4 3l1-2h2l1 2"/></svg>
-                    Snapshot
-                </button>
-                <button class="ctrl-btn danger" onclick="toggleRecord()" id="recBtn">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="4"/><circle cx="6" cy="6" r="2" fill="currentColor"/></svg>
-                    Record
-                </button>
-                <div class="ctrl-sep"></div>
-                <button class="ctrl-btn" onclick="toggleNight()" id="nightBtn">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 7A5 5 0 015 2a5 5 0 100 8 5 5 0 005-3z"/></svg>
-                    Vision nuit
-                </button>
-                <button class="ctrl-btn" onclick="toggleGrid()" id="gridBtn">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="4" height="4"/><rect x="7" y="1" width="4" height="4"/><rect x="1" y="7" width="4" height="4"/><rect x="7" y="7" width="4" height="4"/></svg>
-                    Grille
-                </button>
-                <button class="ctrl-btn" onclick="toggleFullscreen()" style="margin-left:auto;">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4V1h3M8 1h3v3M11 8v3H8M4 11H1V8"/></svg>
-                    Plein écran
-                </button>
-            </div>
-        </div>
-
-        <!-- THUMBNAILS -->
-      
-          <div class="cam-overlay-bl">
-              <div class="overlay-tag green" id="fpsTag">● SIGNAL OK</div>
-         </div>
-           
-
-        <!-- RIGHT PANEL -->
-        <div class="right-panel">
-            <div class="info-card">
-                <div class="card-label">Statut Caméra</div>
-                <div class="stat-row-grid">
-                    <div class="stat-item">
-                        <div class="stat-lbl">Statut</div>
-                        <div class="stat-val green" id="streamStatus">EN LIGNE</div>
+                <div>
+                    <div class="user-name-s">
+                        <%= user.name %>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-lbl">Résolution</div>
-                        <div class="stat-val blue">640×480</div>
-                    </div>
-                
+                    <div class="user-role-s">Administrateur</div>
+                </div>
+            </div>
+            <a href="/logout" class="nav-item" style="color:#555;">
+                <span class="nav-icon-wrap"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                        <path
+                            d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3v-1.5H3.5v-9H6V2zm4.5 3.5L13 8l-2.5 2.5-1-1L11 8H6V6.5h5l-1.5-1.5 1-1z" />
+                    </svg></span>
+                <span class="nav-text">Déconnexion</span>
+            </a>
+        </div>
+    </aside>
 
-            <div class="info-card">
-                <div class="card-label">Événements récents</div>
-                <div class="alert-item ok">
-                    <div class="alert-dot"></div>
-                    Caméra connectée
+    <!-- MAIN -->
+    <div class="main">
+        <div class="topbar">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="#888" style="flex-shrink:0">
+                <rect y="3" width="18" height="2" />
+                <rect y="8" width="18" height="2" />
+                <rect y="13" width="18" height="2" />
+            </svg>
+            <span class="topbar-title">Surveillance Caméra</span>
+            <div class="topbar-right">
+                <span class="admin-pill">ADMIN</span>
+                <div class="live-pill">
+                    <div class="live-dot"></div>LIVE
                 </div>
-                <div class="alert-item info">
-                    <div class="alert-dot"></div>
-                    Stream démarré — port 5000
-                </div>
-                <div class="alert-item" id="camStatusAlert" style="background:rgba(39,174,96,0.07);border-color:rgba(39,174,96,0.2);color:#27ae60;">
-                    <div class="alert-dot" style="background:#27ae60"></div>
-                    <span id="camStatusText">Signal OK</span>
-                </div>
+                <a href="/admin/notifications" class="topbar-bell">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="#888">
+                        <path
+                            d="M8 1a5 5 0 00-5 5v3l-1.5 2.5h13L13 9V6a5 5 0 00-5-5zm0 14a2 2 0 01-2-2h4a2 2 0 01-2 2z" />
+                    </svg>
+                    <div class="bell-badge">3</div>
+                </a>
+                <a href="/admin/settings" class="topbar-user">
+                    <div class="user-dot"></div>
+                    <%= user.name %>
+                </a>
             </div>
         </div>
 
-    </div>
-</div>
+        <div class="content">
 
-<script>
-let zoom = 1;
-let isRec = false;
-let isNight = false;
-let isGrid = false;
-let camOnline = false;
-let retryTimer = null;
+            <!-- CAMERA MAIN -->
+            <div class="cam-main">
+                <div class="cam-header">
+                    <span class="cam-title">Flux Principal</span>
+                    <span class="cam-id" id="camLabel">CAM-01 — Entrée</span>
+                </div>
+                <div class="cam-feed" id="mainFeed">
+                    <img id="camStream" src="/camera-stream" style="width:100%;height:100%;object-fit:cover;display:block;">
+                    <div class="cam-offline-overlay" id="offlineOverlay">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5">
+                            <path d="M1 4a1 1 0 011-1h8a1 1 0 011 1v1.5l3-2v7l-3-2V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z" />
+                            <line x1="2" y1="2" x2="22" y2="22" stroke="#e74c3c" stroke-width="2" />
+                        </svg>
+                        CAMÉRA HORS LIGNE
+                        <span style="font-size:0.7rem;color:#555;font-weight:400;">Reconnexion en cours...</span>
+                    </div>
+                    <div class="corner corner-tl"></div>
+                    <div class="corner corner-tr"></div>
+                    <div class="corner corner-bl"></div>
+                    <div class="corner corner-br"></div>
+                    <div class="cam-overlay-tl">
+                        <div class="overlay-tag red">
+                            <div class="live-dot"></div> REC LIVE
+                        </div>
+                        <div class="overlay-tag blue" id="resTag">640×480</div>
+                    </div>
+                    <div class="cam-overlay-tr">
+                        <div class="overlay-tag" id="timeTag">--:--:--</div>
+                    </div>
 
-// ── CLOCK ──
-setInterval(() => {
-    const el = document.getElementById('timeTag');
-    if (el) el.textContent = new Date().toLocaleTimeString('fr-FR');
-}, 1000);
+                    <div class="cam-overlay-br">
+                        <div class="overlay-tag" id="zoomTag">ZOOM 1.0×</div>
+                    </div>
+                </div>
+                <div class="cam-controls">
+                    <button class="ctrl-btn" onclick="zoomIn()">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <circle cx="5" cy="5" r="4" />
+                            <line x1="8" y1="8" x2="11" y2="11" />
+                            <line x1="5" y1="3" x2="5" y2="7" />
+                            <line x1="3" y1="5" x2="7" y2="5" />
+                        </svg>
+                        Zoom +
+                    </button>
+                    <button class="ctrl-btn" onclick="zoomOut()">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <circle cx="5" cy="5" r="4" />
+                            <line x1="8" y1="8" x2="11" y2="11" />
+                            <line x1="3" y1="5" x2="7" y2="5" />
+                        </svg>
+                        Zoom −
+                    </button>
+                    <div class="ctrl-sep"></div>
+                    <button class="ctrl-btn" onclick="takeSnapshot()">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <rect x="1" y="3" width="10" height="8" rx="1" />
+                            <circle cx="6" cy="7" r="2" />
+                            <path d="M4 3l1-2h2l1 2" />
+                        </svg>
+                        Snapshot
+                    </button>
+                    <button class="ctrl-btn danger" onclick="toggleRecord()" id="recBtn">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <circle cx="6" cy="6" r="4" />
+                            <circle cx="6" cy="6" r="2" fill="currentColor" />
+                        </svg>
+                        Record
+                    </button>
+                    <div class="ctrl-sep"></div>
+                    <button class="ctrl-btn" onclick="toggleNight()" id="nightBtn">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path d="M10 7A5 5 0 015 2a5 5 0 100 8 5 5 0 005-3z" />
+                        </svg>
+                        Vision nuit
+                    </button>
+                    <button class="ctrl-btn" onclick="toggleGrid()" id="gridBtn">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <rect x="1" y="1" width="4" height="4" />
+                            <rect x="7" y="1" width="4" height="4" />
+                            <rect x="1" y="7" width="4" height="4" />
+                            <rect x="7" y="7" width="4" height="4" />
+                        </svg>
+                        Grille
+                    </button>
+                    <button class="ctrl-btn" onclick="toggleFullscreen()" style="margin-left:auto;">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path d="M1 4V1h3M8 1h3v3M11 8v3H8M4 11H1V8" />
+                        </svg>
+                        Plein écran
+                    </button>
+                </div>
+            </div>
 
-// Badel startCameraStream() f camera.ejs b haka:
-let retryCount = 0;
 
-function startCameraStream() {
-    const img = document.getElementById('camStream');
-    const overlay = document.getElementById('offlineOverlay');
+            <script>
+                let zoom = 1;
+                let isRec = false;
+                let isNight = false;
+                let isGrid = false;
+                let camOnline = false;
+                let retryTimer = null;
 
-    if (retryTimer) clearTimeout(retryTimer);
+                // ── CLOCK ──
+                setInterval(() => {
+                    const el = document.getElementById('timeTag');
+                    if (el) el.textContent = new Date().toLocaleTimeString('fr-FR');
+                }, 1000);
 
-    // Cache-bust kol marra
-    const newSrc = '/camera-stream?t=' + Date.now();
+                // Badel startCameraStream() f camera.ejs b haka:
+                let retryCount = 0;
 
-    img.onload = () => {
-        camOnline = true;
-        retryCount = 0;
-        overlay.style.display = 'none';
-        document.getElementById('fpsTag').textContent = '● SIGNAL OK';
-        document.getElementById('fpsTag').className = 'overlay-tag green';
-        const s = document.getElementById('streamStatus');
-        if (s) { s.textContent = 'EN LIGNE'; s.className = 'stat-val green'; }
-    };
+                function startCameraStream() {
+                    const img = document.getElementById('camStream');
+                    const overlay = document.getElementById('offlineOverlay');
 
-    img.onerror = () => {
-        camOnline = false;
-        retryCount++;
-        overlay.style.display = 'flex';
-        document.getElementById('fpsTag').textContent = '● HORS LIGNE';
-        document.getElementById('fpsTag').className = 'overlay-tag red';
-        const s = document.getElementById('streamStatus');
-        if (s) { s.textContent = 'HORS LIGNE'; s.className = 'stat-val rouge'; }
+                    if (retryTimer) clearTimeout(retryTimer);
 
-        // Backoff: 5s, 10s, 15s max
-        const delay = Math.min(retryCount * 5000, 15000);
-        console.warn(`Camera retry #${retryCount} dans ${delay/1000}s`);
-        retryTimer = setTimeout(startCameraStream, delay);
-    };
+                    // Cache-bust kol marra
+                    const newSrc = '/camera-stream?t=' + Date.now();
 
-    img.src = newSrc;
-}
-// ── ZOOM ──
-function zoomIn() {
-    if (zoom < 3) { zoom = +(zoom + 0.2).toFixed(1); applyZoom(); }
-}
-function zoomOut() {
-    if (zoom > 1) { zoom = +(zoom - 0.2).toFixed(1); applyZoom(); }
-}
-function applyZoom() {
-    document.getElementById('camStream').style.transform = `scale(${zoom})`;
-    document.getElementById('zoomTag').textContent = `ZOOM ${zoom.toFixed(1)}×`;
-}
+                    img.onload = () => {
+                        camOnline = true;
+                        retryCount = 0;
+                        overlay.style.display = 'none';
+                        document.getElementById('fpsTag').textContent = '● SIGNAL OK';
+                        document.getElementById('fpsTag').className = 'overlay-tag green';
+                        const s = document.getElementById('streamStatus');
+                        if (s) { s.textContent = 'EN LIGNE'; s.className = 'stat-val green'; }
+                    };
 
-// ── SNAPSHOT ──
-// Ba3d el /camera-stream route, zid haka:
-app.get('/camera-snapshot', (req, res) => {
-    const options = {
-        hostname: '100.90.80.29',
-        port: 5000,
-        path: '/snapshot',  // walla '/video' — depends on camera_server.py
-        method: 'GET',
-        timeout: 10000
-    };
+                    img.onerror = () => {
+                        camOnline = false;
+                        retryCount++;
+                        overlay.style.display = 'flex';
+                        document.getElementById('fpsTag').textContent = '● HORS LIGNE';
+                        document.getElementById('fpsTag').className = 'overlay-tag red';
+                        const s = document.getElementById('streamStatus');
+                        if (s) { s.textContent = 'HORS LIGNE'; s.className = 'stat-val rouge'; }
 
-    const proxyReq = http.request(options, (proxyRes) => {
-        res.setHeader('Content-Type', 'image/jpeg');
-        res.setHeader('Cache-Control', 'no-cache');
-        proxyRes.pipe(res, { end: true });
-    });
+                        // Backoff: 5s, 10s, 15s max
+                        const delay = Math.min(retryCount * 5000, 15000);
+                        console.warn(`Camera retry #${retryCount} dans ${delay / 1000}s`);
+                        retryTimer = setTimeout(startCameraStream, delay);
+                    };
 
-    proxyReq.on('error', (err) => {
-        if (!res.headersSent) res.status(502).json({ error: 'Camera offline' });
-    });
+                    img.src = newSrc;
+                }
+                // ── ZOOM ──
+                function zoomIn() {
+                    if (zoom < 3) { zoom = +(zoom + 0.2).toFixed(1); applyZoom(); }
+                }
+                function zoomOut() {
+                    if (zoom > 1) { zoom = +(zoom - 0.2).toFixed(1); applyZoom(); }
+                }
+                function applyZoom() {
+                    document.getElementById('camStream').style.transform = `scale(${zoom})`;
+                    document.getElementById('zoomTag').textContent = `ZOOM ${zoom.toFixed(1)}×`;
+                }
 
-    proxyReq.on('timeout', () => {
-        proxyReq.destroy();
-        if (!res.headersSent) res.status(504).json({ error: 'Timeout' });
-    });
+               
+                // ── RECORD ──
+                function toggleRecord() {
+                    isRec = !isRec;
+                    const btn = document.getElementById('recBtn');
+                    btn.classList.toggle('active', isRec);
+                    btn.innerHTML = isRec
+                        ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="2" width="8" height="8" rx="1"/></svg> Stop REC'
+                        : '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="4"/><circle cx="6" cy="6" r="2" fill="currentColor"/></svg> Record';
+                }
 
-    proxyReq.end();
-});
-// ── RECORD ──
-function toggleRecord() {
-    isRec = !isRec;
-    const btn = document.getElementById('recBtn');
-    btn.classList.toggle('active', isRec);
-    btn.innerHTML = isRec
-        ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="2" width="8" height="8" rx="1"/></svg> Stop REC'
-        : '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="4"/><circle cx="6" cy="6" r="2" fill="currentColor"/></svg> Record';
-}
+                // ── NIGHT MODE ──
+                function toggleNight() {
+                    isNight = !isNight;
+                    document.getElementById('camStream').style.filter =
+                        isNight ? 'brightness(0.4) sepia(1) hue-rotate(90deg) saturate(2)' : 'none';
+                    document.getElementById('nightBtn').classList.toggle('active', isNight);
+                }
 
-// ── NIGHT MODE ──
-function toggleNight() {
-    isNight = !isNight;
-    document.getElementById('camStream').style.filter =
-        isNight ? 'brightness(0.4) sepia(1) hue-rotate(90deg) saturate(2)' : 'none';
-    document.getElementById('nightBtn').classList.toggle('active', isNight);
-}
+                // ── GRID ──
+                function toggleGrid() {
+                    isGrid = !isGrid;
+                    const feed = document.getElementById('mainFeed');
+                    feed.style.backgroundImage = isGrid
+                        ? 'linear-gradient(rgba(192,57,43,0.15) 1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,0.15) 1px,transparent 1px)'
+                        : 'none';
+                    feed.style.backgroundSize = isGrid ? '60px 60px' : '';
+                    document.getElementById('gridBtn').classList.toggle('active', isGrid);
+                }
 
-// ── GRID ──
-function toggleGrid() {
-    isGrid = !isGrid;
-    const feed = document.getElementById('mainFeed');
-    feed.style.backgroundImage = isGrid
-        ? 'linear-gradient(rgba(192,57,43,0.15) 1px,transparent 1px),linear-gradient(90deg,rgba(192,57,43,0.15) 1px,transparent 1px)'
-        : 'none';
-    feed.style.backgroundSize = isGrid ? '60px 60px' : '';
-    document.getElementById('gridBtn').classList.toggle('active', isGrid);
-}
+                // ── FULLSCREEN ──
+                function toggleFullscreen() {
+                    const el = document.getElementById('mainFeed');
+                    if (!document.fullscreenElement) el.requestFullscreen().catch(() => { });
+                    else document.exitFullscreen();
+                }
 
-// ── FULLSCREEN ──
-function toggleFullscreen() {
-    const el = document.getElementById('mainFeed');
-    if (!document.fullscreenElement) el.requestFullscreen().catch(()=>{});
-    else document.exitFullscreen();
-}
+                // ── SELECT CAM ──
+                function selectCam(e, num, name) {
+                    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    document.getElementById('camLabel').textContent = name;
 
-// ── SELECT CAM ──
-function selectCam(e, num, name) {
-    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
-    e.currentTarget.classList.add('active');
-    document.getElementById('camLabel').textContent = name;
+                    if (num === 1) {
+                        startCameraStream();
+                    } else {
+                        // Cameras 2,3,4 offline
+                        if (retryTimer) clearTimeout(retryTimer);
+                        const img = document.getElementById('camStream');
+                        img.src = '';
+                        document.getElementById('fpsTag').textContent = '● HORS LIGNE';
+                        document.getElementById('fpsTag').className = 'overlay-tag red';
+                        document.getElementById('offlineOverlay').style.display = 'flex';
+                        const statusEl = document.getElementById('streamStatus');
+                        if (statusEl) { statusEl.textContent = 'HORS LIGNE'; statusEl.className = 'stat-val rouge'; }
+                    }
+                }
 
-    if (num === 1) {
-        startCameraStream();
-    } else {
-        // Cameras 2,3,4 offline
-        if (retryTimer) clearTimeout(retryTimer);
-        const img = document.getElementById('camStream');
-        img.src = '';
-        document.getElementById('fpsTag').textContent = '● HORS LIGNE';
-        document.getElementById('fpsTag').className = 'overlay-tag red';
-        document.getElementById('offlineOverlay').style.display = 'flex';
-        const statusEl = document.getElementById('streamStatus');
-        if (statusEl) { statusEl.textContent = 'HORS LIGNE'; statusEl.className = 'stat-val rouge'; }
-    }
-}
-
-// ── KEYBOARD ──
-document.addEventListener('keydown', e => {
-    if (e.key === 'f' || e.key === 'F') toggleFullscreen();
-    if (e.key === 's' || e.key === 'S') takeSnapshot();
-    if (e.key === 'n' || e.key === 'N') toggleNight();
-    if (e.key === 'r' || e.key === 'R') { zoom = 1; applyZoom(); }
-});
-</script>
+                // ── KEYBOARD ──
+                document.addEventListener('keydown', e => {
+                    if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+                    if (e.key === 's' || e.key === 'S') takeSnapshot();
+                    if (e.key === 'n' || e.key === 'N') toggleNight();
+                    if (e.key === 'r' || e.key === 'R') { zoom = 1; applyZoom(); }
+                });
+                startCameraStream();
+            </script>
 
 </body>
+
 </html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/theme.js"></script>
+    <title>404 - Page non trouvée - YURA GUARDIAN</title>
+    <link rel="stylesheet" href="/css/signin.css">
+    <style>
+        .error-code {
+            font-size: 6rem;
+            font-weight: 900;
+            color: var(--rouge);
+            margin: 0;
+            line-height: 1;
+            text-shadow: 0 0 20px rgba(192, 57, 43, 0.3);
+        }
+        .error-message-large {
+            font-size: 1.5rem;
+            color: #fff;
+            margin: 10px 0 30px;
+        }
+        .back-home-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--rouge), #7b241c);
+            color: #fff;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.3);
+        }
+        .back-home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 57, 43, 0.4);
+            background: linear-gradient(135deg, var(--rouge-light), var(--rouge));
+        }
+    </style>
+</head>
+
+<body>
+    <div class="signin-container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <div class="left-content">
+                <div class="welcome-text-wrapper">
+                    <h1 class="welcome-text">ERREUR 404</h1>
+                    <div class="text-decoration"></div>
+                </div>
+                <p class="robot-desc">La page que vous recherchez n'existe pas ou a été déplacée. Le système YURA Guardian ne trouve pas cette coordonnée.</p>
+
+                <div class="features-vertical">
+                    <div class="feature-item">
+                        <span class="feature-icon"></span>
+                        <p>Retour Sécurisé</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Animated Background Left -->
+            <div class="animated-bg-left">
+                <div class="gradient-circle circle-1"></div>
+                <div class="gradient-circle circle-2"></div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <!-- Animated Background Right -->
+            <div class="animated-bg-right">
+                <div class="gradient-circle circle-3"></div>
+                <div class="gradient-circle circle-4"></div>
+            </div>
+
+            <div class="signin-box" style="text-align: center; padding: 40px 20px;">
+                <div class="header-section" style="justify-content: center;">
+                    <div class="logo-wrapper" style="margin-bottom: 20px;">
+                        <img src="/images/logo robot.png" alt="YURA GUARDIAN" class="signin-logo" loading="lazy">
+                        <div class="logo-ring"></div>
+                    </div>
+                </div>
+
+                <h1 class="error-code">404</h1>
+                <h2 class="error-message-large">Page Introuvable</h2>
+                
+                <p style="color: #aaa; margin-bottom: 40px;">
+                    La route que vous essayez d'emprunter est hors des limites de navigation.
+                </p>
+
+                <a href="/" class="back-home-btn">
+                    <span>Retour à l'accueil</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
